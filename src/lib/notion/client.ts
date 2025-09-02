@@ -55,6 +55,9 @@ import type {
 } from '../interfaces'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 import { Client, APIResponseError } from '@notionhq/client'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const client = new Client({
   auth: NOTION_API_SECRET,
@@ -66,6 +69,7 @@ let dbCache: Database | null = null
 const numberOfRetry = 2
 
 export async function getAllPosts(): Promise<Post[]> {
+	console.log("QUERYING POSTS")
   if (postsCache !== null) {
     return Promise.resolve(postsCache)
   }
@@ -99,6 +103,7 @@ export async function getAllPosts(): Promise<Post[]> {
 
   let results: responses.PageObject[] = []
   while (true) {
+	console.log("QUERYING POSTS 2")
     const res = await retry(
       async (bail) => {
         try {
@@ -120,7 +125,7 @@ export async function getAllPosts(): Promise<Post[]> {
     )
 
     results = results.concat(res.results)
-
+	console.log(results)
     if (!res.has_more) {
       break
     }

@@ -22,6 +22,7 @@
     "@astrojs/tailwind": "^6.0.2",
     "@iconify-json/octicon": "^1.2.2",
     "@notionhq/client": "^2.2.15",
+    "@radix-ui/react-slot": "^1.2.3",
     "@supercharge/promise-pool": "^3.2.0",
     "@tailwindcss/vite": "^4.1.13",
     "astro": "^5.1.3",

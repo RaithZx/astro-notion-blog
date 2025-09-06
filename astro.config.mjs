@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import icon from 'astro-icon';
 import tailwind from '@astrojs/tailwind';
+import react from '@astrojs/react';
 import { CUSTOM_DOMAIN, BASE_PATH } from './src/server-constants';
 import CoverImageDownloader from './src/integrations/cover-image-downloader';
 import CustomIconDownloader from './src/integrations/custom-icon-downloader';
@@ -40,6 +41,7 @@ export default defineConfig({
   integrations: [
     icon(),
     tailwind(),
+    react(),
     CoverImageDownloader(),
     CustomIconDownloader(),
     FeaturedImageDownloader(),

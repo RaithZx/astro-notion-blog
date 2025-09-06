@@ -1,11 +1,11 @@
 import { defineConfig } from 'astro/config';
 import icon from 'astro-icon';
+import tailwind from '@astrojs/tailwind';
 import { CUSTOM_DOMAIN, BASE_PATH } from './src/server-constants';
 import CoverImageDownloader from './src/integrations/cover-image-downloader';
 import CustomIconDownloader from './src/integrations/custom-icon-downloader';
 import FeaturedImageDownloader from './src/integrations/featured-image-downloader';
 import PublicNotionCopier from './src/integrations/public-notion-copier';
-import tailwindcss from '@tailwindcss/vite';
 
 const getSite = function () {
   if (CUSTOM_DOMAIN) {
@@ -39,12 +39,10 @@ export default defineConfig({
   base: BASE_PATH,
   integrations: [
     icon(),
+    tailwind(),
     CoverImageDownloader(),
     CustomIconDownloader(),
     FeaturedImageDownloader(),
     PublicNotionCopier(),
   ],
-  vite: {
-	plugins: [tailwindcss()],
-  },
 });

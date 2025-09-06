@@ -60,9 +60,12 @@
 
 @layer base {
   * {
-    @apply border-gray-200;
+	   @apply border-gray-200;
+    /* border-color: rgb(229 231 235); border-gray-200 */
   }
   body {
-    @apply bg-white text-gray-900;
-  }
+    /* background-color: rgb(255 255 255); bg-white */
+    /* color: rgb(17 24 39); text-gray-900 */
+	@apply bg-white text-gray-900;
+  } 
 }

@@ -1,4 +1,5 @@
 ---
+import '../styles/globals.css'
 import { PUBLIC_GA_TRACKING_ID, ENABLE_LIGHTBOX } from '../server-constants.ts'
 import { getDatabase } from '../lib/notion/client.ts'
 import { getNavLink, getStaticFilePath, filePath } from '../lib/blog-helpers.ts'
@@ -129,10 +130,10 @@ if (database.Icon && database.Icon.Type === 'file') {
 
             <footer>
               <div>
-                <span>Powered by&nbsp;</span>
-                <a href="https://github.com/otoyo/astro-notion-blog"
-                  >astro-notion-blog</a
-                >
+							<button class="bg-blue-500 text-white px-4 py-2 rounded-md">
+								Click me
+							</button>
+								   <p>Hello</p>
               </div>
             </footer>
           </div>

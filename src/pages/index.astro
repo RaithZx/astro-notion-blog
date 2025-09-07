@@ -17,7 +17,6 @@ import ReadMoreLink from '../components/ReadMoreLink.astro'
 import Pagination from '../components/Pagination.astro'
 import BlogPostsLink from '../components/BlogPostsLink.astro'
 import BlogTagsLink from '../components/BlogTagsLink.astro'
-import styles from '../styles/blog.module.css'
 
 const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
   getPosts(NUMBER_OF_POSTS_PER_PAGE),
@@ -28,315 +27,85 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
 ---
 
 <Layout title="Home" description="Latest cybersecurity news and insights" path="/" ogImage="">
-  <div slot="main" class="hackernews-main">
+  <div slot="main" class="">
+  <!-- <div slot="main" class="bg-white rounded-lg p-0 shadow-sm"> -->
     {
       posts.length === 0 ? (
         <NoContents contents={posts} />
       ) : (
-        <div class="articles-container">
+        <div class="p-0">
           {posts.map((post, index) => (
-            <article class="hackernews-article">
-              <div class="article-image">
-                <PostFeaturedImage post={post} />
+            <article class="flex items-center gap-3 py-3 px-6 border-b border-slate-200 transition-colors  last:border-b-0 max-sm:flex-col max-sm:gap-2 max-sm:py-3 max-sm:px-4 cursor-pointer">
+              <div class="flex-shrink-0 w-32 h-24 rounded-md overflow-hidden bg-slate-200 max-sm:w-full max-sm:h-40">
+                {post.FeaturedImage && post.FeaturedImage.Url ? (
+                  <PostFeaturedImage post={post} />
+                ) : (
+                  <div class="w-full h-full bg-slate-300 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-slate-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                )}
               </div>
-              <div class="article-content">
-                <div class="article-meta">
-                  <PostDate post={post} />
+              <div class="flex-1 flex flex-col gap-0.5 ml-2">
+                <div class="flex items-center gap-2 text-xs text-slate-500">
+                  {/* <PostDate post={post} /> */}
                   <PostTags post={post} enableLink={true} />
                 </div>
-                <h2 class="article-title">
+                <h1 class="m-0 text-base font-semibold text-slate-800 leading-tight">
                   <PostTitle post={post} enableLink={true} />
-                </h2>
-                <p class="article-excerpt">
+                </h1>
+                <p class="m-0 text-slate-500 text-xs leading-snug line-clamp-2">
                   <PostExcerpt post={post} />
                 </p>
-                <div class="article-actions">
-                  <ReadMoreLink post={post} />
                 </div>
-              </div>
             </article>
           ))}
         </div>
       )
     }
 
-    <footer class="pagination-footer">
+    <footer class="py-8 px-8 border-t border-slate-200 text-center">
       <Pagination currentPage={1} numberOfPages={numberOfPages} tag="" />
     </footer>
   </div>
 
-  <div slot="aside" class="hackernews-sidebar">
+  <div slot="aside" class="flex flex-col gap-6">
     <!-- Advertisement 1 -->
-    <div class="sidebar-ad">
-      <div class="ad-content">
-        <div class="ad-header">
-          <div class="ad-logo">WIZ</div>
-          <div class="ad-badge">Gartner</div>
+    <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-lg p-6 relative overflow-hidden">
+      <div class="absolute -top-1/2 -right-1/2 w-full h-full bg-white/10 rounded-full rotate-45"></div>
+      <div class="relative z-10">
+        <div class="flex justify-between items-center mb-4">
+          <div class="font-bold text-xl">WIZ</div>
+          <div class="bg-white/20 px-2 py-1 rounded text-xs font-medium">Gartner</div>
         </div>
-        <h3>2025 Gartner Market Guide for CNAPP</h3>
-        <p>Wiz named a Representative Vendor</p>
-        <button class="ad-button">Download now</button>
+        <h3 class="m-0 mb-2.5 text-lg font-semibold">2025 Gartner Market Guide for CNAPP</h3>
+        <p class="m-0 mb-5 text-sm opacity-90">Wiz named a Representative Vendor</p>
+        <button class="bg-white text-indigo-500 border-0 px-5 py-2.5 rounded-md font-semibold cursor-pointer transition-transform hover:-translate-y-0.5">Download now</button>
       </div>
     </div>
 
     <!-- Call to Action -->
-    <div class="sidebar-cta">
+    <div class="bg-blue-600 text-white rounded-lg p-6 text-center">
       <div class="cta-content">
-        <div class="cta-icon">🔒</div>
-        <h3>Share your cybersecurity experience and expertise.</h3>
-        <p>Join our community of security professionals</p>
+        <div class="text-4xl mb-4">🔒</div>
+        <h3 class="m-0 mb-2.5 text-lg font-semibold">Share your cybersecurity experience and expertise.</h3>
+        <p class="m-0 text-sm opacity-90">Join our community of security professionals</p>
       </div>
     </div>
 
     <!-- Recommended Posts -->
-    <div class="sidebar-section">
-      <h3 class="sidebar-title">Recommended</h3>
+    <div class="bg-white border border-slate-200 rounded-lg p-5">
+      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Recommended</h3>
       <BlogPostsLink heading="" posts={rankedPosts} />
     </div>
 
     <!-- Categories -->
-    <div class="sidebar-section">
-      <h3 class="sidebar-title">Categories</h3>
+    <div class="bg-white border border-slate-200 rounded-lg p-5">
+      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Categories</h3>
       <BlogTagsLink heading="" tags={tags} />
     </div>
   </div>
 </Layout>
 
-<style>
-  /* Hacker News Main Content Styles */
-  .hackernews-main {
-    background: white;
-    border-radius: 8px;
-    padding: 0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-
-  .articles-container {
-    padding: 0;
-  }
-
-  .hackernews-article {
-    display: flex;
-    gap: 20px;
-    padding: 25px 30px;
-    border-bottom: 1px solid #e2e8f0;
-    transition: background-color 0.2s;
-  }
-
-  .hackernews-article:hover {
-    background-color: #f7fafc;
-  }
-
-  .hackernews-article:last-child {
-    border-bottom: none;
-  }
-
-  .article-image {
-    flex-shrink: 0;
-    width: 120px;
-    height: 80px;
-    border-radius: 6px;
-    overflow: hidden;
-    background: #f1f5f9;
-  }
-
-  .article-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .article-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .article-meta {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    font-size: 0.85rem;
-    color: #718096;
-  }
-
-  .article-title {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #2d3748;
-    line-height: 1.4;
-  }
-
-  .article-title a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .article-title a:hover {
-    color: #3182ce;
-  }
-
-  .article-excerpt {
-    margin: 0;
-    color: #4a5568;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .article-actions {
-    margin-top: 10px;
-  }
-
-  .pagination-footer {
-    padding: 30px;
-    border-top: 1px solid #e2e8f0;
-    text-align: center;
-  }
-
-  /* Hacker News Sidebar Styles */
-  .hackernews-sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-  }
-
-  .sidebar-ad {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 8px;
-    padding: 25px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .sidebar-ad::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    transform: rotate(45deg);
-  }
-
-  .ad-content {
-    position: relative;
-    z-index: 1;
-  }
-
-  .ad-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-
-  .ad-logo {
-    font-weight: bold;
-    font-size: 1.2rem;
-  }
-
-  .ad-badge {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: 500;
-  }
-
-  .sidebar-ad h3 {
-    margin: 0 0 10px 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-
-  .sidebar-ad p {
-    margin: 0 0 20px 0;
-    font-size: 0.9rem;
-    opacity: 0.9;
-  }
-
-  .ad-button {
-    background: white;
-    color: #667eea;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-
-  .ad-button:hover {
-    transform: translateY(-2px);
-  }
-
-  .sidebar-cta {
-    background: #3182ce;
-    color: white;
-    border-radius: 8px;
-    padding: 25px;
-    text-align: center;
-  }
-
-  .cta-icon {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-  }
-
-  .sidebar-cta h3 {
-    margin: 0 0 10px 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-
-  .sidebar-cta p {
-    margin: 0;
-    font-size: 0.9rem;
-    opacity: 0.9;
-  }
-
-  .sidebar-section {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 20px;
-  }
-
-  .sidebar-title {
-    margin: 0 0 15px 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #2d3748;
-    border-bottom: 2px solid #3182ce;
-    padding-bottom: 8px;
-  }
-
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .hackernews-article {
-      flex-direction: column;
-      gap: 15px;
-      padding: 20px;
-    }
-
-    .article-image {
-      width: 100%;
-      height: 200px;
-    }
-
-    .sidebar-ad,
-    .sidebar-cta {
-      padding: 20px;
-    }
-  }
-</style>
 

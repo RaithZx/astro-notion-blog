@@ -24,7 +24,6 @@ import PostBody from '../../components/PostBody.astro'
 import PostRelativeLink from '../../components/PostRelativeLink.astro'
 import BlogPostsLink from '../../components/BlogPostsLink.astro'
 import BlogTagsLink from '../../components/BlogTagsLink.astro'
-import styles from '../../styles/blog.module.css'
 
 export async function getStaticPaths() {
   const posts = await getAllPosts()
@@ -99,29 +98,48 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
   path={getPostLink(post.Slug)}
   ogImage={ogImage}
 >
-  <div slot="main" class={styles.main}>
-    <div class={styles.post}>
-      <PostDate post={post} />
-      <PostTags post={post} />
-      <PostTitle post={post} enableLink={false} />
+  <div slot="main" class="bg-white rounded-lg p-0 shadow-sm">
+    <div class="mx-auto mb-10">
+      <header class="pb-5">
+        <PostDate post={post} />
+        <PostTags post={post} />
+        <PostTitle post={post} enableLink={false} />
+      </header>
+      
       <PostBody blocks={blocks} />
+      
       <PostTags post={post} />
 
-      <footer>
+      <footer class="border-t border-dashed border-slate-400 mx-auto pt-10 max-sm:mb-10">
         <PostRelativeLink prevPost={prevPost} nextPost={nextPost} />
       </footer>
     </div>
   </div>
 
-  <div slot="aside" class="aside">
-    <BlogPostsLink
-      heading="Posts in the same category"
-      posts={postsHavingSameTag.filter(
-        (p: interfaces.Post) => p.Slug !== post.Slug
-      )}
-    />
-    <BlogPostsLink heading="Recommended" posts={rankedPosts} />
-    <BlogPostsLink heading="Latest posts" posts={recentPosts} />
-    <BlogTagsLink heading="Categories" tags={tags} />
+  <div slot="aside" class="flex flex-col gap-6">
+    <div class="bg-white border border-slate-200 rounded-lg p-5">
+      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Posts in the same category</h3>
+      <BlogPostsLink
+        heading=""
+        posts={postsHavingSameTag.filter(
+          (p: interfaces.Post) => p.Slug !== post.Slug
+        )}
+      />
+    </div>
+    
+    <div class="bg-white border border-slate-200 rounded-lg p-5">
+      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Recommended</h3>
+      <BlogPostsLink heading="" posts={rankedPosts} />
+    </div>
+    
+    <div class="bg-white border border-slate-200 rounded-lg p-5">
+      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Latest posts</h3>
+      <BlogPostsLink heading="" posts={recentPosts} />
+    </div>
+    
+    <div class="bg-white border border-slate-200 rounded-lg p-5">
+      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Categories</h3>
+      <BlogTagsLink heading="" tags={tags} />
+    </div>
   </div>
 </Layout>

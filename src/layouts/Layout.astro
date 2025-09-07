@@ -80,15 +80,15 @@ if (database.Icon && database.Icon.Type === 'file') {
     <GoogleAnalytics trackingId={PUBLIC_GA_TRACKING_ID} />
     
     <!-- Hacker News Style Header -->
-    <header class="hackernews-header">
-      <div class="header-top">
-        <div class="header-content">
+    <header class="bg-slate-800 text-white">
+      <div class="bg-slate-800 py-2.5">
+        <div class="max-w-6xl mx-auto flex items-center justify-between px-5">
           <div class="header-left">
-            <span class="header-subtitle">sudo apt-get update cyber_news</span>
+            <span class="text-xs text-slate-300 font-mono">sudo apt-get update cyber_news</span>
           </div>
           <div class="header-center">
-            <h1 class="site-title">
-              <a href={getNavLink('/')}>
+            <h1 class="m-0 text-4xl font-bold">
+              <a href={getNavLink('/')} class="text-white no-underline hover:text-white">
                   {
                     database.Icon && database.Icon.Type === 'emoji' ? (
                       <>
@@ -116,15 +116,15 @@ if (database.Icon && database.Icon.Type === 'file') {
               </a>
             </h1>
           </div>
-          <div class="header-right">
-            <span class="followers">Followed by 5.20+ million</span>
-            <div class="social-links">
-              <a href="#" class="social-link">Twitter</a>
-              <a href="#" class="social-link">LinkedIn</a>
-              <a href="#" class="social-link">Facebook</a>
+          <div class="flex items-center gap-4">
+            <span class="text-sm text-slate-200">Followed by 5.20+ million</span>
+            <div class="flex gap-2.5">
+              <a href="#" class="text-slate-200 no-underline text-sm hover:text-white">Twitter</a>
+              <a href="#" class="text-slate-200 no-underline text-sm hover:text-white">LinkedIn</a>
+              <a href="#" class="text-slate-200 no-underline text-sm hover:text-white">Facebook</a>
             </div>
-            <button class="subscribe-btn">
-              <span class="envelope-icon">✉</span>
+            <button class="bg-amber-400 text-slate-900 border-0 px-4 py-2 rounded font-bold cursor-pointer flex items-center gap-1.5 hover:bg-amber-500">
+              <span class="text-lg">✉</span>
               Subscribe - Get Latest News
             </button>
           </div>
@@ -132,54 +132,56 @@ if (database.Icon && database.Icon.Type === 'file') {
       </div>
       
       <!-- Navigation Bar -->
-      <nav class="hackernews-nav">
-        <div class="nav-content">
-          <a href={getNavLink('/')} class="nav-link active">Home</a>
-          <a href="#" class="nav-link">Data Breaches</a>
-          <a href="#" class="nav-link">Cyber Attacks</a>
-          <a href="#" class="nav-link">Vulnerabilities</a>
-          <a href="#" class="nav-link">Webinars</a>
-          <a href="#" class="nav-link">Expert Insights</a>
-          <a href="#" class="nav-link">Contact</a>
-          <div class="nav-right">
-            <button class="nav-icon">☰</button>
-            <button class="nav-icon">☰</button>
+      <nav class="bg-white border-b border-slate-200">
+        <div class="max-w-6xl mx-auto flex items-center px-5">
+          <a href={getNavLink('/')} class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500 active:text-slate-800 active:border-blue-500">Inisiu</a>
+          <a href="#" class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Saúdi</a>
+          <a href="#" class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Siénsia</a>
+          <a href="#" class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Tekinolojia</a>
+          <a href="#" class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Kontaktu</a>
+          <div class="ml-auto flex gap-2.5">
+            <button class="bg-transparent border-0 text-xl cursor-pointer p-1.5">☰</button>
+            <button class="bg-transparent border-0 text-xl cursor-pointer p-1.5">☰</button>
           </div>
         </div>
       </nav>
       
       <!-- Search Bar -->
-      <div class="search-section">
-        <div class="search-content">
-          <input type="text" placeholder="Search Here..." class="search-input" />
+      <div class="bg-white py-4 border-b border-slate-200">
+
+        <div class="max-w-6xl mx-auto px-5">
+
+          <SearchButton />
+          <!-- <input type="text" placeholder="Faze piskiza..." class="w-full py-3 px-4 border border-slate-200 rounded text-base focus:outline-none focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]" /> -->
         </div>
       </div>
       
       <!-- Advertisement Banner -->
-      <div class="ad-banner">
-        <div class="ad-content">
-          <div class="ad-left">
-            <div class="ad-logo">AppOmni</div>
+      <!-- <div class="bg-blue-600 text-white py-5">
+        <div class="max-w-6xl mx-auto flex items-center justify-between px-5">
+          <div class="flex items-center gap-5">
+            <div class="font-bold text-xl">AppOmni</div>
             <div class="ad-text">
-              <h3>Vishing crews like UNC6040 use rogue apps to breach Salesforce.</h3>
+              <h3 class="m-0 text-lg font-medium">Vishing crews like UNC6040 use rogue apps to breach Salesforce.</h3>
             </div>
           </div>
-          <div class="ad-right">
-            <div class="ad-icon">📄</div>
-            <button class="ad-btn">See the Controls</button>
+          <div class="flex items-center gap-4">
+            <div class="text-3xl">📄</div>
+            <button class="bg-white text-blue-600 border-0 px-5 py-2.5 rounded font-bold cursor-pointer hover:bg-slate-50">See the Controls</button>
           </div>
         </div>
-      </div>
+      </div> -->
     </header>
 
-    <div class="container">
-      <div class="main-layout">
-        <main class="main-content">
+    <div class="min-h-screen bg-slate-50">
+      <div class="flex max-w-6xl mx-auto gap-8 px-5 py-8 max-sm:flex-col max-sm:gap-5 max-sm:px-2.5 max-sm:py-5">
+        <!-- <main class="flex-[2] p-8  max-sm:p-5"> -->
+        <main class="flex-[2] bg-white rounded-lg p-8 shadow-sm max-sm:p-5">
           <slot name="main" />
         </main>
 
-        <aside class="sidebar">
-          <SearchButton />
+        <aside class="flex-1 bg-white rounded-lg p-8 shadow-sm h-fit max-sm:p-5">
+          <!-- <SearchButton /> -->
           <slot name="aside" />
         </aside>
       </div>
@@ -194,293 +196,6 @@ if (database.Icon && database.Icon.Type === 'file') {
   </body>
 </html>
 
-<style>
-  /* Hacker News Header Styles */
-  .hackernews-header {
-    background: #1a365d;
-    color: white;
-  }
-
-  .header-top {
-    background: #1a365d;
-    padding: 10px 0;
-  }
-
-  .header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-  }
-
-  .header-left .header-subtitle {
-    font-size: 0.8rem;
-    color: #a0aec0;
-    font-family: monospace;
-  }
-
-  .header-center .site-title {
-    margin: 0;
-    font-size: 2.5rem;
-    font-weight: bold;
-  }
-
-  .header-center .site-title a {
-    color: white;
-    text-decoration: none;
-  }
-
-  .header-center .site-title a:hover {
-    color: white;
-  }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-
-  .followers {
-    font-size: 0.9rem;
-    color: #e2e8f0;
-  }
-
-  .social-links {
-    display: flex;
-    gap: 10px;
-  }
-
-  .social-link {
-    color: #e2e8f0;
-    text-decoration: none;
-    font-size: 0.9rem;
-  }
-
-  .social-link:hover {
-    color: white;
-  }
-
-  .subscribe-btn {
-    background: #f6ad55;
-    color: #1a202c;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .subscribe-btn:hover {
-    background: #ed8936;
-  }
-
-  .envelope-icon {
-    font-size: 1.1rem;
-  }
-
-  /* Navigation Styles */
-  .hackernews-nav {
-    background: white;
-    border-bottom: 1px solid #e2e8f0;
-  }
-
-  .nav-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-  }
-
-  .nav-link {
-    color: #4a5568;
-    text-decoration: none;
-    padding: 15px 20px;
-    font-weight: 500;
-    border-bottom: 3px solid transparent;
-  }
-
-  .nav-link:hover,
-  .nav-link.active {
-    color: #2d3748;
-    border-bottom-color: #3182ce;
-  }
-
-  .nav-right {
-    margin-left: auto;
-    display: flex;
-    gap: 10px;
-  }
-
-  .nav-icon {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    padding: 5px;
-  }
-
-  /* Search Section */
-  .search-section {
-    background: white;
-    padding: 15px 0;
-    border-bottom: 1px solid #e2e8f0;
-  }
-
-  .search-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-
-  .search-input {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 4px;
-    font-size: 1rem;
-  }
-
-  .search-input:focus {
-    outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
-  }
-
-  /* Advertisement Banner */
-  .ad-banner {
-    background: #3182ce;
-    color: white;
-    padding: 20px 0;
-  }
-
-  .ad-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-  }
-
-  .ad-left {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .ad-logo {
-    font-weight: bold;
-    font-size: 1.2rem;
-  }
-
-  .ad-text h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 500;
-  }
-
-  .ad-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-
-  .ad-icon {
-    font-size: 2rem;
-  }
-
-  .ad-btn {
-    background: white;
-    color: #3182ce;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  .ad-btn:hover {
-    background: #f7fafc;
-  }
-
-  /* Main Layout */
-  .container {
-    min-height: 100vh;
-    background: #f7fafc;
-  }
-
-  .main-layout {
-    display: flex;
-    max-width: 1200px;
-    margin: 0 auto;
-    gap: 30px;
-    padding: 30px 20px;
-  }
-
-  @media (max-width: 768px) {
-    .main-layout {
-      flex-direction: column;
-      gap: 20px;
-    }
-  }
-
-  .main-content {
-    flex: 2;
-    background: white;
-    border-radius: 8px;
-    padding: 30px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-
-  .sidebar {
-    flex: 1;
-    background: white;
-    border-radius: 8px;
-    padding: 30px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    height: fit-content;
-  }
-
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .header-content {
-      flex-direction: column;
-      gap: 15px;
-      text-align: center;
-    }
-
-    .header-right {
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .nav-content {
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .ad-content {
-      flex-direction: column;
-      text-align: center;
-      gap: 15px;
-    }
-
-    .main-layout {
-      padding: 20px 10px;
-    }
-
-    .main-content,
-    .sidebar {
-      padding: 20px;
-    }
-  }
-</style>
 
 <style is:global>
   :root {

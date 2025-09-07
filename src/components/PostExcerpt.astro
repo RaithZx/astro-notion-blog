@@ -6,19 +6,18 @@ export interface Props {
 }
 
 const { post } = Astro.props
+
+// Function to trim text to 200 words and add ellipsis
+function trimToWords(text: string, maxWords: number = 30): string {
+  if (!text) return ''
+  
+  const words = text.split(' ')
+  if (words.length <= maxWords) return text
+  
+  return words.slice(0, maxWords).join(' ') + '...'
+}
 ---
 
-<div class="post-excerpt">
-  <p>{post.Excerpt ? post.Excerpt : ''}</p>
+<div class="py-1 text-base">
+  <p class="m-0">{post.Excerpt ? trimToWords(post.Excerpt) : ''}</p>
 </div>
-
-<style>
-  .post-excerpt {
-    padding: 0.2rem 0;
-    font-size: 1rem;
-  }
-
-  .post-excerpt p {
-    margin: 0;
-  }
-</style>

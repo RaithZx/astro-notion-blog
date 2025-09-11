@@ -18,6 +18,9 @@ import Pagination from '../components/Pagination.astro'
 import BlogPostsLink from '../components/BlogPostsLink.astro'
 import BlogTagsLink from '../components/BlogTagsLink.astro'
 
+const labels = {
+  categories: 'Kategorias',
+}
 const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
   getPosts(NUMBER_OF_POSTS_PER_PAGE),
   getRankedPosts(),
@@ -95,7 +98,7 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
           <div class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">Di grasa</div>
         </div>
         <h2 class="m-0 mb-2 text-xl font-bold text-white">Fika ligadu ku ultimus artigus</h2>
-        <p class="m-0 mb-4 text-sm opacity-90 text-white">Resebi kes ultimu artigus i storias na bu email
+        <p class="m-0 mb-4 text-sm opacity-90 text-white">Resebe kes ultimu artigu i stórias na bu email 
 		</p>
 	<div class="flex gap-3 max-sm:flex-col">
            <input 
@@ -104,7 +107,7 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
              class="flex-1 px-4 py-2 rounded-md border-0 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-white/50"
            />
            <button class="bg-white text-blue-600 border-0 px-6 py-2 rounded-md font-semibold cursor-pointer transition-transform hover:-translate-y-0.5 hover:bg-blue-50 whitespace-nowrap">
-             Subskribe
+             Inskreve
            </button>
          </div>
       </div>
@@ -121,13 +124,13 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
 
     <!-- Recommended Posts -->
     <div class="bg-white border border-slate-200 rounded-lg p-5">
-      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Recommended</h3>
+      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Otus artigu pa lê</h3>
       <BlogPostsLink heading="" posts={rankedPosts} />
     </div>
 
-    <!-- Categories -->
+    <!-- Tipus di artigu -->
     <div class="bg-white border border-slate-200 rounded-lg p-5">
-      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Categories</h3>
+      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Tipus di artigu</h3>
       <BlogTagsLink heading="" tags={tags} />
     </div>
   </div>

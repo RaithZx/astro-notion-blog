@@ -15,7 +15,7 @@ export interface Props {
   ogImage: string
 }
 
-const { title = 'Ligadu', description = 'Artigus di siensia i saudi', path = '/', ogImage = '' } = Astro.props
+const { title = 'Ligadu', description = 'Artigus di siensia, teknolojia i saúdi', path = '/', ogImage = '' } = Astro.props
 
 const database = await getDatabase()
 
@@ -89,51 +89,56 @@ if (database.Icon && database.Icon.Type === 'file') {
     <header class="bg-slate-800 text-white">
       <div class="bg-slate-800 py-2.5">
         <div class="max-w-6xl mx-auto flex items-center justify-between px-5">
-          <!-- <div class="header-left">
-            <span class="text-xs text-slate-300 font-mono">sudo apt-get update cyber_news</span>
-          </div> -->
-          <div class="header-center">
-            <h1 class="m-0 text-4xl font-bold">
+          <!-- Mobile Menu Button -->
+          <button 
+            id="mobile-menu-button" 
+            class="md:hidden bg-transparent border-0 text-white text-2xl cursor-pointer p-2 hover:bg-slate-700 rounded"
+            aria-label="Toggle mobile menu"
+          >
+            ☰
+          </button>
+          
+          <!-- Logo/Title -->
+          <div class="header-center flex-1 text-center md:text-left">
+            <h1 class="m-0 text-2xl md:text-4xl font-bold">
               <a href={getNavLink('/')} class="text-white no-underline hover:text-white">
-                  {
+				<img src={getStaticFilePath('/ligadu_logo.png')} alt="Ligadu Logo" class="w-32 h-16" />
+                  <!-- {
                     database.Icon && database.Icon.Type === 'emoji' ? (
                       <>
                         <span>{(database.Icon as any).Emoji}</span>
-                        {siteTitle}
+                        <span class="ml-2">{siteTitle}</span>
                       </>
                     ) : database.Icon && database.Icon.Type === 'external' ? (
                       <>
-                        <img src={(database.Icon as any).Url} alt="Site icon image" />
-                        {siteTitle}
+                        <img src={(database.Icon as any).Url} alt="Site icon image" class="inline-block w-6 h-6 md:w-8 md:h-8" />
+                        <span class="ml-2">{siteTitle}</span>
                       </>
                     ) : database.Icon && database.Icon.Type === 'file' ? (
                       <>
                         <img
                           src={customIconURL}
-                          class="custom-icon"
+                          class="custom-icon inline-block w-6 h-6 md:w-8 md:h-8"
                           alt="Site icon image"
                         />
-                        {siteTitle}
+                        <span class="ml-2">{siteTitle}</span>
                       </>
                     ) : (
 					  <>
 					  {/* <span>default</span> */}
-                      {title}
+                       <span>{title}</span>
 					  </>
-                    )}
+                     )} -->
               </a>
             </h1>
           </div>
+          
+          <!-- CTA Button - Always visible -->
           <div class="flex items-center gap-4">
-            <!-- <span class="text-sm text-slate-200">Followed by 5.20+ million</span> -->
-            <!-- <div class="flex gap-2.5">
-              <a href="#" class="text-slate-200 no-underline text-sm hover:text-white">Twitter</a>
-              <a href="#" class="text-slate-200 no-underline text-sm hover:text-white">LinkedIn</a>
-              <a href="#" class="text-slate-200 no-underline text-sm hover:text-white">Facebook</a>
-            </div> -->
-            <button class="bg-amber-400 text-slate-900 border-0 px-4 py-2 rounded font-bold cursor-pointer flex items-center gap-1.5 hover:bg-amber-500">
+            <button class="bg-amber-400 text-slate-900 border-0 px-2 md:px-4 py-2 rounded font-bold cursor-pointer flex items-center gap-1.5 hover:bg-amber-500 text-sm md:text-base">
               <span class="text-lg">✉</span>
-              Inskreve - Resebe kes ultimu artigus
+              <span class="hidden lg:inline">Inskreve - Resebe kes ultimu artigus</span>
+              <span class="lg:hidden hidden sm:inline">Inskreve</span>
             </button>
           </div>
         </div>
@@ -141,26 +146,61 @@ if (database.Icon && database.Icon.Type === 'file') {
       
       <!-- Navigation Bar -->
       <nav class="bg-white border-b border-slate-200">
-        <div class="max-w-6xl mx-auto flex items-center px-5">
-          <a href={getNavLink('/')} class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500 active:text-slate-800 active:border-blue-500">Inisiu</a>
-          <a href="#" class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Saúdi</a>
-          <a href="#" class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Siénsia</a>
-          <a href="#" class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Tekinolojia</a>
-          <a href="#" class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Kontaktu</a>
-          <div class="ml-auto flex gap-2.5">
-            <button class="bg-transparent border-0 text-xl cursor-pointer p-1.5">☰</button>
-            <button class="bg-transparent border-0 text-xl cursor-pointer p-1.5">☰</button>
+        <!-- Desktop Navigation -->
+        <div class="hidden md:block max-w-6xl mx-auto px-5">
+          <div class="flex items-center">
+            <a href={getNavLink('/')} class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500 active:text-slate-800 active:border-blue-500">Inisiu</a>
+            <a href="#" class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Saúdi</a>
+            <a href="#" class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Siénsia</a>
+            <a href="#" class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Tekinolojia</a>
+            <a href={getNavLink('/kontaktu')} class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Kontaktu</a>
+          </div>
+        </div>
+        
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobile-drawer" class="md:hidden fixed inset-0 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out">
+          <!-- Overlay -->
+          <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50"></div>
+          
+          <!-- Drawer Content -->
+          <div class="relative flex flex-col w-80 max-w-sm h-full bg-white shadow-xl">
+            <!-- Drawer Header -->
+            <div class="flex items-center justify-end p-4 border-b border-slate-200">
+              <button 
+                id="mobile-close-button" 
+                class="bg-transparent border-0 text-slate-600 text-2xl cursor-pointer p-2 hover:bg-slate-100 rounded"
+                aria-label="Close mobile menu"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <!-- Drawer Navigation -->
+            <div class="flex-1 p-4">
+              <nav class="space-y-2">
+                <a href={getNavLink('/')} class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Inisiu</a>
+                <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Saúdi</a>
+                <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Siénsia</a>
+                <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Tekinolojia</a>
+                <a href={getNavLink('/kontaktu')} class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Kontaktu</a>
+              </nav>
+              
+              <!-- Mobile CTA Button -->
+              <div class="mt-6 pt-6 border-t border-slate-200">
+                <button class="w-full bg-amber-400 text-slate-900 border-0 px-4 py-3 rounded font-bold cursor-pointer flex items-center justify-center gap-2 hover:bg-amber-500">
+                  <span class="text-lg">✉</span>
+                  Inskreve - Resebe kes ultimu artigus
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </nav>
       
       <!-- Search Bar -->
       <div class="bg-white py-4 border-b border-slate-200">
-
         <div class="max-w-6xl mx-auto px-5">
-
           <SearchButton />
-          <!-- <input type="text" placeholder="Faze piskiza..." class="w-full py-3 px-4 border border-slate-200 rounded text-base focus:outline-none focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]" /> -->
         </div>
       </div>
       
@@ -196,11 +236,301 @@ if (database.Icon && database.Icon.Type === 'file') {
     </div>
 
     <SearchModal />
+    
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-white mt-16">
+      <div class="max-w-6xl mx-auto px-5 py-12">
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <!-- Brand Section -->
+          <div class="lg:col-span-1">
+              <div class="flex items-center space-x-2 mb-4">
+                <img src={getStaticFilePath('/ligadu_logo.png')} alt="Ligadu Logo" class="w-32 h-16" />
+                <!-- <h3 class="text-xl font-bold">Ligadu</h3> -->
+              </div>
+            <p class="text-slate-300 text-sm mb-4">
+              Artigus di siensia, teknolojia i saúdi.
+            </p>
+            <div class="flex space-x-4">
+              <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="Facebook">
+                <span class="text-xl">📘</span>
+              </a>
+              <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="Twitter">
+                <span class="text-xl">🐦</span>
+              </a>
+              <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="Instagram">
+                <span class="text-xl">📷</span>
+              </a>
+              <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="LinkedIn">
+                <span class="text-xl">💼</span>
+              </a>
+              <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="YouTube">
+                <span class="text-xl">📺</span>
+              </a>
+            </div>
+          </div>
+          
+          <!-- Quick Links -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Links Rápidos</h4>
+            <ul class="space-y-2">
+              <li><a href={getNavLink('/')} class="text-slate-300 hover:text-white transition-colors text-sm">Inisiu</a></li>
+              <li><a href="#" class="text-slate-300 hover:text-white transition-colors text-sm">Saúdi</a></li>
+              <li><a href="#" class="text-slate-300 hover:text-white transition-colors text-sm">Siénsia</a></li>
+              <li><a href="#" class="text-slate-300 hover:text-white transition-colors text-sm">Tekinolojia</a></li>
+              <li><a href={getNavLink('/kontaktu')} class="text-slate-300 hover:text-white transition-colors text-sm">Kontaktu</a></li>
+            </ul>
+          </div>
+          
+          <!-- Legal Links -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Legal</h4>
+            <ul class="space-y-2">
+              <li><a href="/privacidade" class="text-slate-300 hover:text-white transition-colors text-sm">Polítika di Privasidade</a></li>
+              <li><a href="/termus" class="text-slate-300 hover:text-white transition-colors text-sm">Termus i Kondições</a></li>
+              <li><a href="/kontaktu" class="text-slate-300 hover:text-white transition-colors text-sm">Kontaktu</a></li>
+              <li><a href="#" class="text-slate-300 hover:text-white transition-colors text-sm">Cookies</a></li>
+            </ul>
+          </div>
+          
+          <!-- Newsletter & Contact -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Fika ligadu</h4>
+            <p class="text-slate-300 text-sm mb-4">
+              Resebe kes ultimu artigus i notísias sobri siénsia, teknolojia i saúdi.
+            </p>
+            <button 
+              id="footer-newsletter-btn"
+              class="w-full bg-amber-400 text-slate-900 border-0 px-4 py-2 rounded font-bold cursor-pointer flex items-center justify-center gap-2 hover:bg-amber-500 transition-colors text-sm"
+            >
+              <span class="text-lg">✉</span>
+              Inskreve na Newsletter
+            </button>
+            
+            <div class="mt-6 pt-6 border-t border-slate-700">
+              <h5 class="font-semibold mb-2 text-sm text-slate-100">Kontaktu</h5>
+              <div class="space-y-1 text-sm text-slate-100">
+                <p>📧 kontaktu@ligadu.com</p>
+                <p>🌐 www.ligadu.com</p>
+                <p>📍 Cabo Verde</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Bottom Bar -->
+        <div class="border-t border-slate-700 mt-8 pt-8">
+          <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div class="text-sm text-slate-400">
+              © {new Date().getFullYear()} {database.Title}. Todu direitu reservadu.
+            </div>
+            <div class="flex items-center space-x-6 text-sm text-slate-400">
+              <a href="#" class="hover:text-white transition-colors">🇨🇻</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+    <!-- Newsletter Signup Modal -->
+    <div id="newsletter-modal" class="fixed inset-0 z-50 hidden">
+      <!-- Overlay -->
+      <div id="newsletter-overlay" class="fixed inset-0 bg-black bg-opacity-50"></div>
+      
+      <!-- Modal Content -->
+      <div class="relative flex items-center justify-center min-h-screen p-4">
+        <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between p-6 border-b border-slate-200">
+            <h2 class="text-2xl font-bold text-slate-800">Inskreve na Newsletter</h2>
+            <button 
+              id="newsletter-close-button" 
+              class="bg-transparent border-0 text-slate-600 text-2xl cursor-pointer p-2 hover:bg-slate-100 rounded"
+              aria-label="Close newsletter modal"
+            >
+              ✕
+            </button>
+          </div>
+          
+          <!-- Modal Body -->
+          <div class="p-6">
+            <p class="text-slate-600 mb-6">
+              Resebe kes ultimu artigus i notísias sobri siénsia, teknolojia i saúdi. 
+              Inskreve i fika atualizadu!
+            </p>
+            
+            <form id="newsletter-form" class="space-y-4">
+              <div>
+                <label for="newsletter-email" class="block text-sm font-medium text-slate-700 mb-2">
+                  Email
+                </label>
+                <input 
+                  type="email" 
+                  id="newsletter-email" 
+                  name="email"
+                  required
+                  class="w-full px-4 py-3 border border-slate-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  placeholder="seu@email.com"
+                />
+              </div>
+              
+              <div>
+                <label for="newsletter-name" class="block text-sm font-medium text-slate-700 mb-2">
+                  Nome (opcional)
+                </label>
+                <input 
+                  type="text" 
+                  id="newsletter-name" 
+                  name="name"
+                  class="w-full px-4 py-3 border border-slate-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  placeholder="Seu nome"
+                />
+              </div>
+              
+              <div class="flex items-start">
+                <input 
+                  type="checkbox" 
+                  id="newsletter-privacy" 
+                  name="privacy"
+                  required
+                  class="mt-1 h-4 w-4 text-amber-600 focus:ring-amber-500 border-slate-300 rounded"
+                />
+                <label for="newsletter-privacy" class="ml-2 text-sm text-slate-600">
+                  Konkordo ku a <a href="/privacidade" class="text-amber-600 hover:text-amber-700 underline">polítika di privasidade</a> i 
+                  <a href="/termus" class="text-amber-600 hover:text-amber-700 underline">termus di servisu</a>
+                </label>
+              </div>
+              
+              <button 
+                type="submit" 
+                class="w-full bg-amber-400 text-slate-900 border-0 px-6 py-3 rounded-lg font-bold cursor-pointer flex items-center justify-center gap-2 hover:bg-amber-500 transition-colors"
+              >
+                <span class="text-lg">✉</span>
+                Inskreve na Newsletter
+              </button>
+            </form>
+            
+            <p class="text-xs text-slate-500 mt-4 text-center">
+              Pode kansa kada momentu. Nunka spam, só kontenidu di kalidade.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     {
       ENABLE_LIGHTBOX && (
         <script src={getStaticFilePath('/scripts/fslightbox.js')} />
       )
     }
+    
+    <!-- Mobile Menu & Newsletter Modal JavaScript -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Mobile Menu Elements
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileCloseButton = document.getElementById('mobile-close-button');
+        const mobileDrawer = document.getElementById('mobile-drawer');
+        const mobileOverlay = document.getElementById('mobile-overlay');
+        
+        // Newsletter Modal Elements
+        const newsletterModal = document.getElementById('newsletter-modal');
+        const newsletterOverlay = document.getElementById('newsletter-overlay');
+        const newsletterCloseButton = document.getElementById('newsletter-close-button');
+        const newsletterForm = document.getElementById('newsletter-form');
+        const ctaButtons = document.querySelectorAll('button[class*="bg-amber-400"]');
+        const footerNewsletterBtn = document.getElementById('footer-newsletter-btn');
+        
+        // Mobile Menu Functions
+        function openMobileMenu() {
+          mobileDrawer.classList.remove('-translate-x-full');
+          document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenu() {
+          mobileDrawer.classList.add('-translate-x-full');
+          document.body.style.overflow = '';
+        }
+        
+        // Newsletter Modal Functions
+        function openNewsletterModal() {
+          newsletterModal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+          // Focus on email input
+          setTimeout(() => {
+            document.getElementById('newsletter-email').focus();
+          }, 100);
+        }
+        
+        function closeNewsletterModal() {
+          newsletterModal.classList.add('hidden');
+          document.body.style.overflow = '';
+          // Reset form
+          newsletterForm.reset();
+        }
+        
+        // Mobile Menu Event Listeners
+        mobileMenuButton.addEventListener('click', openMobileMenu);
+        mobileCloseButton.addEventListener('click', closeMobileMenu);
+        mobileOverlay.addEventListener('click', closeMobileMenu);
+        
+        // Newsletter Modal Event Listeners
+        ctaButtons.forEach(button => {
+          button.addEventListener('click', function(e) {
+            e.preventDefault();
+            openNewsletterModal();
+          });
+        });
+        
+        // Footer newsletter button
+        if (footerNewsletterBtn) {
+          footerNewsletterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openNewsletterModal();
+          });
+        }
+        
+        newsletterCloseButton.addEventListener('click', closeNewsletterModal);
+        newsletterOverlay.addEventListener('click', closeNewsletterModal);
+        
+        // Newsletter Form Submission
+        newsletterForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const email = document.getElementById('newsletter-email').value;
+          const name = document.getElementById('newsletter-name').value;
+          const privacy = document.getElementById('newsletter-privacy').checked;
+          
+          if (!privacy) {
+            alert('Por favor, konkordo ku a polítika di privasidade i termus di servisu.');
+            return;
+          }
+          
+          // Here you would typically send the data to your newsletter service
+          // For now, we'll just show a success message
+          alert(`Obrigadu! ${name ? name + ', ' : ''}inskrevu ku suksesu na newsletter.`);
+          closeNewsletterModal();
+        });
+        
+        // Close modals on escape key
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') {
+            if (!mobileDrawer.classList.contains('-translate-x-full')) {
+              closeMobileMenu();
+            }
+            if (!newsletterModal.classList.contains('hidden')) {
+              closeNewsletterModal();
+            }
+          }
+        });
+        
+        // Close mobile menu on window resize to desktop
+        window.addEventListener('resize', function() {
+          if (window.innerWidth >= 768) {
+            closeMobileMenu();
+          }
+        });
+      });
+    </script>
   </body>
 </html>
 
@@ -385,5 +715,149 @@ if (database.Icon && database.Icon.Type === 'file') {
     content: '';
     display: inline-block;
     min-height: 0.9rem;
+  }
+  
+  /* Mobile Responsive Styles */
+  @media (max-width: 767px) {
+    .header-center h1 {
+      font-size: 1.5rem;
+    }
+    
+    .custom-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+  
+  /* Mobile Drawer Styles */
+  #mobile-drawer {
+    z-index: 9999;
+  }
+  
+  #mobile-drawer.show {
+    transform: translateX(0);
+  }
+  
+  /* Smooth transitions for mobile menu */
+  .mobile-menu-transition {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Prevent body scroll when mobile menu is open */
+  body.mobile-menu-open {
+    overflow: hidden;
+  }
+  
+  /* Responsive main content */
+  @media (max-width: 640px) {
+    .max-w-6xl {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    
+    .flex.max-w-6xl.mx-auto.gap-8.px-5.py-8 {
+      flex-direction: column;
+      gap: 1.25rem;
+      padding: 1.25rem 1rem;
+    }
+    
+    main.flex-\[2\] {
+      padding: 1.25rem;
+    }
+    
+    aside.flex-1 {
+      padding: 1.25rem;
+    }
+  }
+  
+  /* Newsletter Modal Styles */
+  #newsletter-modal {
+    backdrop-filter: blur(4px);
+  }
+  
+  #newsletter-modal .relative {
+    animation: modalSlideIn 0.3s ease-out;
+  }
+  
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  /* Form input focus styles */
+  #newsletter-form input:focus {
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
+  }
+  
+  /* Checkbox styling */
+  #newsletter-privacy:checked {
+    background-color: #f59e0b;
+    border-color: #f59e0b;
+  }
+  
+  /* Button hover effects */
+  #newsletter-form button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+  }
+  
+  /* Mobile modal adjustments */
+  @media (max-width: 640px) {
+    #newsletter-modal .relative {
+      padding: 1rem;
+    }
+    
+    #newsletter-modal .max-w-md {
+      max-width: 100%;
+    }
+  }
+  
+  /* Footer Styles */
+  footer {
+    margin-top: auto;
+  }
+  
+  footer a:hover {
+    transform: translateY(-1px);
+  }
+  
+  footer .social-links a {
+    transition: all 0.3s ease;
+  }
+  
+  footer .social-links a:hover {
+    transform: scale(1.1);
+  }
+  
+  /* Footer responsive adjustments */
+  @media (max-width: 768px) {
+    footer .grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    
+    footer .lg\\:col-span-1 {
+      text-align: center;
+    }
+    
+    footer .flex.space-x-4 {
+      justify-content: center;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    footer {
+      padding: 2rem 1rem;
+    }
+    
+    footer .max-w-6xl {
+      padding: 0;
+    }
   }
 </style>

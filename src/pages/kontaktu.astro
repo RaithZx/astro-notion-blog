@@ -1,0 +1,247 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { getDatabase } from '../lib/notion/client.ts'
+
+const database = await getDatabase()
+---
+
+<Layout 
+  title="Kontaktu" 
+  description="Kontaktu ku Ligadu. Faze pergunta, manda sugestão, o partilha ku nos." 
+  path="/kontaktu"
+  ogImage=""
+>
+  <div slot="main">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-4xl font-bold text-slate-800 mb-8">Kontaktu ku Nos</h1>
+      
+      <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <!-- Contact Information -->
+        <div class="space-y-6">
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">Informaçon di Kontaktu</h2>
+          
+          <div class="space-y-4">
+            <div class="flex items-start space-x-3">
+              <div class="text-2xl">📧</div>
+              <div>
+                <h3 class="font-semibold text-slate-700">Email</h3>
+                <p class="text-slate-600">kontaktu@ligadu.com</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start space-x-3">
+              <div class="text-2xl">🌐</div>
+              <div>
+                <h3 class="font-semibold text-slate-700">Website</h3>
+                <p class="text-slate-600">www.ligadu.com</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start space-x-3">
+              <div class="text-2xl">📍</div>
+              <div>
+                <h3 class="font-semibold text-slate-700">Lokalizaçon</h3>
+                <p class="text-slate-600">Cabo Verde</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start space-x-3">
+              <div class="text-2xl">⏰</div>
+              <div>
+                <h3 class="font-semibold text-slate-700">Horáriu di Atendimentu</h3>
+                <p class="text-slate-600">Segunda - Sexta: 9:00 - 17:00<br>Sabadu: 9:00 - 13:00</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <h3 class="font-semibold text-amber-800 mb-2">Dica</h3>
+            <p class="text-amber-700 text-sm">
+              Pa respostas mais rápidas, usa o formulário di baixo. Ista forma, 
+              nos pode organiza melhor as pergunta i responde ku prioridade.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Contact Form -->
+        <div>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">Manda Mensajen</h2>
+          
+          <form id="contact-form" class="space-y-4">
+            <div>
+              <label for="contact-name" class="block text-sm font-medium text-slate-700 mb-2">
+                Nome *
+              </label>
+              <input 
+                type="text" 
+                id="contact-name" 
+                name="name"
+                required
+                class="w-full px-4 py-3 border border-slate-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                placeholder="Seu nome completo"
+              />
+            </div>
+            
+            <div>
+              <label for="contact-email" class="block text-sm font-medium text-slate-700 mb-2">
+                Email *
+              </label>
+              <input 
+                type="email" 
+                id="contact-email" 
+                name="email"
+                required
+                class="w-full px-4 py-3 border border-slate-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                placeholder="seu@email.com"
+              />
+            </div>
+            
+            <div>
+              <label for="contact-subject" class="block text-sm font-medium text-slate-700 mb-2">
+                Assuntu *
+              </label>
+              <select 
+                id="contact-subject" 
+                name="subject"
+                required
+                class="w-full px-4 py-3 border border-slate-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+              >
+                <option value="">Seleciona assuntu</option>
+                <option value="pergunta">Pergunta Geral</option>
+                <option value="sugestao">Sugestão</option>
+                <option value="partnership">Parceria</option>
+                <option value="technical">Problema Técnico</option>
+                <option value="content">Sugestão di Kontenidu</option>
+                <option value="other">Outro</option>
+              </select>
+            </div>
+            
+            <div>
+              <label for="contact-message" class="block text-sm font-medium text-slate-700 mb-2">
+                Mensajen *
+              </label>
+              <textarea 
+                id="contact-message" 
+                name="message"
+                required
+                rows="5"
+                class="w-full px-4 py-3 border border-slate-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-vertical"
+                placeholder="Escreve sua mensajen aqui..."
+              ></textarea>
+            </div>
+            
+            <div class="flex items-start">
+              <input 
+                type="checkbox" 
+                id="contact-privacy" 
+                name="privacy"
+                required
+                class="mt-1 h-4 w-4 text-amber-600 focus:ring-amber-500 border-slate-300 rounded"
+              />
+              <label for="contact-privacy" class="ml-2 text-sm text-slate-600">
+                Konkordo ku a <a href="/privacidade" class="text-amber-600 hover:text-amber-700 underline">polítika di privasidade</a> i 
+                <a href="/termus" class="text-amber-600 hover:text-amber-700 underline">termus di servisu</a>
+              </label>
+            </div>
+            
+            <button 
+              type="submit" 
+              class="w-full bg-amber-400 text-slate-900 border-0 px-6 py-3 rounded-lg font-bold cursor-pointer flex items-center justify-center gap-2 hover:bg-amber-500 transition-colors"
+            >
+              <span class="text-lg">📤</span>
+              Manda Mensajen
+            </button>
+          </form>
+        </div>
+      </div>
+      
+      <!-- FAQ Section -->
+      <div class="bg-slate-50 rounded-lg p-6">
+        <h2 class="text-2xl font-semibold text-slate-700 mb-6">Perguntas Frequentes</h2>
+        
+        <div class="space-y-4">
+          <div>
+            <h3 class="font-semibold text-slate-700 mb-2">Kantu tempu leva pa responde?</h3>
+            <p class="text-slate-600">Normalmente, nos responde dentro di 24-48 horas durante dias úteis.</p>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold text-slate-700 mb-2">Posso sugere artigu pa publica?</h3>
+            <p class="text-slate-600">Sim! Nos adora recebe sugestões di kontenidu. Manda sua ideia i nos analisa.</p>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold text-slate-700 mb-2">Komo posso partisipa na newsletter?</h3>
+            <p class="text-slate-600">Klik na botão "Inskreve" na header i preenche o formulário. É grátis!</p>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold text-slate-700 mb-2">Tem problema ku o site?</h3>
+            <p class="text-slate-600">Se encontra algum problema técnico, manda detalhes i nos resolve o mais rápido possível.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div slot="aside">
+    <div class="bg-white rounded-lg p-6 shadow-sm">
+      <h3 class="text-lg font-semibold text-slate-700 mb-4">Redes Sociais</h3>
+      <div class="space-y-3">
+        <a href="#" class="flex items-center space-x-3 text-slate-600 hover:text-amber-600 transition-colors">
+          <span class="text-xl">📘</span>
+          <span>Facebook</span>
+        </a>
+        <a href="#" class="flex items-center space-x-3 text-slate-600 hover:text-amber-600 transition-colors">
+          <span class="text-xl">🐦</span>
+          <span>Twitter</span>
+        </a>
+        <a href="#" class="flex items-center space-x-3 text-slate-600 hover:text-amber-600 transition-colors">
+          <span class="text-xl">📷</span>
+          <span>Instagram</span>
+        </a>
+        <a href="#" class="flex items-center space-x-3 text-slate-600 hover:text-amber-600 transition-colors">
+          <span class="text-xl">💼</span>
+          <span>LinkedIn</span>
+        </a>
+      </div>
+    </div>
+    
+    <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 mt-6">
+      <h3 class="text-lg font-semibold text-amber-800 mb-2">Newsletter</h3>
+      <p class="text-amber-700 text-sm mb-4">
+        Resebe kes ultimu artigus i notísias diretamente no seu email.
+      </p>
+      <button class="w-full bg-amber-400 text-slate-900 border-0 px-4 py-2 rounded font-bold cursor-pointer hover:bg-amber-500 transition-colors">
+        Inskreve Agora
+      </button>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contact-form');
+    
+    contactForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(contactForm);
+      const name = formData.get('name');
+      const email = formData.get('email');
+      const subject = formData.get('subject');
+      const message = formData.get('message');
+      const privacy = formData.get('privacy');
+      
+      if (!privacy) {
+        alert('Por favor, konkordo ku a polítika di privasidade i termus di servisu.');
+        return;
+      }
+      
+      // Here you would typically send the data to your contact form handler
+      // For now, we'll just show a success message
+      alert(`Obrigadu, ${name}! Sua mensajen foi enviada ku suksesu. Nos responde o mais rápido possível.`);
+      contactForm.reset();
+    });
+  });
+</script>

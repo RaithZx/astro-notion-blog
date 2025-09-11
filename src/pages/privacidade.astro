@@ -1,0 +1,211 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { getDatabase } from '../lib/notion/client.ts'
+
+const database = await getDatabase()
+---
+
+<Layout 
+  title="Polítika di Privasidade" 
+  description="Polítika di privasidade di Ligadu. Saiba komo nos protege i usa su informaçon pessoal." 
+  path="/privacidade"
+  ogImage=""
+>
+  <div slot="main">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-4xl font-bold text-slate-800 mb-8">Polítika di Privasidade</h1>
+      
+      <div class="prose prose-slate max-w-none">
+        <p class="text-slate-600 mb-6">
+          <strong>Última atualização:</strong> {new Date().toLocaleDateString('pt-CV')}
+        </p>
+        
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+          <h2 class="text-xl font-semibold text-blue-800 mb-2">Resumo</h2>
+          <p class="text-blue-700">
+            Esta polítika explica komo nos coleta, usa i protege su informaçon pessoal 
+            quando usa o site Ligadu. Nos respeita su privasidade i compromete-nos ku 
+            proteger su dados pessoais.
+          </p>
+        </div>
+        
+        <section class="mb-8">
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">1. Informaçon ku Nos Coleta</h2>
+          
+          <h3 class="text-xl font-semibold text-slate-600 mb-3">1.1 Informaçon ku Voce Nos Dá</h3>
+          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+            <li><strong>Newsletter:</strong> Email i nome (opcional) quando se inscreve na newsletter</li>
+            <li><strong>Kontaktu:</strong> Nome, email, assuntu i mensajen quando usa o formulário di kontaktu</li>
+            <li><strong>Comentários:</strong> Nome i email quando deixa comentários (se disponível)</li>
+          </ul>
+          
+          <h3 class="text-xl font-semibold text-slate-600 mb-3 mt-6">1.2 Informaçon ku Nos Coleta Automaticamente</h3>
+          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+            <li><strong>Dados di Navegaçon:</strong> IP address, tipo di browser, páginas visitadas, tempo di visita</li>
+            <li><strong>Cookies:</strong> Pequenos arquivos ku melhoram sua experiência no site</li>
+            <li><strong>Analytics:</strong> Dados anônimos sobre uso do site (Google Analytics)</li>
+          </ul>
+        </section>
+        
+        <section class="mb-8">
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">2. Komo Nos Usa Su Informaçon</h2>
+          
+          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+            <li><strong>Newsletter:</strong> Pa manda artigus i notísias sobre siénsia, teknolojia i saúdi</li>
+            <li><strong>Kontaktu:</strong> Pa responde suas pergunta i sugestões</li>
+            <li><strong>Melhoria do Site:</strong> Pa entender komo os usuários usam o site i melhorar</li>
+            <li><strong>Segurança:</strong> Pa proteger contra spam i atividades maliciosas</li>
+            <li><strong>Legal:</strong> Pa cumprir obrigações legais quando necessário</li>
+          </ul>
+        </section>
+        
+        <section class="mb-8">
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">3. Partilha di Informaçon</h2>
+          
+          <p class="text-slate-600 mb-4">
+            Nos <strong>NUNCA</strong> vende, aluga o partilha sua informaçon pessoal ku terceiros, exceto:
+          </p>
+          
+          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+            <li><strong>Serviços di Terceiros:</strong> Google Analytics (dados anônimos) pa análise do site</li>
+            <li><strong>Obrigação Legal:</strong> Quando requerido por lei ou autoridades competentes</li>
+            <li><strong>Proteção:</strong> Pa proteger nossos direitos, propriedade ou segurança</li>
+          </ul>
+        </section>
+        
+        <section class="mb-8">
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">4. Cookies</h2>
+          
+          <p class="text-slate-600 mb-4">
+            Usamos cookies pa melhorar sua experiência no site. Cookies são pequenos arquivos 
+            ku ficam no seu computador e nos ajudam a:
+          </p>
+          
+          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+            <li>Lembrar suas preferências</li>
+            <li>Analisar komo usa o site</li>
+            <li>Melhorar a performance</li>
+            <li>Personalizar kontenidu</li>
+          </ul>
+          
+          <p class="text-slate-600 mt-4">
+            Pode desativar cookies nas configurações do seu browser, mas isso pode afetar 
+            a funcionalidade do site.
+          </p>
+        </section>
+        
+        <section class="mb-8">
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">5. Segurança</h2>
+          
+          <p class="text-slate-600 mb-4">
+            Nos implementamos medidas de segurança técnicas i organizacionais pa proteger 
+            sua informaçon pessoal:
+          </p>
+          
+          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+            <li>Encriptação SSL/TLS pa transmissão de dados</li>
+            <li>Acesso restrito a dados pessoais</li>
+            <li>Monitorização regular de segurança</li>
+            <li>Backup seguro de dados</li>
+          </ul>
+        </section>
+        
+        <section class="mb-8">
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">6. Seus Direitos</h2>
+          
+          <p class="text-slate-600 mb-4">
+            Voce tem o direito de:
+          </p>
+          
+          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+            <li><strong>Acesso:</strong> Saber que informaçon temos sobre voce</li>
+            <li><strong>Correção:</strong> Corrigir informaçon incorreta</li>
+            <li><strong>Eliminação:</strong> Pedir pa eliminar sua informaçon</li>
+            <li><strong>Portabilidade:</strong> Receber sua informaçon em formato legível</li>
+            <li><strong>Oposição:</strong> Opor-se ao processamento da sua informaçon</li>
+            <li><strong>Retirada:</strong> Cancelar newsletter a qualquer momento</li>
+          </ul>
+        </section>
+        
+        <section class="mb-8">
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">7. Retenção di Dados</h2>
+          
+          <p class="text-slate-600">
+            Mantemos sua informaçon pessoal apenas pelo tempo necessário pa cumprir 
+            os propósitos descritos nesta polítika, geralmente:
+          </p>
+          
+          <ul class="list-disc pl-6 space-y-2 text-slate-600 mt-4">
+            <li><strong>Newsletter:</strong> Até cancelar a inscrição</li>
+            <li><strong>Kontaktu:</strong> 3 anos após última interação</li>
+            <li><strong>Analytics:</strong> 26 meses (Google Analytics)</li>
+          </ul>
+        </section>
+        
+        <section class="mb-8">
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">8. Menores di Idade</h2>
+          
+          <p class="text-slate-600">
+            Nosso site não é direcionado a menores de 16 anos. Se tem menos de 16 anos, 
+            por favor não nos forneça informaçon pessoal. Se descobrirmos que coletamos 
+            informaçon de menor de 16 anos, eliminaremos imediatamente.
+          </p>
+        </section>
+        
+        <section class="mb-8">
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">9. Mudanças na Polítika</h2>
+          
+          <p class="text-slate-600">
+            Podemos atualizar esta polítika ocasionalmente. Quando fizermos mudanças 
+            significativas, notificaremos através do site ou email. A data da última 
+            atualização aparece no topo desta página.
+          </p>
+        </section>
+        
+        <section class="mb-8">
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">10. Kontaktu</h2>
+          
+          <p class="text-slate-600 mb-4">
+            Se tem pergunta sobre esta polítika di privasidade ou quer exercer seus direitos, 
+            kontakta-nos:
+          </p>
+          
+          <div class="bg-slate-50 rounded-lg p-6">
+            <ul class="space-y-2 text-slate-600">
+              <li><strong>Email:</strong> privacidade@ligadu.com</li>
+              <li><strong>Formulário:</strong> <a href="/kontaktu" class="text-amber-600 hover:text-amber-700 underline">Página di Kontaktu</a></li>
+              <li><strong>Endereço:</strong> Cabo Verde</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+  
+  <div slot="aside">
+    <div class="bg-white rounded-lg p-6 shadow-sm">
+      <h3 class="text-lg font-semibold text-slate-700 mb-4">Links Úteis</h3>
+      <div class="space-y-3">
+        <a href="/termus" class="block text-amber-600 hover:text-amber-700 underline">
+          Termus i Kondições
+        </a>
+        <a href="/kontaktu" class="block text-amber-600 hover:text-amber-700 underline">
+          Kontaktu
+        </a>
+        <a href="/" class="block text-amber-600 hover:text-amber-700 underline">
+          Volta pa Inisiu
+        </a>
+      </div>
+    </div>
+    
+    <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 mt-6">
+      <h3 class="text-lg font-semibold text-amber-800 mb-2">Tem Dúvidas?</h3>
+      <p class="text-amber-700 text-sm mb-4">
+        Se tem pergunta sobre privasidade, kontakta-nos diretamente.
+      </p>
+      <a href="/kontaktu" class="inline-block bg-amber-400 text-slate-900 border-0 px-4 py-2 rounded font-bold cursor-pointer hover:bg-amber-500 transition-colors">
+        Kontaktu
+      </a>
+    </div>
+  </div>
+</Layout>

@@ -18,9 +18,12 @@ const { post, enableLink = true } = Astro.props
       post.Tags.map((tag: SelectProperty) => {
         if (enableLink) {
           return (
-            <a href={getTagLink(tag.name)} class={`flex items-center flex-shrink min-w-0 rounded-sm px-1.5 py-0.5 leading-tight text-slate-700 bg-slate-200/50 hover:bg-slate-300/50 transition-colors ${tag.color}`}>
-              {tag.name}
-            </a>
+            // <a href={getTagLink(tag.name)} class={`flex items-center flex-shrink min-w-0 rounded-sm px-1.5 py-0.5 leading-tight text-slate-700 bg-slate-200/50 hover:bg-slate-300/50 transition-colors ${tag.color}`}>
+            //   {tag.name}
+            // </a>
+			<span class="px-1.5 py-0.5 bg-black text-white uppercase font-bold text-xs">
+				{tag.name}
+			</span>
           )
         }
         return <span class={`flex items-center flex-shrink min-w-0 rounded-sm px-1.5 py-0.5 leading-tight text-slate-700 bg-slate-200/50 ${tag.color}`}>{tag.name}</span>

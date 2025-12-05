@@ -10,6 +10,19 @@ export default {
     		height: {
     			'20': '5rem'
     		},
+    		animation: {
+    			aurora: 'aurora 60s linear infinite'
+    		},
+    		keyframes: {
+    			aurora: {
+    				from: {
+    					backgroundPosition: '50% 50%, 50% 50%'
+    				},
+    				to: {
+    					backgroundPosition: '350% 50%, 350% 50%'
+    				}
+    			}
+    		},
     		borderRadius: {
     			lg: 'var(--radius)',
     			md: 'calc(var(--radius) - 2px)',

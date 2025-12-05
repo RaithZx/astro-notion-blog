@@ -1,0 +1,267 @@
+---
+import { AuroraBackground } from './ui/aurora-background';
+---
+
+<AuroraBackground client:load showRadialGradient={true}>
+  <div class="coming-soon-content">
+    <div class="logo-section">
+      <img src="/ligadu_logo.png" alt="Ligadu Logo" class="logo" />
+    </div>
+    
+    <h1 class="main-heading">Artigus di siensia, teknolojia i saúdi</h1>
+    
+    <p class="coming-soon-text">Ka ta dura li...</p>
+    
+    <div class="newsletter-signup">
+      <p class="signup-description">Inskreve i fika atualizadu!</p>
+      
+      <form id="coming-soon-form" class="signup-form">
+        <input 
+          type="email" 
+          id="coming-soon-email" 
+          name="email"
+          required
+          placeholder="bu@email.com"
+          aria-label="Email address"
+        />
+        <button type="submit">
+          Inskreve
+        </button>
+      </form>
+      
+      <p id="success-message" class="success-message hidden">
+        ✓ Obrigadu! Bu ta na nu lista.
+      </p>
+    </div>
+  </div>
+</AuroraBackground>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('coming-soon-form');
+    const successMessage = document.getElementById('success-message');
+    const emailInput = document.getElementById('coming-soon-email');
+    
+    form?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = (emailInput as HTMLInputElement)?.value;
+      
+      if (email) {
+        // Here you would typically send the data to your email service
+        // For now, we'll just show a success message
+        console.log('Email signup:', email);
+        
+        // Show success message
+        if (successMessage) {
+          form.classList.add('hidden');
+          successMessage.classList.remove('hidden');
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  .coming-soon-content {
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+    animation: fadeInUp 1s ease-out;
+    z-index: 10;
+    position: relative;
+  }
+  
+  .logo-section {
+    margin-bottom: 2rem;
+    animation: fadeIn 1.5s ease-out;
+  }
+  
+  .logo {
+    width: 150px;
+    height: auto;
+    filter: brightness(0) invert(1);
+  }
+  
+  .main-heading {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 1rem 0;
+    line-height: 1.2;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .coming-soon-text {
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 0 3rem 0;
+    font-weight: 400;
+  }
+  
+  .newsletter-signup {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    padding: 2.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .signup-description {
+    color: white;
+    font-size: 1rem;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.6;
+  }
+  
+  .signup-form {
+    display: flex;
+    gap: 0.75rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .signup-form input[type="email"] {
+    flex: 1;
+    padding: 1rem 1.25rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    outline: none;
+    transition: all 0.3s ease;
+    min-width: 0;
+  }
+  
+  .signup-form input[type="email"]:focus {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  }
+  
+  .signup-form input[type="email"]::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .signup-form button {
+    padding: 1rem 2rem;
+    background: white;
+    color: #1e1b4b;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .signup-form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    background: #f7fafc;
+  }
+  
+  .signup-form button:active {
+    transform: translateY(0);
+  }
+  
+  .success-message {
+    color: white;
+    font-size: 1.125rem;
+    font-weight: 500;
+    padding: 1rem;
+    background: rgba(72, 187, 120, 0.3);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* Tablet and smaller */
+  @media (max-width: 768px) {
+    .main-heading {
+      font-size: 2rem;
+    }
+    
+    .coming-soon-text {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    
+    .newsletter-signup {
+      padding: 2rem 1.5rem;
+    }
+  }
+  
+  /* Mobile */
+  @media (max-width: 640px) {
+    .coming-soon-content {
+      padding: 1.5rem;
+    }
+    
+    .logo {
+      width: 120px;
+    }
+    
+    .main-heading {
+      font-size: 1.5rem;
+    }
+    
+    .coming-soon-text {
+      font-size: 1.125rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .newsletter-signup {
+      padding: 1.5rem;
+    }
+    
+    .signup-description {
+      font-size: 0.9rem;
+    }
+    
+    .signup-form input[type="email"],
+    .signup-form button {
+      padding: 0.875rem 1rem;
+      font-size: 0.9375rem;
+    }
+  }
+  
+  /* Desktop: Horizontal form */
+  @media (min-width: 641px) {
+    .signup-form {
+      flex-direction: row;
+    }
+    
+    .signup-form button {
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+  }
+</style>

@@ -41,7 +41,7 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
       ) : (
         <div class="p-0">
           {posts.map((post, index) => (
-            <article class="flex gap-4 py-4 border-b border-slate-200 transition-colors last:border-b-0 max-sm:flex-col max-sm:gap-3 max-sm:py-4 max-sm:px-4 cursor-pointer hover:bg-slate-50">
+            <article class="flex gap-4 py-4  transition-colors last:border-b-0 max-sm:flex-col max-sm:gap-3 max-sm:py-4 max-sm:px-4 cursor-pointer hover:bg-slate-50">
               <div class="w-32 h-24  rounded-md overflow-hidden bg-slate-200 max-sm:w-full max-sm:h-40">
                 {post.FeaturedImage && post.FeaturedImage.Url ? (
                   <PostFeaturedImage post={post} />
@@ -54,11 +54,12 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
                 )}
               </div>
               <div class="flex-1 min-w-0 flex flex-col justify-start">
-                <h1 class="m-0 mb-2 text-lg font-bold text-slate-900 leading-tight hover:text-blue-600 transition-colors">
+
+                  <PostTags post={post} enableLink={true} />
+                <h1 class="m-0  text-lg font-bold text-slate-900 leading-tight hover:text-blue-600 transition-colors">
                   <PostTitle post={post} enableLink={true} />
                 </h1>
-                <div class="mb-2">
-                  <PostTags post={post} enableLink={true} />
+                <div class="">
                 </div>
                 <p class="m-0 text-slate-600 text-sm leading-relaxed line-clamp-3">
                   <PostExcerpt post={post} />

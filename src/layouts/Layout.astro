@@ -6,7 +6,6 @@ import { getNavLink, getStaticFilePath, filePath } from '../lib/blog-helpers.ts'
 import '../styles/syntax-coloring.css'
 import GoogleAnalytics from '../components/GoogleAnalytics.astro'
 import SearchModal from '../components/SearchModal.astro'
-import SearchButton from '../components/SearchButton.astro'
 
 export interface Props {
   title: string
@@ -92,124 +91,104 @@ if (database.Icon && database.Icon.Type === 'file') {
   <body>
     <GoogleAnalytics trackingId={PUBLIC_GA_TRACKING_ID} />
     
-    <!-- Hacker News Style Header -->
-    <header class="bg-slate-800 text-white">
-      <div class="bg-slate-800 py-2.5">
-        <div class="max-w-6xl mx-auto flex items-center justify-between px-5">
-          <!-- Mobile Menu Button -->
-          <button 
-            id="mobile-menu-button" 
-            class="md:hidden bg-transparent border-0 text-white text-2xl cursor-pointer p-2 hover:bg-slate-700 rounded"
-            aria-label="Toggle mobile menu"
-          >
-            ☰
-          </button>
-          
-          <!-- Logo/Title -->
-          <div class="header-center flex-1 text-center md:text-left">
-            <h1 class="m-0 text-2xl md:text-4xl font-bold">
-              <a href={getNavLink('/')} class="text-white no-underline hover:text-white">
-				<img src={getStaticFilePath('/ligadu_logo.png')} alt="Ligadu Logo" class="w-32 h-16" />
-                  <!-- {
-                    database.Icon && database.Icon.Type === 'emoji' ? (
-                      <>
-                        <span>{(database.Icon as any).Emoji}</span>
-                        <span class="ml-2">{siteTitle}</span>
-                      </>
-                    ) : database.Icon && database.Icon.Type === 'external' ? (
-                      <>
-                        <img src={(database.Icon as any).Url} alt="Site icon image" class="inline-block w-6 h-6 md:w-8 md:h-8" />
-                        <span class="ml-2">{siteTitle}</span>
-                      </>
-                    ) : database.Icon && database.Icon.Type === 'file' ? (
-                      <>
-                        <img
-                          src={customIconURL}
-                          class="custom-icon inline-block w-6 h-6 md:w-8 md:h-8"
-                          alt="Site icon image"
-                        />
-                        <span class="ml-2">{siteTitle}</span>
-                      </>
-                    ) : (
-					  <>
-					  {/* <span>default</span> */}
-                       <span>{title}</span>
-					  </>
-                     )} -->
-              </a>
-            </h1>
+    <!-- Sticky Navigation Header -->
+    <header id="main-header" class="sticky top-0 z-50 border-b border-slate-200">
+      <div class="px-5 max-sm:px-2.5 md:px-[3.25rem]">
+        <div class="flex items-center justify-between py-3">
+          <!-- Left Side: Mobile Menu + Logo -->
+          <div class="flex items-center gap-3 md:hidden">
+            <!-- Mobile Menu Button -->
+            <button 
+              id="mobile-menu-button" 
+              class="bg-transparent border-0 text-slate-600 text-2xl cursor-pointer p-2 hover:bg-slate-100 rounded"
+              aria-label="Toggle mobile menu"
+            >
+              ☰
+            </button>
+            <!-- Logo/Text -->
+            <a href={getNavLink('/')} class="text-slate-700 no-underline text-lg font-medium hover:text-slate-900 transition-colors">
+              Ligadu
+            </a>
           </div>
           
-          <!-- CTA Button - Always visible -->
-          <div class="flex items-center gap-4">
-            <button class="bg-amber-400 text-slate-900 border-0 px-2 md:px-4 py-2 rounded font-bold cursor-pointer flex items-center gap-1.5 hover:bg-amber-500 text-sm md:text-base">
-              <span class="text-lg">✉</span>
-              <span class="hidden lg:inline">Inskreve - Resebe kes ultimu artigus</span>
-              <span class="lg:hidden hidden sm:inline">Inskreve</span>
+          <!-- Desktop Navigation -->
+          <nav class="hidden md:flex items-center gap-1">
+            <a href={getNavLink('/')} class="text-slate-600 no-underline py-2 pl-0 pr-4 font-medium border-b-2 border-transparent hover:text-slate-900 hover:border-slate-400 transition-colors">Inisiu</a>
+            <a href="#" class="text-slate-600 no-underline py-2 px-4 font-medium border-b-2 border-transparent hover:text-slate-900 hover:border-slate-400 transition-colors">Saúdi</a>
+            <a href="#" class="text-slate-600 no-underline py-2 px-4 font-medium border-b-2 border-transparent hover:text-slate-900 hover:border-slate-400 transition-colors">Siénsia</a>
+            <a href="#" class="text-slate-600 no-underline py-2 px-4 font-medium border-b-2 border-transparent hover:text-slate-900 hover:border-slate-400 transition-colors">Tekinolojia</a>
+            <a href={getNavLink('/kontaktu')} class="text-slate-600 no-underline py-2 px-4 font-medium border-b-2 border-transparent hover:text-slate-900 hover:border-slate-400 transition-colors">Kontaktu</a>
+          </nav>
+          
+          <!-- Right Side Actions -->
+          <div class="flex items-center gap-3">
+            <!-- Search Button (All screens) -->
+            <button 
+              class="open-search-modal bg-transparent border-0 text-slate-600 cursor-pointer p-2 hover:bg-slate-100 rounded transition-colors"
+              aria-label="Search"
+              type="button"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </button>
+            
+            <!-- Subscribe Button (Desktop only) -->
+            <button class="hidden md:block newsletter-btn bg-transparent border border-slate-300 text-slate-700 px-3 py-1.5 rounded text-sm font-normal cursor-pointer hover:bg-slate-50 hover:border-slate-400 transition-colors">
+              Inskreve
             </button>
           </div>
         </div>
       </div>
       
-      <!-- Navigation Bar -->
-      <nav class="bg-white border-b border-slate-200">
-        <!-- Desktop Navigation -->
-        <div class="hidden md:block max-w-6xl mx-auto px-5">
-          <div class="flex items-center">
-            <a href={getNavLink('/')} class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500 active:text-slate-800 active:border-blue-500">Inisiu</a>
-            <a href="#" class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Saúdi</a>
-            <a href="#" class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Siénsia</a>
-            <a href="#" class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Tekinolojia</a>
-            <a href={getNavLink('/kontaktu')} class="text-slate-600 no-underline py-4 px-5 font-medium border-b-4 border-transparent hover:text-slate-800 hover:border-blue-500">Kontaktu</a>
-          </div>
-        </div>
+      <!-- Mobile Navigation Drawer -->
+      <div id="mobile-drawer" class="md:hidden fixed inset-0 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out">
+        <!-- Overlay -->
+        <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50"></div>
         
-        <!-- Mobile Navigation Drawer -->
-        <div id="mobile-drawer" class="md:hidden fixed inset-0 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out">
-          <!-- Overlay -->
-          <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <!-- Drawer Content -->
+        <div class="relative flex flex-col w-80 max-w-sm h-full bg-white shadow-xl">
+          <!-- Drawer Header -->
+          <div class="flex items-center justify-end p-4 border-b border-slate-200">
+            <button 
+              id="mobile-close-button" 
+              class="bg-transparent border-0 text-slate-600 text-2xl cursor-pointer p-2 hover:bg-slate-100 rounded"
+              aria-label="Close mobile menu"
+            >
+              ✕
+            </button>
+          </div>
           
-          <!-- Drawer Content -->
-          <div class="relative flex flex-col w-80 max-w-sm h-full bg-white shadow-xl">
-            <!-- Drawer Header -->
-            <div class="flex items-center justify-end p-4 border-b border-slate-200">
+          <!-- Drawer Navigation -->
+          <div class="flex-1 p-4">
+            <nav class="space-y-2">
+              <a href={getNavLink('/')} class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Inisiu</a>
+              <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Saúdi</a>
+              <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Siénsia</a>
+              <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Tekinolojia</a>
+              <a href={getNavLink('/kontaktu')} class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Kontaktu</a>
+            </nav>
+            
+            <!-- Mobile Search and CTA Buttons -->
+            <div class="mt-6 pt-6 border-t border-slate-200 space-y-3">
               <button 
-                id="mobile-close-button" 
-                class="bg-transparent border-0 text-slate-600 text-2xl cursor-pointer p-2 hover:bg-slate-100 rounded"
-                aria-label="Close mobile menu"
+                class="open-search-modal w-full bg-transparent border border-slate-300 text-slate-700 px-4 py-2 rounded text-sm font-normal cursor-pointer hover:bg-slate-50 flex items-center justify-center gap-2"
+                type="button"
               >
-                ✕
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <span>Faze piskiza...</span>
+              </button>
+              <button class="newsletter-btn w-full bg-transparent border border-slate-300 text-slate-700 px-4 py-2 rounded text-sm font-normal cursor-pointer hover:bg-slate-50">
+                Inskreve
               </button>
             </div>
-            
-            <!-- Drawer Navigation -->
-            <div class="flex-1 p-4">
-              <nav class="space-y-2">
-                <a href={getNavLink('/')} class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Inisiu</a>
-                <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Saúdi</a>
-                <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Siénsia</a>
-                <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Tekinolojia</a>
-                <a href={getNavLink('/kontaktu')} class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Kontaktu</a>
-              </nav>
-              
-              <!-- Mobile CTA Button -->
-              <div class="mt-6 pt-6 border-t border-slate-200">
-                <button class="w-full bg-amber-400 text-slate-900 border-0 px-4 py-3 rounded font-bold cursor-pointer flex items-center justify-center gap-2 hover:bg-amber-500">
-                  <span class="text-lg">✉</span>
-                  Inskreve - Resebe kes ultimu artigus
-                </button>
-              </div>
-            </div>
           </div>
         </div>
-      </nav>
-      
-      <!-- Search Bar -->
-      <div class="bg-white py-4 border-b border-slate-200">
-        <div class="max-w-6xl mx-auto px-5">
-          <SearchButton />
-        </div>
       </div>
+      
+    </header>
       
       <!-- Advertisement Banner -->
       <!-- <div class="bg-blue-600 text-white py-5">
@@ -229,13 +208,13 @@ if (database.Icon && database.Icon.Type === 'file') {
     </header>
 
     <div class="min-h-screen bg-slate-50">
-      <div class="flex max-w-6xl mx-auto gap-8 px-5 py-8 max-sm:flex-col max-sm:gap-5 max-sm:px-2.5 max-sm:py-5">
+      <div class="flex gap-8 px-5 py-8 max-sm:flex-col max-sm:gap-5 max-sm:px-2.5 max-sm:py-5">
         <!-- <main class="flex-[2] p-8  max-sm:p-5"> -->
-        <main class="flex-[2] bg-white rounded-lg p-8 shadow-sm max-sm:p-5">
+        <main class="flex-[2]  p-8  max-sm:p-5">
           <slot name="main" />
         </main>
 
-        <aside class="flex-1 bg-white rounded-lg p-8 shadow-sm h-fit max-sm:p-5">
+        <aside class="flex-1  p-8  h-fit max-sm:p-5">
           <!-- <SearchButton /> -->
           <slot name="aside" />
         </aside>
@@ -246,7 +225,7 @@ if (database.Icon && database.Icon.Type === 'file') {
     
     <!-- Footer -->
     <footer class="bg-slate-800 text-white mt-16">
-      <div class="max-w-6xl mx-auto px-5 py-12">
+      <div class="px-5 max-sm:px-2.5 py-12">
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           <!-- Brand Section -->
           <div class="lg:col-span-1">
@@ -307,9 +286,8 @@ if (database.Icon && database.Icon.Type === 'file') {
             </p>
             <button 
               id="footer-newsletter-btn"
-              class="w-full bg-amber-400 text-slate-900 border-0 px-4 py-2 rounded font-bold cursor-pointer flex items-center justify-center gap-2 hover:bg-amber-500 transition-colors text-sm"
+              class="newsletter-btn w-full bg-transparent border border-slate-400 text-slate-200 px-4 py-2 rounded text-sm font-normal cursor-pointer hover:bg-slate-700 hover:border-slate-300 transition-colors"
             >
-              <span class="text-lg">✉</span>
               Inskreve na Newsletter
             </button>
             
@@ -444,8 +422,9 @@ if (database.Icon && database.Icon.Type === 'file') {
         const newsletterOverlay = document.getElementById('newsletter-overlay');
         const newsletterCloseButton = document.getElementById('newsletter-close-button');
         const newsletterForm = document.getElementById('newsletter-form');
-        const ctaButtons = document.querySelectorAll('button[class*="bg-amber-400"]');
+        const ctaButtons = document.querySelectorAll('.newsletter-btn');
         const footerNewsletterBtn = document.getElementById('footer-newsletter-btn');
+        const mainHeader = document.getElementById('main-header');
         
         // Mobile Menu Functions
         function openMobileMenu() {
@@ -534,6 +513,25 @@ if (database.Icon && database.Icon.Type === 'file') {
         window.addEventListener('resize', function() {
           if (window.innerWidth >= 768) {
             closeMobileMenu();
+          }
+        });
+        
+        // Sticky header scroll effect with smooth transition
+        let ticking = false;
+        window.addEventListener('scroll', function() {
+          if (!ticking) {
+            window.requestAnimationFrame(function() {
+              const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+              
+              if (scrollTop > 10) {
+                mainHeader.classList.add('scrolled');
+              } else {
+                mainHeader.classList.remove('scrolled');
+              }
+              
+              ticking = false;
+            });
+            ticking = true;
           }
         });
       });
@@ -873,5 +871,25 @@ if (database.Icon && database.Icon.Type === 'file') {
     footer .max-w-6xl {
       padding: 0;
     }
+  }
+  
+  /* Sticky Header Scroll Effect */
+  #main-header {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    transition: background-color 0.2s ease-out,
+                box-shadow 0.2s ease-out,
+                backdrop-filter 0.2s ease-out;
+  }
+  
+  #main-header.scrolled {
+    background-color: rgba(255, 255, 255, 1);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+  
+  #main-header.scrolled .border-b {
+    border-color: rgba(226, 232, 240, 0.9);
   }
 </style>

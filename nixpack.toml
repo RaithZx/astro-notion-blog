@@ -1,0 +1,41 @@
+# nixpacks.toml
+# Force Nixpacks to use Node 18.20.8 and provide all native build tools.
+
+[phases.setup]
+# Force Node 18.20.8
+nixPkgs = [
+  "nodejs_18",
+  "npm-9_x",
+  "python3",
+  "gcc",
+  "gnumake",
+  "binutils",
+  "pkg-config"
+]
+
+# Optional system libs sometimes needed for builds (safe to keep)
+nixLibs = [
+  "libuuid",
+  "libGL"
+]
+
+[phases.install]
+cmds = [
+  "npm ci"
+]
+cacheDirectories = [
+  "/root/.npm"
+]
+
+[phases.build]
+cmds = [
+  "npm run build"
+]
+cacheDirectories = [
+  "node_modules/.cache"
+]
+
+[start]
+# Astro's "start" runs preview or server depending on config
+# Coolify will inject HOST and PORT automatically.
+cmd = "npm run start"

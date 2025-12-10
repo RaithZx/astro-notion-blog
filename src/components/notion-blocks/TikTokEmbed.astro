@@ -28,6 +28,7 @@ const videoId = url.pathname.split('/')[3]
 
 <style>
   .tiktok-wrapper {
+    width: 100%;
     max-width: 325px;
     overflow-x: auto;
     margin-block-start: 1.5rem;
@@ -36,5 +37,12 @@ const videoId = url.pathname.split('/')[3]
   }
   blockquote.tiktok-embed {
     margin: 0;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  @media (min-width: 325px) {
+    blockquote.tiktok-embed {
+      min-width: 325px;
+    }
   }
 </style>

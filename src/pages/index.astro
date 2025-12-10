@@ -39,17 +39,11 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
         <div class="p-0">
           {posts.map((post, index) => (
             <article class="flex gap-4 py-4  transition-colors last:border-b-0 max-sm:flex-col max-sm:gap-3 max-sm:py-4 max-sm:px-4 cursor-pointer hover:bg-slate-50">
-              <div class="w-32 h-24  rounded-md overflow-hidden bg-slate-200 max-sm:w-full max-sm:h-40">
-                {post.FeaturedImage && post.FeaturedImage.Url ? (
+              {post.FeaturedImage && post.FeaturedImage.Url && (
+                <div class="w-32 h-24  rounded-md overflow-hidden bg-slate-200 max-sm:w-full max-sm:h-40">
                   <PostFeaturedImage post={post} />
-                ) : (
-                  <div class="w-full h-full bg-slate-300 flex items-center justify-center">
-                    <svg class="w-6 h-6 text-slate-500" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
-                    </svg>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
               <div class="flex-1 min-w-0 flex flex-col justify-start">
 
                   <PostTags post={post} enableLink={true} />

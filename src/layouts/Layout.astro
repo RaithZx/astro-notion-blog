@@ -216,13 +216,15 @@ if (database.Icon && database.Icon.Type === 'file') {
     </header>
 
     <div class="min-h-screen bg-slate-50" style="overflow-x: hidden; max-width: 100vw;">
-      <div class="flex gap-8 px-5 py-8 max-sm:flex-col max-sm:gap-5 max-sm:px-2.5 max-sm:py-5" style="max-width: 100%; overflow-x: hidden;">
+      <div class="flex gap-3 px-5 py-8 max-sm:flex-col max-sm:gap-5 max-sm:px-2.5 max-sm:py-5" style="max-width: 1200px; margin: 0 auto; overflow-x: hidden;">
         <!-- <main class="flex-[2] p-8  max-sm:p-5"> -->
-        <main class="flex-[2]  p-8  max-sm:p-5" style="max-width: 100%; overflow-x: hidden; min-width: 0;">
-          <slot name="main" />
+        <main class="flex-[3]  p-8  max-sm:p-5" style="max-width: 100%; overflow-x: hidden; min-width: 0;">
+          <div class="main-content-wrapper">
+            <slot name="main" />
+          </div>
         </main>
 
-        <aside class="flex-1  p-8  h-fit max-sm:p-5">
+        <aside class="flex-1  p-8  h-fit max-sm:p-5" style="min-width: 280px; max-width: 320px;">
           <!-- <SearchButton /> -->
           <slot name="aside" />
         </aside>
@@ -883,6 +885,14 @@ if (database.Icon && database.Icon.Type === 'file') {
   
   footer .social-links a:hover {
     transform: scale(1.1);
+  }
+  
+  /* Main content centering */
+  .main-content-wrapper {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
   }
   
   /* Footer responsive adjustments */

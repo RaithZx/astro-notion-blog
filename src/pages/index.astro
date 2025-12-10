@@ -32,9 +32,6 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
 <Layout title="Ligadu" description="Artigus di siensia i saudi" path="/" ogImage="">
   <div slot="main" class="">
   <!-- <div slot="main" class="bg-white rounded-lg p-0 shadow-sm"> -->
-    
-
-
     {
       posts.length === 0 ? (
         <NoContents contents={posts} />

@@ -69,7 +69,6 @@ let dbCache: Database | null = null
 const numberOfRetry = 2
 
 export async function getAllPosts(): Promise<Post[]> {
-	console.log("QUERYING POSTS")
   if (postsCache !== null) {
     return Promise.resolve(postsCache)
   }
@@ -103,7 +102,6 @@ export async function getAllPosts(): Promise<Post[]> {
 
   let results: responses.PageObject[] = []
   while (true) {
-	console.log("QUERYING POSTS 2")
     const res = await retry(
       async (bail) => {
         try {
@@ -125,7 +123,6 @@ export async function getAllPosts(): Promise<Post[]> {
     )
 
     results = results.concat(res.results)
-	console.log(results)
     if (!res.has_more) {
       break
     }
@@ -920,13 +917,34 @@ async function _getSyncedBlockChildren(block: Block): Promise<Block[]> {
   return children
 }
 
+function _generateSlugFromTitle(title: string): string {
+  if (!title || title.trim().length === 0) {
+    return ''
+  }
+  
+  let slug = title
+    .toLowerCase()
+    .trim()
+    .normalize('NFD') // Normalize to decomposed form for handling accents
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritical marks
+    .replace(/[^\w\s-]/g, '') // Remove special characters except word chars, spaces, and hyphens
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+    .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
+  
+  // Fallback: if slug is empty after processing, use a default
+  if (slug.length === 0) {
+    slug = 'untitled'
+  }
+  
+  return slug
+}
+
 function _validPageObject(pageObject: responses.PageObject): boolean {
   const prop = pageObject.properties
   return (
     !!prop.Page.title &&
     prop.Page.title.length > 0 &&
-    !!prop.Slug.rich_text &&
-    prop.Slug.rich_text.length > 0 &&
     !!prop.Date.date
   )
 }
@@ -976,16 +994,23 @@ function _buildPost(pageObject: responses.PageObject): Post {
     }
   }
 
+  const title = prop.Page.title
+    ? prop.Page.title.map((richText) => richText.plain_text).join('')
+    : ''
+  
+  // Generate slug from title if Slug field is empty
+  const slugFromField = prop.Slug.rich_text && prop.Slug.rich_text.length > 0
+    ? prop.Slug.rich_text.map((richText) => richText.plain_text).join('')
+    : ''
+  
+  const slug = slugFromField || (title ? _generateSlugFromTitle(title) : '')
+
   const post: Post = {
     PageId: pageObject.id,
-    Title: prop.Page.title
-      ? prop.Page.title.map((richText) => richText.plain_text).join('')
-      : '',
+    Title: title,
     Icon: icon,
     Cover: cover,
-    Slug: prop.Slug.rich_text
-      ? prop.Slug.rich_text.map((richText) => richText.plain_text).join('')
-      : '',
+    Slug: slug,
     Date: prop.Date.date ? prop.Date.date.start : '',
     Tags: prop.Tags.multi_select ? prop.Tags.multi_select : [],
     Excerpt:

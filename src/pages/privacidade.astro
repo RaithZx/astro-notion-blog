@@ -6,9 +6,9 @@ const database = await getDatabase()
 ---
 
 <Layout 
-  title="Polítika di Privasidade" 
-  description="Polítika di privasidade di Ligadu. Saiba komo nos protege i usa su informaçon pessoal." 
-  path="/privacidade"
+  title="Régras di Privasidadi" 
+  description="Régras di Privasidadi di Ligadu. Sabe modi ki nu ta proteje i uza bus informason pesoal." 
+  path="/privasidadi"
   ogImage=""
 >
   <div slot="main">
@@ -17,59 +17,57 @@ const database = await getDatabase()
       
       <div class="prose prose-slate max-w-none">
         <p class="text-slate-600 mb-6">
-          <strong>Última atualização:</strong> {new Date().toLocaleDateString('pt-CV')}
+          <strong>Últimu atualizason:</strong> {new Date().toLocaleDateString('pt-CV')}
         </p>
         
         <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
           <h2 class="text-xl font-semibold text-blue-800 mb-2">Resumo</h2>
           <p class="text-blue-700">
-            Esta polítika explica komo nos coleta, usa i protege su informaçon pessoal 
-            quando usa o site Ligadu. Nos respeita su privasidade i compromete-nos ku 
-            proteger su dados pessoais.
+            Nos régras ta splika modi ki nu ta djunta, uza i proteje bu informason pesoal óras ki bu ta uza es site Ligadu. Nu ta ruspeta bu privasidadi i nu ta leba asériu obrigason ki nu ten di proteje bus informason pesoal.
           </p>
         </div>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">1. Informaçon ku Nos Coleta</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">1. Informason ki Nu ta Djunta</h2>
           
-          <h3 class="text-xl font-semibold text-slate-600 mb-3">1.1 Informaçon ku Voce Nos Dá</h3>
+          <h3 class="text-xl font-semibold text-slate-600 mb-3">1.1 Informason ki Bu ta Da-nu</h3>
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li><strong>Newsletter:</strong> Email i nome (opcional) quando se inscreve na newsletter</li>
-            <li><strong>Kontaktu:</strong> Nome, email, assuntu i mensajen quando usa o formulário di kontaktu</li>
-            <li><strong>Comentários:</strong> Nome i email quando deixa comentários (se disponível)</li>
+            <li><strong>Newsletter:</strong> Email i nomi (opsional) óras ki bu ta inskreve na newsletter</li>
+            <li><strong>Kontaktu:</strong> Nomi, email, asuntu i mensajen óras ki bu ta uza formulariu di kontaktu</li>
+            <li><strong>Comentários:</strong> Nomi i email óras ki bu ta dexa komentárius (si sta disponivel)</li>
           </ul>
           
-          <h3 class="text-xl font-semibold text-slate-600 mb-3 mt-6">1.2 Informaçon ku Nos Coleta Automaticamente</h3>
+          <h3 class="text-xl font-semibold text-slate-600 mb-3 mt-6">1.2 Informason ki Nu ta Djunta Óras ki bu ta entra na nos site</h3>
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li><strong>Dados di Navegaçon:</strong> IP address, tipo di browser, páginas visitadas, tempo di visita</li>
-            <li><strong>Cookies:</strong> Pequenos arquivos ku melhoram sua experiência no site</li>
-            <li><strong>Analytics:</strong> Dados anônimos sobre uso do site (Google Analytics)</li>
+            <li><strong>Dadus di Navigason:</strong> Inderesu IP, tipu di browser, pajinas vizitadu, óra di vizita</li>
+            <li><strong>Cookies:</strong> Fixerus pikinoti ki ta midjora bu spiriénsia na es site</li>
+            <li><strong>Analytics:</strong> Dadus anónimu sobri uzu di site(Google Analytics)</li>
           </ul>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">2. Komo Nos Usa Su Informaçon</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">2.  Modi ki Nu ta Uza Bus Informason</h2>
           
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
             <li><strong>Newsletter:</strong> Pa manda artigus i notísias sobre siénsia, teknolojia i saúdi</li>
-            <li><strong>Kontaktu:</strong> Pa responde suas pergunta i sugestões</li>
-            <li><strong>Melhoria do Site:</strong> Pa entender komo os usuários usam o site i melhorar</li>
-            <li><strong>Segurança:</strong> Pa proteger contra spam i atividades maliciosas</li>
-            <li><strong>Legal:</strong> Pa cumprir obrigações legais quando necessário</li>
+            <li><strong>Kontaktu:</strong> Pa responde bus pergunta i sujestons</li>
+            <li><strong>Melhoria do Site:</strong> Pa intende modi ki klientis ta uza site i midjora-l</li>
+            <li><strong>Segurança:</strong> Pa proteje kontra spam i atividadis maldozu</li>
+            <li><strong>Legal:</strong> Pa kunpri obrigasons legal óras ki nisisáriu</li>
           </ul>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">3. Partilha di Informaçon</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">3. Partilha di Informason</h2>
           
           <p class="text-slate-600 mb-4">
-            Nos <strong>NUNCA</strong> vende, aluga o partilha sua informaçon pessoal ku terceiros, exceto:
+            NUNKA <strong>NU KA TA</strong> bende, luga ô partilha bu informason pesoal ku terserus, ku iseson di:
           </p>
           
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li><strong>Serviços di Terceiros:</strong> Google Analytics (dados anônimos) pa análise do site</li>
-            <li><strong>Obrigação Legal:</strong> Quando requerido por lei ou autoridades competentes</li>
-            <li><strong>Proteção:</strong> Pa proteger nossos direitos, propriedade ou segurança</li>
+            <li><strong>Servisus di Terserus:</strong> Google Analytics (dadus anónimu) pa midjora site</li>
+            <li><strong>Obrigason Legal:</strong> Óras ki lei ô autoridadis ta pidi</li>
+            <li><strong>Proteson:</strong> Pa proteje nos diretus, propriedadi ô suguransa</li>
           </ul>
         </section>
         
@@ -77,20 +75,18 @@ const database = await getDatabase()
           <h2 class="text-2xl font-semibold text-slate-700 mb-4">4. Cookies</h2>
           
           <p class="text-slate-600 mb-4">
-            Usamos cookies pa melhorar sua experiência no site. Cookies são pequenos arquivos 
-            ku ficam no seu computador e nos ajudam a:
+            Nu ta uza cookies pa midjora bu speriénsia na site. Cookies é fixerus pikinoti ki ta fika na bu konputador i ki ta djuda-nu pa:
           </p>
           
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li>Lembrar suas preferências</li>
-            <li>Analisar komo usa o site</li>
-            <li>Melhorar a performance</li>
-            <li>Personalizar kontenidu</li>
+            <li>Lenbra kuzê ki bu ta prifiri</li>
+            <li>Analiza modi ki bu ta uza es site</li>
+            <li>Midjora nos site</li>
+            <li>Publika mas artigus i kontiúdu ki bu gosta</li>
           </ul>
           
           <p class="text-slate-600 mt-4">
-            Pode desativar cookies nas configurações do seu browser, mas isso pode afetar 
-            a funcionalidade do site.
+            Bu pode dizativa cookies na konfigurasons di bu browser, ma keli pode afeta funsionalidadi di site.
           </p>
         </section>
         
@@ -98,67 +94,62 @@ const database = await getDatabase()
           <h2 class="text-2xl font-semibold text-slate-700 mb-4">5. Segurança</h2>
           
           <p class="text-slate-600 mb-4">
-            Nos implementamos medidas de segurança técnicas i organizacionais pa proteger 
-            sua informaçon pessoal:
+           Nu ta uza medidas di suguransa téknikas i na nos organizason pa proteje bu informason pesoal:
           </p>
           
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li>Encriptação SSL/TLS pa transmissão de dados</li>
-            <li>Acesso restrito a dados pessoais</li>
-            <li>Monitorização regular de segurança</li>
-            <li>Backup seguro de dados</li>
+            <li>Encriptason SSL/TLS pa transmison di dadus</li>
+            <li>Asesu limitadu pa proteje dadus pesoal</li>
+            <li>Vijia regular di suguransa</li>
+            <li>Backup suguru di dadus</li>
           </ul>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">6. Seus Direitos</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">6. Bu Diretus</h2>
           
           <p class="text-slate-600 mb-4">
-            Voce tem o direito de:
+            Bu ten diretu di:
           </p>
           
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li><strong>Acesso:</strong> Saber que informaçon temos sobre voce</li>
-            <li><strong>Correção:</strong> Corrigir informaçon incorreta</li>
-            <li><strong>Eliminação:</strong> Pedir pa eliminar sua informaçon</li>
-            <li><strong>Portabilidade:</strong> Receber sua informaçon em formato legível</li>
-            <li><strong>Oposição:</strong> Opor-se ao processamento da sua informaçon</li>
-            <li><strong>Retirada:</strong> Cancelar newsletter a qualquer momento</li>
+            <li><strong>Asesu:</strong> Sabe ki informason nu ten sobri bo</li>
+            <li><strong>Koreson:</strong> Koriji informason ki sta eradu</li>
+            <li><strong>Elimina:</strong> Pidi pa nu tra ô elimina bus informason</li>
+            <li><strong>Portabilidadi:</strong> Resebe bu informason na formatu ki bu ta konsigi lê-l</li>
+            <li><strong>Inpidi:</strong> inpidi-nu di prosesa bus informason</li>
+            <li><strong>Direitu di Kansela:</strong> Kansela bu inskrison na kalker momentu</li>
           </ul>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">7. Retenção di Dados</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">7. Guarda Bus Dadus</h2>
           
           <p class="text-slate-600">
-            Mantemos sua informaçon pessoal apenas pelo tempo necessário pa cumprir 
-            os propósitos descritos nesta polítika, geralmente:
+            Nu ta mante bu informason pesoal sô pa tenpu nisisáriu pa kunpri objetivus di akordu ku nos régras, pur izénplu:
           </p>
           
           <ul class="list-disc pl-6 space-y-2 text-slate-600 mt-4">
-            <li><strong>Newsletter:</strong> Até cancelar a inscrição</li>
-            <li><strong>Kontaktu:</strong> 3 anos após última interação</li>
-            <li><strong>Analytics:</strong> 26 meses (Google Analytics)</li>
+            <li><strong>Newsletter:</strong> Ti ki bu kansela bu inskrison</li>
+            <li><strong>Kontaktu:</strong> 3 anu dipôs di últimu interason</li>
+            <li><strong>Analitiks:</strong> 26 mês (Google Analytics)</li>
           </ul>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">8. Menores di Idade</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">8. Kes menór di Idadi</h2>
           
           <p class="text-slate-600">
-            Nosso site não é direcionado a menores de 16 anos. Se tem menos de 16 anos, 
-            por favor não nos forneça informaçon pessoal. Se descobrirmos que coletamos 
-            informaçon de menor de 16 anos, eliminaremos imediatamente.
+            Si di akordu ku lei di país ki bu sta ta uza nos site, abo é
+menór di idadi, bu pode da-nu bus informason ku autorizason di bu pai ku bu mai ô otu algen responsável pa bo. Si bo é pai ô mai ô responsável i bu ta dexa kel menór da-nu se informason pesoal na kel site li, kel-la krê fla ma bu ta konkorda ku nos régras di uzu di site pa kes menór di idadi.
           </p>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">9. Mudanças na Polítika</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">9. Mudansas na Régras</h2>
           
           <p class="text-slate-600">
-            Podemos atualizar esta polítika ocasionalmente. Quando fizermos mudanças 
-            significativas, notificaremos através do site ou email. A data da última 
-            atualização aparece no topo desta página.
+            Nu pode disidi atualiza kes régras. Óras ki nu faze mudansas ki pode afeta bu spriensa na nos site, nu ta dexa-u sabe atravês di nos site ô email. Data di últimu atualizason ta parse na parti di riba di es pájina.
           </p>
         </section>
         
@@ -166,15 +157,14 @@ const database = await getDatabase()
           <h2 class="text-2xl font-semibold text-slate-700 mb-4">10. Kontaktu</h2>
           
           <p class="text-slate-600 mb-4">
-            Se tem pergunta sobre esta polítika di privasidade ou quer exercer seus direitos, 
-            kontakta-nos:
+            Si bu ten perguntas sobri es régra di privasidadi ô bu krê bus diretus, kontakta-nu:
           </p>
           
           <div class="bg-slate-50 rounded-lg p-6">
             <ul class="space-y-2 text-slate-600">
-              <li><strong>Email:</strong> privacidade@ligadu.com</li>
-              <li><strong>Formulário:</strong> <a href="/kontaktu" class="text-amber-600 hover:text-amber-700 underline">Página di Kontaktu</a></li>
-              <li><strong>Endereço:</strong> Cabo Verde</li>
+              <li><strong>Email:</strong> privasidadi@ligadu.com</li>
+              <li><strong>Formuláriu:</strong> <a href="/kontaktu" class="text-amber-600 hover:text-amber-700 underline">Pájina di Kontaktu</a></li>
+              <li><strong>Inderesu:</strong> Cabo Verde</li>
             </ul>
           </div>
         </section>
@@ -187,7 +177,7 @@ const database = await getDatabase()
       <h3 class="text-lg font-semibold text-slate-700 mb-4">Links Úteis</h3>
       <div class="space-y-3">
         <a href="/termus" class="block text-amber-600 hover:text-amber-700 underline">
-          Termus i Kondições
+          Régras di uzu
         </a>
         <a href="/kontaktu" class="block text-amber-600 hover:text-amber-700 underline">
           Kontaktu
@@ -201,7 +191,7 @@ const database = await getDatabase()
     <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 mt-6">
       <h3 class="text-lg font-semibold text-amber-800 mb-2">Tem Dúvidas?</h3>
       <p class="text-amber-700 text-sm mb-4">
-        Se tem pergunta sobre privasidade, kontakta-nos diretamente.
+       Si bu ten perguntas sobri es regra di privasidadi ô bu krê bus diretus, kontakta-nu:
       </p>
       <a href="/kontaktu" class="inline-block bg-amber-400 text-slate-900 border-0 px-4 py-2 rounded font-bold cursor-pointer hover:bg-amber-500 transition-colors">
         Kontaktu

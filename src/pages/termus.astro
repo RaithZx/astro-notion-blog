@@ -6,189 +6,185 @@ const database = await getDatabase()
 ---
 
 <Layout 
-  title="Termus i Kondições" 
-  description="Termus i kondições di uso di Ligadu. Saiba as regras i kondições pa usar nosso site." 
+  title="Régras di uzu" 
+  description="Régras di uzu i lisénsa di uzu di site." 
   path="/termus"
   ogImage=""
 >
   <div slot="main">
     <div class="max-w-4xl mx-auto">
-      <h1 class="text-4xl font-bold text-slate-800 mb-8">Termus i Kondições di Uso</h1>
+      <h1 class="text-4xl font-bold text-slate-800 mb-8">Régras di uzu i lisénsa di uzu di site</h1>
       
       <div class="prose prose-slate max-w-none">
         <p class="text-slate-600 mb-6">
-          <strong>Última atualização:</strong> {new Date().toLocaleDateString('pt-CV')}
+          <strong>Últimu atualizason:</strong> {new Date().toLocaleDateString('pt-CV')}
         </p>
         
         <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-8">
-          <h2 class="text-xl font-semibold text-amber-800 mb-2">Aceitação dos Termus</h2>
+          <h2 class="text-xl font-semibold text-amber-800 mb-2">Régras di uzu i Lisénsa di uzu di site</h2>
           <p class="text-amber-700">
-            Ao usar o site Ligadu, voce concorda ku estes termus i kondições. 
-            Se não concorda, por favor não use o site.
+            Óras ki bu uza es site, bu sta dexa klaru ma bu ta konkorda ku
+tudu Régras di uzu. Si bu ka ta konkorda ku tudu Régras di uzu, nton ka bu uza es site.
           </p>
         </div>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">1. Definições</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">1. Signifikadu di termus</h2>
           
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li><strong>"Ligadu"</strong> refere-se ao site e seus operadores</li>
-            <li><strong>"Usuário"</strong> refere-se a qualquer pessoa que acessa o site</li>
-            <li><strong>"Kontenidu"</strong> refere-se a artigos, imagens, vídeos e outros materiais</li>
-            <li><strong>"Serviços"</strong> refere-se a newsletter, comentários e outras funcionalidades</li>
+            <li><strong>"Ligadu"</strong> Es site i donus di es site</li>
+            <li><strong>"Kliénti"</strong> É kalker algen ki entra na site</li>
+            <li><strong>"Kontiúdu"</strong> É artigus, imajens, vídius i otus kuza uzadu na site</li>
+            <li><strong>"Servisus"</strong> É email, komentarius, i otu meius di komunikason</li>
           </ul>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">2. Uso do Site</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">2. Uzu di Site</h2>
           
-          <h3 class="text-xl font-semibold text-slate-600 mb-3">2.1 Uso Permitido</h3>
+          <h3 class="text-xl font-semibold text-slate-600 mb-3">2.1 Modi ki es site debe uzadu?</h3>
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li>Ler e compartilhar artigos para uso pessoal</li>
-            <li>Inscrever-se na newsletter</li>
-            <li>Deixar comentários respeitosos (quando disponível)</li>
-            <li>Usar o site de acordo com a lei</li>
+            <li>Lê i manda link di artigus pa bu uza pa bo, má ka pa faze ninhun tipu di nogósiu.</li>
+            <li>Inskreve na nos site</li>
+            <li>Deixa komentárius ki ka ta ofende otus algen  (óras ki sta disponível)</li>
+            <li>Uza es site di akordu ku lei.</li>
           </ul>
           
-          <h3 class="text-xl font-semibold text-slate-600 mb-3 mt-6">2.2 Uso Proibido</h3>
+          <h3 class="text-xl font-semibold text-slate-600 mb-3 mt-6">2.2 Modi ki es site ka debe uzadu</h3>
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li>Usar o site para atividades ilegais</li>
-            <li>Interferir com o funcionamento do site</li>
-            <li>Tentar acessar áreas restritas</li>
-            <li>Usar bots ou scripts automatizados</li>
-            <li>Copiar ou reproduzir kontenidu sem permissão</li>
-            <li>Enviar spam ou mensagens maliciosas</li>
+            <li>El ka debe ser uzadu di un manera ilegal ô ligadu ku algun atividadi ilegal</li>
+            <li>Uza es site di un manera ki ta kauza ô ki pode kauza stragu na kel site li, ô prujudika se disponibilidadi i entrada na el.</li>
+            <li>Tenta entra na es site i ses sirbisu ku métodus ki é ka kes ki dadu klaramenti.</li>
+            <li>Uza kalker software, aplikativu, feraménta ô tékinikas ki ta sirbi
+pa djunta, kôpia, diskarega, tra ô sigi informasons, HTML, imajis ô
+testus di kel site li, i dipôs ku obijetivu di distribui kes informason.</li>
+            <li>Reproduzi, duplika, kôpia, distribui ô faze nogósiu ku kalker imaji, publikason eletróniku, marka rejistadu, múzika, fotus, testu ô vídius di es site pa nogósiu ô troka-s ku dinheru (sikrê bu ka ganha nada). Sen autorizason di donus di es site.</li>
+            <li>Manda spam ô mensajens maldozu.</li>
           </ul>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">3. Propriedade Intelectual</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">3. Propriadadi Inteletual</h2>
           
-          <h3 class="text-xl font-semibold text-slate-600 mb-3">3.1 Nosso Kontenidu</h3>
+          <h3 class="text-xl font-semibold text-slate-600 mb-3">3.1 Nos Kontiúdu</h3>
           <p class="text-slate-600 mb-4">
-            Todo o kontenidu do site (artigos, imagens, design) é propriedade da Ligadu 
-            ou usado sob licença. Está protegido por leis de direitos autorais.
+            Tudu kontiúdu na site (artigus, imajens, vídius i otus kuza uzadu na site) é propriadadi di Ligadu ô Ligadu paga pa algun lisénsa di uzu. Sta protejedu pa leis di direitu di autor.
           </p>
           
-          <h3 class="text-xl font-semibold text-slate-600 mb-3">3.2 Uso do Kontenidu</h3>
+          <h3 class="text-xl font-semibold text-slate-600 mb-3">3.2 Uzu di Kontiúdu</h3>
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li><strong>Uso Pessoal:</strong> Pode ler e compartilhar para uso pessoal</li>
-            <li><strong>Atribuição:</strong> Deve creditar Ligadu quando compartilhar</li>
-            <li><strong>Comercial:</strong> Não pode usar para fins comerciais sem permissão</li>
-            <li><strong>Modificação:</strong> Não pode modificar sem permissão</li>
+            <li><strong>Maneras ki bu pode uza es site:</strong> Lê i manda link di artigus pa otus algen ô pa bu uza pa bo, má ka pa faze ninhun tipu di nogósiu.</li>
+            <li><strong>Fla di undi ki informason ben:</strong> Debe deixa klaru ki kel informason di es site li, ki bu manda é di Ligadu.</li>
+            <li><strong>Nogósiu:</strong> Nos site ka debe uzadu pa faze ninhun tipu di nogósiu sen nos autorizason.</li>
+            <li><strong>Mudansas:</strong> Ka bu faze ninhun mudansa di kuzas di es site sen nos autorizason</li>
           </ul>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">4. Newsletter</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">4. Fika ligadu</h2>
           
-          <h3 class="text-xl font-semibold text-slate-600 mb-3">4.1 Inscrição</h3>
+          <h3 class="text-xl font-semibold text-slate-600 mb-3">4.1 Inskreve</h3>
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li>Inscrição é gratuita e voluntária</li>
-            <li>Deve fornecer email válido</li>
-            <li>Deve concordar com a polítika di privasidade</li>
-            <li>Pode cancelar a qualquer momento</li>
+            <li>Inskreve é ka obrigatóriu i é di grasa</li>
+            <li>Debe poi un email ki bu ta uza</li>
+            <li>Debe konkorda Régras di Privasidadi</li>
+            <li>Pode kansela kalker óra</li>
           </ul>
           
-          <h3 class="text-xl font-semibold text-slate-600 mb-3 mt-6">4.2 Conteúdo da Newsletter</h3>
+          <h3 class="text-xl font-semibold text-slate-600 mb-3 mt-6">4.2 Fika Ligadu i resebe</h3>
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li>Artigos sobre siénsia, teknolojia i saúdi</li>
-            <li>Notísias relevantes</li>
-            <li>Ocasionalmente, ofertas de parceiros</li>
-            <li>Frequência: semanal ou quinzenal</li>
+            <li>Artigus i notísias sobri siénsia, teknolojia i saúdi</li>
+            <li>Nobidadis sobri Ligadu</li>
+            <li>Alvês nu pode manda un oferta di un parseiru</li>
+            <li>Kantu bês ki nu pode manda un email: un bês pa semana ô dôs bês pa mês</li>
           </ul>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">5. Comentários e Interação</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">5. Deixa Komentárius</h2>
           
-          <h3 class="text-xl font-semibold text-slate-600 mb-3">5.1 Responsabilidade</h3>
+          <h3 class="text-xl font-semibold text-slate-600 mb-3">5.1 Régras pa deixa komentárius</h3>
           <p class="text-slate-600 mb-4">
-            Se o site permitir comentários, voce é responsável pelo conteúdo que posta. 
-            Comentários devem ser:
+            Óras ki opson di deixa komentárius sta disponível, Bo é responsável pa kuzê ki bu ta posta. 
+            Bus komentáriu debe:
           </p>
           
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li>Respeitosos e construtivos</li>
-            <li>Relevantes ao tópico</li>
-            <li>Livres de spam ou conteúdo malicioso</li>
-            <li>Respeitosos com outros usuários</li>
+            <li>Djuda otus entende kel asuntu midjor ô da otu pontu di vista sen kritika</li>
+            <li>Pâpia sobri kel artigu ô stória ki sta na pájina ki bu sta komenta na el</li>
+            <li>Ka debe ten link pa ninhun prugrama di konputador, spam ô uzadu faze negósiu</li>
+            <li>Mostra ruspetu pa otus algen</li>
           </ul>
           
-          <h3 class="text-xl font-semibold text-slate-600 mb-3 mt-6">5.2 Moderação</h3>
+          <h3 class="text-xl font-semibold text-slate-600 mb-3 mt-6">5.2 Vijia di Komentárius</h3>
           <p class="text-slate-600">
-            Reservamo-nos o direito de moderar, editar ou remover comentários que 
-            violem estes termus ou sejam inadequados.
+            Nu ten direitu de vijia, idita ô tra komentárius ki 
+            viola kes régra pa deixa komentárius.
           </p>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">6. Limitação de Responsabilidade</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">6. Limiti di Responsabilidadi</h2>
           
           <p class="text-slate-600 mb-4">
-            O site é fornecido "como está". Não garantimos que:
+            Nos site é "sima sta". Nu ka ta garanti ki:
           </p>
           
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li>O site estará sempre disponível</li>
-            <li>O kontenidu estará sempre atualizado</li>
-            <li>O site estará livre de erros</li>
-            <li>O site atenderá suas necessidades específicas</li>
+            <li>Nos site ta sta sénpri disponível</li>
+            <li>Nos kontiúdu ta sta sénpri atualizadu</li>
+            <li>Nos site ka ta tene ninhun éru</li>
+            <li>Nos site ta konsigi djuda-u na un kuza ki bu sta meste</li>
           </ul>
           
           <p class="text-slate-600 mt-4">
-            <strong>Importante:</strong> Informações médicas e científicas são para fins 
-            educacionais apenas. Sempre consulte profissionais qualificados para 
-            decisões importantes sobre saúde.
+            <strong>Inportanti:</strong> Informason sobri saúdi i siénsia é sô pa informa. Si bu ten ki algun disizon sobri saúdi djobe sénpri konsedju di algen kualifikadu na ária di saúdi.
           </p>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">7. Links para Terceiros</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">7. Links pa Otus Site</h2>
           
           <p class="text-slate-600 mb-4">
-            O site pode conter links para outros sites. Não somos responsáveis por:
+            Nos site pode ten links pa otus site. Nos é ka responsável pa:
           </p>
           
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li>Conteúdo de sites externos</li>
-            <li>Políticas de privacidade de terceiros</li>
-            <li>Práticas de segurança de outros sites</li>
-            <li>Produtos ou serviços oferecidos por terceiros</li>
+            <li>Kontiúdu di kes site</li>
+            <li>Régras di Privasidadi di kes site</li>
+            <li>Suguransa di kes site</li>
+            <li>Produtus ô servisus di kes site</li>
           </ul>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">8. Suspensão e Terminação</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">8. Violason di Régras di uzu</h2>
           
           <p class="text-slate-600 mb-4">
-            Podemos suspender ou terminar seu acesso ao site se:
+            Ligadu pode suspende bu entrada na site ô proibi bu entrada na site si bu:
           </p>
           
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
-            <li>Viola estes termus</li>
-            <li>Usa o site de forma inadequada</li>
-            <li>Interfere com outros usuários</li>
-            <li>Realiza atividades ilegais</li>
+            <li>Viola termus di uzu</li>
+            <li>Uza nos site di manera ki ka sta dretu</li>
+            <li>Mexe ku otus klienti na nos site</li>
+            <li>Faze kuzas ilegal</li>
           </ul>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">9. Mudanças nos Termus</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">9. Mudansas</h2>
           
           <p class="text-slate-600">
-            Podemos atualizar estes termus ocasionalmente. Mudanças significativas 
-            serão notificadas através do site ou email. O uso continuado do site 
-            após mudanças constitui aceitação dos novos termus.
+            Nu pode disidi atualiza nos Régras di uzu. Óras ki nu faze mudansas ki pode afeta bu spriensa na nos site, nu ta dexa-u sabe atravês di nos site ô email. Si bu kontinua ta uza nos site kel-li krê fla ma bu aseita Régras di uzu.
           </p>
         </section>
         
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">10. Lei Aplicável</h2>
+          <h2 class="text-2xl font-semibold text-slate-700 mb-4">10. Lei i jurisdison</h2>
           
           <p class="text-slate-600">
-            Estes termus são regidos pelas leis de Cabo Verde. Qualquer disputa 
-            será resolvida nos tribunais competentes de Cabo Verde.
+            Régras di uzu é governadu i interpretadu di akordu ku leis di Kabu Verdi. Kalker medida jurídiku ligadu ku Régras di uzu, debe lebadu pa un tribunal di Kabu Verdi.
           </p>
         </section>
         
@@ -196,14 +192,14 @@ const database = await getDatabase()
           <h2 class="text-2xl font-semibold text-slate-700 mb-4">11. Kontaktu</h2>
           
           <p class="text-slate-600 mb-4">
-            Se tem pergunta sobre estes termus, kontakta-nos:
+            Si bu ten perguntas sobri Régras di uzu, kontakta-nu:
           </p>
           
           <div class="bg-slate-50 rounded-lg p-6">
             <ul class="space-y-2 text-slate-600">
               <li><strong>Email:</strong> legal@ligadu.com</li>
-              <li><strong>Formulário:</strong> <a href="/kontaktu" class="text-amber-600 hover:text-amber-700 underline">Página di Kontaktu</a></li>
-              <li><strong>Endereço:</strong> Cabo Verde</li>
+              <li><strong>Formulário:</strong> <a href="/kontaktu" class="text-amber-600 hover:text-amber-700 underline">Pájina di Kontaktu</a></li>
+              <li><strong>Inderésu:</strong> Kabu Verdi</li>
             </ul>
           </div>
         </section>
@@ -211,8 +207,7 @@ const database = await getDatabase()
         <div class="bg-green-50 border border-green-200 rounded-lg p-6 mt-8">
           <h2 class="text-xl font-semibold text-green-800 mb-2">Agradecimento</h2>
           <p class="text-green-700">
-            Obrigadu por usar Ligadu! Esperamos que encontre valor no nosso kontenidu 
-            i que continue a nos acompanhar na jornada de descoberta científica.
+            Obrigadu pa uza Ligadu! Nu ta spera ma bu gosta di kontiúdu di nos site i ki bu kontinua ta djuntu ku nos na nos jornada.
           </p>
         </div>
       </div>
@@ -221,10 +216,10 @@ const database = await getDatabase()
   
   <div slot="aside">
     <div class="bg-white rounded-lg p-6 shadow-sm">
-      <h3 class="text-lg font-semibold text-slate-700 mb-4">Links Úteis</h3>
+      <h3 class="text-lg font-semibold text-slate-700 mb-4">Links Inportanti</h3>
       <div class="space-y-3">
-        <a href="/privacidade" class="block text-amber-600 hover:text-amber-700 underline">
-          Polítika di Privasidade
+        <a href="/privasidade" class="block text-amber-600 hover:text-amber-700 underline">
+          Régras di Privasidadi
         </a>
         <a href="/kontaktu" class="block text-amber-600 hover:text-amber-700 underline">
           Kontaktu
@@ -236,9 +231,9 @@ const database = await getDatabase()
     </div>
     
     <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 mt-6">
-      <h3 class="text-lg font-semibold text-amber-800 mb-2">Tem Dúvidas?</h3>
+      <h3 class="text-lg font-semibold text-amber-800 mb-2">Ten Dúvidas?</h3>
       <p class="text-amber-700 text-sm mb-4">
-        Se tem pergunta sobre estes termus, kontakta-nos diretamente.
+        Si bu tene kalker pergunta sobri nos Régras di uzu, kontakta-nu.
       </p>
       <a href="/kontaktu" class="inline-block bg-amber-400 text-slate-900 border-0 px-4 py-2 rounded font-bold cursor-pointer hover:bg-amber-500 transition-colors">
         Kontaktu

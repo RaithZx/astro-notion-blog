@@ -5,6 +5,8 @@ import {
   getRankedPosts,
   getAllTags,
   getNumberOfPages,
+  getFeaturedPost,
+  getTopPosts,
 } from '../lib/notion/client.ts'
 import Layout from '../layouts/Layout.astro'
 import NoContents from '../components/NoContents.astro'
@@ -17,28 +19,128 @@ import ReadMoreLink from '../components/ReadMoreLink.astro'
 import Pagination from '../components/Pagination.astro'
 import BlogPostsLink from '../components/BlogPostsLink.astro'
 import BlogTagsLink from '../components/BlogTagsLink.astro'
+import { getPostLink } from '../lib/blog-helpers.ts'
+import { filePath } from '../lib/blog-helpers.ts'
 
 const labels = {
   categories: 'Kategorias',
 }
-const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
+const [posts, rankedPosts, tags, numberOfPages, featuredPost, topPosts] = await Promise.all([
   getPosts(NUMBER_OF_POSTS_PER_PAGE),
   getRankedPosts(),
   getAllTags(),
   getNumberOfPages(),
+  getFeaturedPost(),
+  getTopPosts(4),
 ])
 ---
 
 <Layout title="Ligadu" description="Artigus di siensia i saudi" path="/" ogImage="">
-  <div slot="main" class="">
+  <!-- Featured Section - Above main and aside -->
+  {
+    (featuredPost || topPosts.length > 0) && (
+      <section slot="featured" class="mb-12 px-5 py-8 max-sm:px-2.5 max-sm:py-5" style="max-width: 1200px; margin: 0 auto;">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Main Featured Article -->
+          {
+            featuredPost && (
+              <div class="lg:col-span-2">
+                <a href={getPostLink(featuredPost.Slug)} class="block group">
+                  <div class="relative overflow-hidden rounded-lg mb-4 aspect-[16/10] bg-slate-200">
+                    {
+                      featuredPost.FeaturedImage && featuredPost.FeaturedImage.Url ? (
+                        <img 
+                          src={import.meta.env.DEV ? featuredPost.FeaturedImage.Url : filePath(new URL(featuredPost.FeaturedImage.Url))} 
+                          alt={featuredPost.Title}
+                          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div class="w-full h-full flex items-center justify-center bg-slate-300">
+                          <svg class="w-16 h-16 text-slate-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+                          </svg>
+                        </div>
+                      )
+                    }
+                  </div>
+                  <div class="space-y-3">
+                    <div class="flex items-center gap-2 text-xs text-slate-500 uppercase tracking-wide">
+                      <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded font-semibold">Featured</span>
+                      <PostDate post={featuredPost} />
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-tight">
+                      {featuredPost.Title}
+                    </h2>
+                    {
+                      featuredPost.Excerpt && (
+                        <p class="text-slate-600 text-base leading-relaxed line-clamp-3">
+                          {featuredPost.Excerpt}
+                        </p>
+                      )
+                    }
+                  </div>
+                </a>
+              </div>
+            )
+          }
+
+          <!-- Top Stories -->
+          {
+            topPosts.length > 0 && (
+              <div class="space-y-6">
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Top Stories</h3>
+                {
+                  topPosts.map((post) => (
+                    <a href={getPostLink(post.Slug)} class="block group">
+                      <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-24 h-24 rounded-md overflow-hidden bg-slate-200">
+                          {
+                            post.FeaturedImage && post.FeaturedImage.Url ? (
+                              <img 
+                                src={import.meta.env.DEV ? post.FeaturedImage.Url : filePath(new URL(post.FeaturedImage.Url))} 
+                                alt={post.Title}
+                                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                              />
+                            ) : (
+                              <div class="w-full h-full flex items-center justify-center bg-slate-300">
+                                <svg class="w-8 h-8 text-slate-500" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+                                </svg>
+                              </div>
+                            )
+                          }
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <h4 class="text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug line-clamp-2 mb-1">
+                            {post.Title}
+                          </h4>
+                          <div class="text-xs text-slate-500">
+                            <PostDate post={post} />
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                  ))
+                }
+              </div>
+            )
+          }
+        </div>
+      </section>
+    )
+  }
+
+  <div slot="main" class="" style="max-width: 100%;">
   <!-- <div slot="main" class="bg-white rounded-lg p-0 shadow-sm"> -->
+
     {
       posts.length === 0 ? (
         <NoContents contents={posts} />
       ) : (
-        <div class="p-0">
+        <div class="p-0" style="max-width: 100%; margin-left: -1.25rem; margin-right: -1.25rem;">
+          <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 px-5">Ultimus publikasons</h3>
           {posts.map((post, index) => (
-            <article class="flex gap-4 py-4  transition-colors last:border-b-0 max-sm:flex-col max-sm:gap-3 max-sm:py-4 max-sm:px-4 cursor-pointer hover:bg-slate-50">
+            <article class="flex gap-4 py-4 px-5 transition-colors last:border-b-0 max-sm:flex-col max-sm:gap-3 max-sm:py-4 max-sm:px-4 cursor-pointer hover:bg-slate-50">
               {post.FeaturedImage && post.FeaturedImage.Url && (
                 <div class="w-32 h-24  rounded-md overflow-hidden bg-slate-200 max-sm:w-full max-sm:h-40">
                   <PostFeaturedImage post={post} />
@@ -52,8 +154,8 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
                 </h1>
                 <div class="">
                 </div>
-                <p class="m-0 text-slate-600 text-sm leading-relaxed line-clamp-3">
-                  <PostExcerpt post={post} />
+                <p class="m-0 text-slate-600 text-base leading-relaxed line-clamp-3">
+                  {post.Excerpt}
                 </p>
               </div>
             </article>
@@ -114,17 +216,6 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
       </div>
     </div> -->
 
-    <!-- Recommended Posts -->
-    <div class="bg-white border border-slate-200 rounded-lg p-5">
-      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Otus artigu pa lê</h3>
-      <BlogPostsLink heading="" posts={rankedPosts} />
-    </div>
-
-    <!-- Tipus di artigu -->
-    <div class="bg-white border border-slate-200 rounded-lg p-5">
-      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Tipus di artigu</h3>
-      <BlogTagsLink heading="" tags={tags} />
-    </div>
   </div>
 </Layout>
 

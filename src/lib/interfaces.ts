@@ -13,6 +13,7 @@ export interface Post {
   Slug: string
   Date: string
   Tags: SelectProperty[]
+  AdminTags: SelectProperty[]
   Excerpt: string
   FeaturedImage: FileObject | null
   Rank: number

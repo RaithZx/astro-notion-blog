@@ -178,6 +178,23 @@ export async function getPostsByTag(
     .slice(0, pageSize)
 }
 
+export async function getFeaturedPost(): Promise<Post | null> {
+  const allPosts = await getAllPosts()
+  const featured = allPosts.find((post) =>
+    post.AdminTags.find((tag) => tag.name.toLowerCase() === 'featured')
+  )
+  return featured || null
+}
+
+export async function getTopPosts(pageSize = 4): Promise<Post[]> {
+  const allPosts = await getAllPosts()
+  return allPosts
+    .filter((post) =>
+      post.AdminTags.find((tag) => tag.name.toLowerCase() === 'top')
+    )
+    .slice(0, pageSize)
+}
+
 // page starts from 1 not 0
 export async function getPostsByPage(page: number): Promise<Post[]> {
   if (page < 1) {
@@ -1013,6 +1030,7 @@ function _buildPost(pageObject: responses.PageObject): Post {
     Slug: slug,
     Date: prop.Date.date ? prop.Date.date.start : '',
     Tags: prop.Tags.multi_select ? prop.Tags.multi_select : [],
+    AdminTags: prop.AdminTags?.multi_select ? prop.AdminTags.multi_select : [],
     Excerpt:
       prop.Excerpt.rich_text && prop.Excerpt.rich_text.length > 0
         ? prop.Excerpt.rich_text.map((richText) => richText.plain_text).join('')

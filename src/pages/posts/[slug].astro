@@ -117,7 +117,7 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
   </div>
 
   <div slot="aside" class="flex flex-col gap-3">
-    <div class="bg-white border border-slate-200 rounded-lg p-5">
+    <div class="rounded-lg p-5">
       <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Posts in the same category</h3>
       <BlogPostsLink
         heading=""
@@ -127,17 +127,17 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
       />
     </div>
     
-    <div class="bg-white border border-slate-200 rounded-lg p-5">
+    <div class="rounded-lg p-5">
       <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Otus artigu pa lê</h3>
       <BlogPostsLink heading="" posts={rankedPosts} />
     </div>
     
-    <div class="bg-white border border-slate-200 rounded-lg p-5">
+    <div class="rounded-lg p-5">
       <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Latest posts</h3>
       <BlogPostsLink heading="" posts={recentPosts} />
     </div>
     
-    <div class="bg-white border border-slate-200 rounded-lg p-5">
+    <div class="rounded-lg p-5">
       <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Tipus di artigu</h3>
       <BlogTagsLink heading="" tags={tags} />
     </div>

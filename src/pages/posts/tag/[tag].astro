@@ -18,7 +18,7 @@ import ReadMoreLink from '../../../components/ReadMoreLink.astro'
 import Pagination from '../../../components/Pagination.astro'
 import BlogPostsLink from '../../../components/BlogPostsLink.astro'
 import BlogTagsLink from '../../../components/BlogTagsLink.astro'
-import { getPostLink } from '../../../lib/blog-helpers.ts'
+import { getPostLink, filePath } from '../../../lib/blog-helpers.ts'
 import styles from '../../../styles/blog.module.css'
 import '../../../styles/notion-color.css'
 
@@ -85,7 +85,45 @@ const currentTag = posts.length > 0 ? posts[0].Tags.find((t) => t.name === tag) 
   </div>
 
   <div slot="aside" class={styles.aside}>
-    <BlogPostsLink heading="Otus artigu pa lê" posts={rankedPosts} />
+    <div class="rounded-lg p-5">
+      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Otus artigu pa lê</h3>
+      {
+        rankedPosts.length === 0 ? (
+          <NoContents contents={[]} />
+        ) : (
+          <div class="space-y-4">
+            {rankedPosts
+              .slice(0, 5)
+              .map((rankedPost) => (
+                <a 
+                  href={getPostLink(rankedPost.Slug)} 
+                  class="block group bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md hover:border-blue-300 transition-all"
+                >
+                  <div class="space-y-2">
+                    {rankedPost.FeaturedImage && rankedPost.FeaturedImage.Url && (
+                      <div class="w-full aspect-video rounded-md overflow-hidden bg-slate-200">
+                        <img
+                          src={import.meta.env.DEV ? rankedPost.FeaturedImage.Url : filePath(new URL(rankedPost.FeaturedImage.Url))}
+                          alt={rankedPost.Title}
+                          class="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <h4 class="m-0 text-sm font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
+                      {rankedPost.Title}
+                    </h4>
+                    {rankedPost.Excerpt && (
+                      <p class="m-0 text-xs text-slate-600 leading-relaxed line-clamp-2">
+                        {rankedPost.Excerpt}
+                      </p>
+                    )}
+                  </div>
+                </a>
+              ))}
+          </div>
+        )
+      }
+    </div>
     <BlogTagsLink heading="Tipus di artigu" tags={tags} />
   </div>
 </Layout>

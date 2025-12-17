@@ -6,6 +6,7 @@ import { CUSTOM_DOMAIN, BASE_PATH } from './src/server-constants';
 import CoverImageDownloader from './src/integrations/cover-image-downloader';
 import CustomIconDownloader from './src/integrations/custom-icon-downloader';
 import FeaturedImageDownloader from './src/integrations/featured-image-downloader';
+import PostContentImageDownloader from './src/integrations/post-content-image-downloader';
 // PublicNotionCopier no longer needed - images are now in src/assets/ and handled by Astro
 // import PublicNotionCopier from './src/integrations/public-notion-copier';
 
@@ -54,6 +55,7 @@ export default defineConfig({
     CoverImageDownloader(),
     CustomIconDownloader(),
     FeaturedImageDownloader(),
+    PostContentImageDownloader(), // Download images from post content blocks
     // PublicNotionCopier() - removed, images now in src/assets/ and handled by Astro
   ],
 });

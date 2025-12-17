@@ -36,6 +36,13 @@ function createImageMap(): Record<string, ImageMetadata> {
 // Create the image map once at module load time
 const imageMap = createImageMap()
 
+// Debug: Log image map stats (only in dev or if DEBUG_IMAGES env var is set)
+if (import.meta.env.DEV || process.env.DEBUG_IMAGES) {
+  const mapSize = Object.keys(imageMap).length
+  const sampleKeys = Object.keys(imageMap).slice(0, 3)
+  console.log(`[Image Helpers] Image map created with ${mapSize} images. Sample keys:`, sampleKeys)
+}
+
 /**
  * Constructs the lookup key for an image from a Notion URL
  * @param url - The Notion image URL
@@ -60,13 +67,23 @@ export function getImageFromNotionUrl(
     const imageModule = imageMap[key]
     
     if (!imageModule) {
-      console.warn(`Image not found in map for key: ${key}. URL: ${url.toString()}`)
+      // Enhanced debugging
+      if (import.meta.env.DEV || process.env.DEBUG_IMAGES) {
+        const [dir, filename] = url.pathname.split('/').slice(-2)
+        console.warn(`[Image Helpers] Image not found in map.`, {
+          lookupKey: key,
+          url: url.toString(),
+          pathname: url.pathname,
+          mapSize: Object.keys(imageMap).length,
+          similarKeys: Object.keys(imageMap).filter(k => k.includes(dir) || k.includes(filename)).slice(0, 3)
+        })
+      }
       return null
     }
     
     return imageModule
   } catch (err) {
-    console.error(`Failed to get image from Notion URL: ${url.toString()}`, err)
+    console.error(`[Image Helpers] Failed to get image from Notion URL: ${url.toString()}`, err)
     return null
   }
 }

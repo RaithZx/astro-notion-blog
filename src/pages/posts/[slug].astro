@@ -51,40 +51,8 @@ const [blocks, allPosts, rankedPosts, recentPosts, tags, postsHavingSameTag] =
     getPostsByTag(post.Tags[0]?.name, 6),
   ])
 
-const fileAtacchedBlocks = extractTargetBlocks('image', blocks)
-  .concat(extractTargetBlocks('file', blocks))
-  .filter((block) => {
-    if (!block) {
-      return false
-    }
-    const imageOrFile = block.Image || block.File
-    return imageOrFile && imageOrFile.File && imageOrFile.File.Url
-  })
-
-// Download files
-await Promise.all(
-  fileAtacchedBlocks
-    .map(async (block) => {
-      const expiryTime = (block.Image || block.File).File.ExpiryTime
-      if (Date.parse(expiryTime) > Date.now()) {
-        return Promise.resolve(block)
-      }
-      return getBlock(block.Id)
-    })
-    .map((promise) =>
-      promise.then((block) => {
-        let url!: URL
-        try {
-          url = new URL((block.Image || block.File).File.Url)
-        } catch {
-          console.log('Invalid file URL: ', (block.Image || block.File)?.File?.Url)
-          return Promise.reject()
-        }
-        return Promise.resolve(url)
-      })
-    )
-    .map((promise) => promise.then(downloadFile))
-)
+// Images are now downloaded during build via PostContentImageDownloader integration
+// No need to download here - they're already in src/assets/notion/ when pages render
 
 const currentPostIndex = allPosts.findIndex((post) => post.Slug === slug)
 const prevPost = allPosts[currentPostIndex + 1]

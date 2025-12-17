@@ -33,6 +33,23 @@ const [posts, rankedPosts, tags, numberOfPages, featuredPost, topPosts] = await 
   getFeaturedPost(),
   getTopPosts(4),
 ])
+
+// Helper function to format date as "12 Jul 2025"
+function formatDateShort(date: string): string {
+  const dt = new Date(date)
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const day = dt.getDate()
+  const month = months[dt.getMonth()]
+  const year = dt.getFullYear()
+  return `${day} ${month} ${year}`
+}
+
+// Helper function to estimate reading time (words per minute = 200)
+function estimateReadingTime(excerpt: string): string {
+  const words = excerpt.split(/\s+/).length
+  const minutes = Math.max(1, Math.ceil(words / 200))
+  return `${minutes} min`
+}
 ---
 
 <Layout title="Ligadu" description="Artigus di siensia i saudi" path="/" ogImage="">
@@ -66,11 +83,27 @@ const [posts, rankedPosts, tags, numberOfPages, featuredPost, topPosts] = await 
                   <div class="space-y-3">
                     <div class="flex items-center gap-2 text-xs text-slate-500 uppercase tracking-wide">
                       <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded font-semibold">Sta Ligadu</span>
-                      <PostDate post={featuredPost} />
                     </div>
                     <h2 class="text-3xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-tight">
                       {featuredPost.Title}
                     </h2>
+                    <div class="flex items-center gap-1.5 text-sm text-slate-400">
+                      {featuredPost.Date && (
+                        <span>{formatDateShort(featuredPost.Date)}</span>
+                      )}
+                      {featuredPost.Tags && featuredPost.Tags.length > 0 && (
+                        <>
+                          <span>·</span>
+                          <span>{featuredPost.Tags[0].name}</span>
+                        </>
+                      )}
+                      {featuredPost.Excerpt && (
+                        <>
+                          <span>·</span>
+                          <span>{estimateReadingTime(featuredPost.Excerpt)}</span>
+                        </>
+                      )}
+                    </div>
                     {
                       featuredPost.Excerpt && (
                         <p class="text-slate-600 text-base leading-relaxed line-clamp-3">
@@ -96,8 +129,22 @@ const [posts, rankedPosts, tags, numberOfPages, featuredPost, topPosts] = await 
                         <h4 class="text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug line-clamp-2 mb-1">
                           {post.Title}
                         </h4>
-                        <div class="text-xs text-slate-500">
-                          <PostDate post={post} />
+                        <div class="flex items-center gap-1.5 text-xs text-slate-500">
+                          {post.Date && (
+                            <span>{formatDateShort(post.Date)}</span>
+                          )}
+                          {post.Tags && post.Tags.length > 0 && (
+                            <>
+                              <span>·</span>
+                              <span>{post.Tags[0].name}</span>
+                            </>
+                          )}
+                          {post.Excerpt && (
+                            <>
+                              <span>·</span>
+                              <span>{estimateReadingTime(post.Excerpt)}</span>
+                            </>
+                          )}
                         </div>
                       </div>
                     </a>
@@ -123,21 +170,39 @@ const [posts, rankedPosts, tags, numberOfPages, featuredPost, topPosts] = await 
           {posts.map((post, index) => (
             <article class="flex gap-4 py-4 px-5 transition-colors last:border-b-0 max-sm:flex-col max-sm:gap-3 max-sm:py-4 max-sm:px-4 cursor-pointer hover:bg-slate-50">
               {post.FeaturedImage && post.FeaturedImage.Url && (
-                <div class="w-32 h-24  rounded-md overflow-hidden bg-slate-200 max-sm:w-full max-sm:h-40">
+                <div class="w-32 aspect-[4/5] rounded-md overflow-hidden bg-slate-200 max-sm:w-full max-sm:aspect-video">
                   <PostFeaturedImage post={post} />
                 </div>
               )}
-              <div class="flex-1 min-w-0 flex flex-col justify-start">
-
-                  <PostTags post={post} enableLink={true} />
-                <h1 class="m-0  text-lg font-bold text-slate-900 leading-tight hover:text-blue-600 transition-colors">
-                  <PostTitle post={post} enableLink={true} />
-                </h1>
-                <div class="">
+              <div class="flex-1 min-w-0 flex flex-col justify-between">
+                <div>
+                  <h1 class="m-0 text-lg font-bold text-slate-900 leading-tight hover:text-blue-600 transition-colors">
+                    <PostTitle post={post} enableLink={true} />
+                  </h1>
+                  <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
+                    {post.Date && (
+                      <span>{formatDateShort(post.Date)}</span>
+                    )}
+                    {post.Tags && post.Tags.length > 0 && (
+                      <>
+                        <span>·</span>
+                        <span>{post.Tags[0].name}</span>
+                      </>
+                    )}
+                    {post.Excerpt && (
+                      <>
+                        <span>·</span>
+                        <span>{estimateReadingTime(post.Excerpt)}</span>
+                      </>
+                    )}
+                  </div>
+                  <p class="m-0 text-slate-600 text-base leading-relaxed line-clamp-3">
+                    {post.Excerpt}
+                  </p>
                 </div>
-                <p class="m-0 text-slate-600 text-base leading-relaxed line-clamp-3">
-                  {post.Excerpt}
-                </p>
+                <div class="flex justify-end">
+                  <PostTags post={post} enableLink={true} />
+                </div>
               </div>
             </article>
           ))}

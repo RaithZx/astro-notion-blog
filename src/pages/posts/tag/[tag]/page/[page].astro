@@ -49,6 +49,23 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
 ])
 
 const currentTag = posts.length > 0 ? posts[0].Tags.find((t) => t.name === tag) : null
+
+// Helper function to format date as "12 Jul 2025"
+function formatDateShort(date: string): string {
+  const dt = new Date(date)
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const day = dt.getDate()
+  const month = months[dt.getMonth()]
+  const year = dt.getFullYear()
+  return `${day} ${month} ${year}`
+}
+
+// Helper function to estimate reading time (words per minute = 200)
+function estimateReadingTime(excerpt: string): string {
+  const words = excerpt.split(/\s+/).length
+  const minutes = Math.max(1, Math.ceil(words / 200))
+  return `${minutes} min`
+}
 ---
 
 <Layout

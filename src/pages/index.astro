@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets'
 import { NUMBER_OF_POSTS_PER_PAGE } from '../server-constants.ts'
 import {
   getPosts,
@@ -20,7 +21,7 @@ import Pagination from '../components/Pagination.astro'
 import BlogPostsLink from '../components/BlogPostsLink.astro'
 import BlogTagsLink from '../components/BlogTagsLink.astro'
 import { getPostLink } from '../lib/blog-helpers.ts'
-import { filePath } from '../lib/blog-helpers.ts'
+import { getImageFromNotionUrl } from '../lib/image-helpers.ts'
 
 const labels = {
   categories: 'Kategorias',
@@ -33,6 +34,17 @@ const [posts, rankedPosts, tags, numberOfPages, featuredPost, topPosts] = await 
   getFeaturedPost(),
   getTopPosts(4),
 ])
+
+// Load featured post image if available
+let featuredPostImage = null
+if (featuredPost?.FeaturedImage?.Url) {
+  if (import.meta.env.DEV) {
+    featuredPostImage = featuredPost.FeaturedImage.Url
+  } else {
+    const imported = getImageFromNotionUrl(new URL(featuredPost.FeaturedImage.Url))
+    featuredPostImage = imported || featuredPost.FeaturedImage.Url
+  }
+}
 
 // Helper function to format date as "12 Jul 2025"
 function formatDateShort(date: string): string {
@@ -65,12 +77,23 @@ function estimateReadingTime(excerpt: string): string {
                 <a href={getPostLink(featuredPost.Slug)} class="block group">
                   <div class="relative overflow-hidden rounded-lg mb-4 aspect-[16/10] bg-slate-200">
                     {
-                      featuredPost.FeaturedImage && featuredPost.FeaturedImage.Url ? (
-                        <img 
-                          src={import.meta.env.DEV ? featuredPost.FeaturedImage.Url : filePath(new URL(featuredPost.FeaturedImage.Url))} 
-                          alt={featuredPost.Title}
-                          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
+                      featuredPostImage ? (
+                        typeof featuredPostImage === 'string' ? (
+                          <img 
+                            src={featuredPostImage} 
+                            alt={featuredPost.Title}
+                            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                        ) : (
+                          <Image 
+                            src={featuredPostImage} 
+                            alt={featuredPost.Title}
+                            width={featuredPost.FeaturedImage?.Width}
+                            height={featuredPost.FeaturedImage?.Height}
+                            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            loading="eager"
+                          />
+                        )
                       ) : (
                         <div class="w-full h-full flex items-center justify-center bg-slate-300">
                           <svg class="w-16 h-16 text-slate-500" fill="currentColor" viewBox="0 0 20 20">

@@ -1,6 +1,7 @@
 ---
+import { Image } from 'astro:assets'
 import type { Post } from '../lib/interfaces.ts'
-import { filePath } from '../lib/blog-helpers'
+import { getImageFromNotionUrl } from '../lib/image-helpers'
 
 export interface Props {
   post: Post
@@ -8,20 +9,38 @@ export interface Props {
 
 const { post } = Astro.props
 
-let image = ''
+let imageModule: any = null
 if (post.FeaturedImage && post.FeaturedImage.Url) {
   if (import.meta.env.DEV) {
-    image = post.FeaturedImage.Url
+    // In dev, use URL directly (images may not be downloaded yet)
+    imageModule = post.FeaturedImage.Url
   } else {
-    image = filePath(new URL(post.FeaturedImage.Url))
+    // In production, use pre-loaded image map for optimized images
+    const imported = getImageFromNotionUrl(new URL(post.FeaturedImage.Url))
+    if (imported) {
+      imageModule = imported
+    } else {
+      // Fallback to URL if lookup fails
+      imageModule = post.FeaturedImage.Url
+    }
   }
 }
 ---
 
 {
-  image && (
+  imageModule && (
     <div class="post-featured-image">
-      <img src={image} alt="Featured image of the post" />
+      {typeof imageModule === 'string' ? (
+        <img src={imageModule} alt={post.Title || "Featured image of the post"} />
+      ) : (
+        <Image 
+          src={imageModule} 
+          alt={post.Title || "Featured image of the post"}
+          width={imageModule.width}
+          height={imageModule.height}
+          loading="eager"
+        />
+      )}
     </div>
   )
 }

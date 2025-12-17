@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets'
 import * as interfaces from '../../lib/interfaces.ts'
 import {
   getPosts,
@@ -17,6 +18,7 @@ import {
   extractTargetBlocks,
   getDateStr,
 } from '../../lib/blog-helpers.ts'
+import { getImageFromNotionUrl } from '../../lib/image-helpers.ts'
 import Layout from '../../layouts/Layout.astro'
 import PostDate from '../../components/PostDate.astro'
 import PostTags from '../../components/PostTags.astro'
@@ -93,6 +95,20 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
   ogImage = new URL(filePath(new URL(post.FeaturedImage.Url)), Astro.site)
 }
 
+// Load images for related posts
+const loadPostImage = (post: interfaces.Post) => {
+  if (!post.FeaturedImage?.Url) return null
+  if (import.meta.env.DEV) {
+    return post.FeaturedImage.Url
+  }
+  const imported = getImageFromNotionUrl(new URL(post.FeaturedImage.Url))
+  return imported || post.FeaturedImage.Url
+}
+
+const postsHavingSameTagImages = postsHavingSameTag.filter((p: interfaces.Post) => p.Slug !== post.Slug).slice(0, 5).map(loadPostImage)
+const rankedPostsImages = rankedPosts.slice(0, 5).map(loadPostImage)
+const recentPostsImages = recentPosts.slice(0, 5).map(loadPostImage)
+
 // Helper function to format date as "12 Jul 2025"
 function formatDateShort(date: string): string {
   const dt = new Date(date)
@@ -152,15 +168,33 @@ function estimateReadingTime(excerpt: string): string {
                   class="block group bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md hover:border-blue-300 transition-all"
                 >
                   <div class="space-y-2">
-                    {relatedPost.FeaturedImage && relatedPost.FeaturedImage.Url && (
-                      <div class="w-full aspect-video rounded-md overflow-hidden bg-slate-200">
-                        <img
-                          src={import.meta.env.DEV ? relatedPost.FeaturedImage.Url : filePath(new URL(relatedPost.FeaturedImage.Url))}
-                          alt={relatedPost.Title}
-                          class="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
+                    {(() => {
+                      const imageIndex = postsHavingSameTag
+                        .filter((p: interfaces.Post) => p.Slug !== post.Slug)
+                        .slice(0, 5)
+                        .findIndex((p: interfaces.Post) => p.Slug === relatedPost.Slug)
+                      const image = imageIndex >= 0 ? postsHavingSameTagImages[imageIndex] : null
+                      return image && (
+                        <div class="w-full aspect-video rounded-md overflow-hidden bg-slate-200">
+                          {typeof image === 'string' ? (
+                            <img
+                              src={image}
+                              alt={relatedPost.Title}
+                              class="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Image
+                              src={image}
+                              alt={relatedPost.Title}
+                              width={relatedPost.FeaturedImage?.Width}
+                              height={relatedPost.FeaturedImage?.Height}
+                              class="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          )}
+                        </div>
+                      )
+                    })()}
                     <h4 class="m-0 text-sm font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
                       {relatedPost.Title}
                     </h4>
@@ -192,15 +226,30 @@ function estimateReadingTime(excerpt: string): string {
                   class="block group bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md hover:border-blue-300 transition-all"
                 >
                   <div class="space-y-2">
-                    {rankedPost.FeaturedImage && rankedPost.FeaturedImage.Url && (
-                      <div class="w-full aspect-video rounded-md overflow-hidden bg-slate-200">
-                        <img
-                          src={import.meta.env.DEV ? rankedPost.FeaturedImage.Url : filePath(new URL(rankedPost.FeaturedImage.Url))}
-                          alt={rankedPost.Title}
-                          class="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
+                    {(() => {
+                      const imageIndex = rankedPosts.slice(0, 5).findIndex((p: interfaces.Post) => p.Slug === rankedPost.Slug)
+                      const image = imageIndex >= 0 ? rankedPostsImages[imageIndex] : null
+                      return image && (
+                        <div class="w-full aspect-video rounded-md overflow-hidden bg-slate-200">
+                          {typeof image === 'string' ? (
+                            <img
+                              src={image}
+                              alt={rankedPost.Title}
+                              class="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Image
+                              src={image}
+                              alt={rankedPost.Title}
+                              width={rankedPost.FeaturedImage?.Width}
+                              height={rankedPost.FeaturedImage?.Height}
+                              class="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          )}
+                        </div>
+                      )
+                    })()}
                     <h4 class="m-0 text-sm font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
                       {rankedPost.Title}
                     </h4>
@@ -232,15 +281,30 @@ function estimateReadingTime(excerpt: string): string {
                   class="block group bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md hover:border-blue-300 transition-all"
                 >
                   <div class="space-y-2">
-                    {recentPost.FeaturedImage && recentPost.FeaturedImage.Url && (
-                      <div class="w-full aspect-video rounded-md overflow-hidden bg-slate-200">
-                        <img
-                          src={import.meta.env.DEV ? recentPost.FeaturedImage.Url : filePath(new URL(recentPost.FeaturedImage.Url))}
-                          alt={recentPost.Title}
-                          class="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
+                    {(() => {
+                      const imageIndex = recentPosts.slice(0, 5).findIndex((p: interfaces.Post) => p.Slug === recentPost.Slug)
+                      const image = imageIndex >= 0 ? recentPostsImages[imageIndex] : null
+                      return image && (
+                        <div class="w-full aspect-video rounded-md overflow-hidden bg-slate-200">
+                          {typeof image === 'string' ? (
+                            <img
+                              src={image}
+                              alt={recentPost.Title}
+                              class="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Image
+                              src={image}
+                              alt={recentPost.Title}
+                              width={recentPost.FeaturedImage?.Width}
+                              height={recentPost.FeaturedImage?.Height}
+                              class="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          )}
+                        </div>
+                      )
+                    })()}
                     <h4 class="m-0 text-sm font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
                       {recentPost.Title}
                     </h4>

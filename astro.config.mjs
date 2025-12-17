@@ -6,7 +6,8 @@ import { CUSTOM_DOMAIN, BASE_PATH } from './src/server-constants';
 import CoverImageDownloader from './src/integrations/cover-image-downloader';
 import CustomIconDownloader from './src/integrations/custom-icon-downloader';
 import FeaturedImageDownloader from './src/integrations/featured-image-downloader';
-import PublicNotionCopier from './src/integrations/public-notion-copier';
+// PublicNotionCopier no longer needed - images are now in src/assets/ and handled by Astro
+// import PublicNotionCopier from './src/integrations/public-notion-copier';
 
 const getSite = function () {
   if (CUSTOM_DOMAIN) {
@@ -38,6 +39,14 @@ const getSite = function () {
 export default defineConfig({
   site: getSite(),
   base: BASE_PATH,
+  image: {
+    // Enable responsive images globally
+    layout: 'constrained', // Constrained layout for most images
+    responsiveStyles: true, // Enable responsive image styles
+    // Optional: configure remote image domains if using external images
+    // domains: ['example.com'],
+    // remotePatterns: [{ protocol: 'https' }],
+  },
   integrations: [
     icon(),
     tailwind(),
@@ -45,6 +54,6 @@ export default defineConfig({
     CoverImageDownloader(),
     CustomIconDownloader(),
     FeaturedImageDownloader(),
-    PublicNotionCopier(),
+    // PublicNotionCopier() - removed, images now in src/assets/ and handled by Astro
   ],
 });

@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets'
 import {
   getPostsByPage,
   getRankedPosts,
@@ -16,7 +17,8 @@ import ReadMoreLink from '../../../components/ReadMoreLink.astro'
 import Pagination from '../../../components/Pagination.astro'
 import BlogPostsLink from '../../../components/BlogPostsLink.astro'
 import BlogTagsLink from '../../../components/BlogTagsLink.astro'
-import { getPostLink, filePath } from '../../../lib/blog-helpers.ts'
+import { getPostLink } from '../../../lib/blog-helpers.ts'
+import { getImageFromNotionUrl } from '../../../lib/image-helpers.ts'
 import styles from '../../../styles/blog.module.css'
 
 export async function getStaticPaths() {
@@ -37,6 +39,18 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
   getAllTags(),
   getNumberOfPages(),
 ])
+
+// Load images for ranked posts
+const loadPostImage = (post: any) => {
+  if (!post.FeaturedImage?.Url) return null
+  if (import.meta.env.DEV) {
+    return post.FeaturedImage.Url
+  }
+  const imported = getImageFromNotionUrl(new URL(post.FeaturedImage.Url))
+  return imported || post.FeaturedImage.Url
+}
+
+const rankedPostsImages = rankedPosts.slice(0, 5).map(loadPostImage)
 
 // Helper function to format date as "12 Jul 2025"
 function formatDateShort(date: string): string {
@@ -103,15 +117,30 @@ function estimateReadingTime(excerpt: string): string {
                   class="block group bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md hover:border-blue-300 transition-all"
                 >
                   <div class="space-y-2">
-                    {rankedPost.FeaturedImage && rankedPost.FeaturedImage.Url && (
-                      <div class="w-full aspect-video rounded-md overflow-hidden bg-slate-200">
-                        <img
-                          src={import.meta.env.DEV ? rankedPost.FeaturedImage.Url : filePath(new URL(rankedPost.FeaturedImage.Url))}
-                          alt={rankedPost.Title}
-                          class="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
+                    {(() => {
+                      const imageIndex = rankedPosts.slice(0, 5).findIndex((p) => p.Slug === rankedPost.Slug)
+                      const image = imageIndex >= 0 ? rankedPostsImages[imageIndex] : null
+                      return image && (
+                        <div class="w-full aspect-video rounded-md overflow-hidden bg-slate-200">
+                          {typeof image === 'string' ? (
+                            <img
+                              src={image}
+                              alt={rankedPost.Title}
+                              class="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Image
+                              src={image}
+                              alt={rankedPost.Title}
+                              width={rankedPost.FeaturedImage?.Width}
+                              height={rankedPost.FeaturedImage?.Height}
+                              class="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          )}
+                        </div>
+                      )
+                    })()}
                     <h4 class="m-0 text-sm font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
                       {rankedPost.Title}
                     </h4>

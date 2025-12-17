@@ -1,7 +1,8 @@
 ---
+import { Image as AstroImage } from 'astro:assets'
 import { ENABLE_LIGHTBOX } from '../../server-constants.ts'
 import * as interfaces from '../../lib/interfaces'
-import { filePath } from '../../lib/blog-helpers'
+import { getImageFromNotionUrl } from '../../lib/image-helpers'
 import Caption from './Caption.astro'
 
 export interface Props {
@@ -10,25 +11,77 @@ export interface Props {
 
 const { block } = Astro.props
 
-let image = ''
+if (!block.Image) {
+  return null
+}
+
+let imageModule: any = null
+let imageUrl = ''
+let altText = ''
+
+// Extract alt text from caption
+if (block.Image.Caption && block.Image.Caption.length > 0) {
+  altText = block.Image.Caption
+    .map((rt) => rt.PlainText || rt.Text?.Content || '')
+    .join(' ')
+    .trim()
+}
+
+if (!altText) {
+  altText = 'Image in a image block'
+}
+
+// Handle External (remote) vs File (downloaded) images
 if (block.Image.External) {
-  image = block.Image.External.Url
+  imageUrl = block.Image.External.Url
 } else if (block.Image.File) {
-  image = filePath(new URL(block.Image.File.Url))
+  if (import.meta.env.DEV) {
+    // In dev, use URL directly
+    imageUrl = block.Image.File.Url
+  } else {
+    // In production, use pre-loaded image map for optimized images
+    const imported = getImageFromNotionUrl(new URL(block.Image.File.Url))
+    if (imported) {
+      imageModule = imported
+    } else {
+      // Fallback to URL if lookup fails
+      imageUrl = block.Image.File.Url
+    }
+  }
 }
 ---
 
 <figure class="image">
   {
-    image && (
+    (imageModule || imageUrl) && (
       <div>
         <div>
           {ENABLE_LIGHTBOX ? (
-            <a data-fslightbox href={image} data-type="image">
-              <img src={image} alt="Image in a image block" loading="lazy" />
+            <a 
+              data-fslightbox 
+              href={imageModule ? (imageModule as any).src : imageUrl} 
+              data-type="image"
+            >
+              {imageModule ? (
+                <AstroImage 
+                  src={imageModule} 
+                  alt={altText}
+                  loading="lazy"
+                />
+              ) : (
+                <img src={imageUrl} alt={altText} loading="lazy" />
+              )}
             </a>
           ) : (
-            <img src={image} alt="Image in a image block" loading="lazy" />
+            imageModule ? (
+              <AstroImage 
+                src={imageModule} 
+                alt={altText}
+                loading="lazy"
+              />
+            ) : (
+              <img src={imageUrl} alt={altText} loading="lazy" />
+            )
           )}
         </div>
         <Caption richTexts={block.Image.Caption} />

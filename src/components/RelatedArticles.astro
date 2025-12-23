@@ -1,0 +1,251 @@
+---
+import type { Post } from '../lib/interfaces.ts'
+import { getPostLink } from '../lib/blog-helpers.ts'
+import { getImageFromNotionUrl } from '../lib/image-helpers.ts'
+import ImageWithBlur from './ImageWithBlur.astro'
+import PostTags from './PostTags.astro'
+
+export interface Props {
+  posts: Post[]
+  currentPostSlug: string
+  title?: string
+}
+
+const { posts, currentPostSlug, title = 'Artigus relasionadu' } = Astro.props
+
+// Filter out current post and limit to 4 articles
+const relatedPosts = posts
+  .filter((p: Post) => p.Slug !== currentPostSlug)
+  .slice(0, 4)
+
+// Helper function to format date
+function formatDateShort(date: string): string {
+  const dt = new Date(date)
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const day = dt.getDate()
+  const month = months[dt.getMonth()]
+  const year = dt.getFullYear()
+  return `${day} ${month} ${year}`
+}
+
+// Helper function to estimate reading time
+function estimateReadingTime(excerpt: string): string {
+  const words = excerpt.split(/\s+/).length
+  const minutes = Math.max(1, Math.ceil(words / 200))
+  return `${minutes} min`
+}
+
+// Load images for related posts
+const loadPostImage = (post: Post) => {
+  if (!post.FeaturedImage?.Url) return null
+  if (import.meta.env.DEV) {
+    return post.FeaturedImage.Url
+  }
+  const imported = getImageFromNotionUrl(new URL(post.FeaturedImage.Url))
+  return imported || post.FeaturedImage.Url
+}
+
+const relatedPostsImages = relatedPosts.map(loadPostImage)
+---
+
+{
+  relatedPosts.length > 0 && (
+    <section class="related-articles">
+      <h2 class="related-articles-title">{title}</h2>
+      <div class="related-articles-grid">
+        {
+          relatedPosts.map((relatedPost: Post, index: number) => {
+            const image = relatedPostsImages[index]
+            return (
+              <article class="related-article-card">
+                <a href={getPostLink(relatedPost.Slug)} class="related-article-link">
+                  {image && (
+                    <div class="related-article-image">
+                      <ImageWithBlur
+                        src={image}
+                        alt={relatedPost.Title}
+                        width={typeof image === 'string' ? undefined : image.width}
+                        height={typeof image === 'string' ? undefined : image.height}
+                        loading="lazy"
+                        aspectRatio="16/9"
+                        class="related-article-img"
+                      />
+                    </div>
+                  )}
+                  <div class="related-article-content">
+                    <h3 class="related-article-title">{relatedPost.Title}</h3>
+                    {relatedPost.Excerpt && (
+                      <p class="related-article-excerpt">{relatedPost.Excerpt}</p>
+                    )}
+                    <div class="related-article-meta">
+                      {relatedPost.Date && (
+                        <span class="related-article-date">{formatDateShort(relatedPost.Date)}</span>
+                      )}
+                      {relatedPost.Excerpt && (
+                        <>
+                          <span class="meta-separator">·</span>
+                          <span class="related-article-time">{estimateReadingTime(relatedPost.Excerpt)}</span>
+                        </>
+                      )}
+                    </div>
+                    {relatedPost.Tags && relatedPost.Tags.length > 0 && (
+                      <div class="related-article-tags">
+                        <PostTags post={relatedPost} enableLink={false} />
+                      </div>
+                    )}
+                  </div>
+                </a>
+              </article>
+            )
+          })
+        }
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .related-articles {
+    margin: 3rem 0;
+    padding: 2rem 0;
+    border-top: 2px solid #e2e8f0;
+  }
+
+  .related-articles-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 1.5rem 0;
+    font-family: var(--font-display);
+  }
+
+  .related-articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .related-article-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .related-article-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    border-color: #3b82f6;
+  }
+
+  .related-article-link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .related-article-image {
+    width: 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    background-color: #e2e8f0;
+  }
+
+  .related-article-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .related-article-content {
+    padding: 1.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .related-article-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.4;
+    font-family: var(--font-display);
+    transition: color 0.2s ease;
+  }
+
+  .related-article-card:hover .related-article-title {
+    color: #3b82f6;
+  }
+
+  .related-article-excerpt {
+    font-size: 0.875rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0 0 1rem 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .related-article-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-bottom: 0.75rem;
+  }
+
+  .meta-separator {
+    color: #cbd5e1;
+  }
+
+  .related-article-date,
+  .related-article-time {
+    font-weight: 500;
+  }
+
+  .related-article-tags {
+    margin-top: auto;
+  }
+
+  @media (max-width: 768px) {
+    .related-articles {
+      margin: 2rem 0;
+      padding: 1.5rem 0;
+    }
+
+    .related-articles-title {
+      font-size: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .related-articles-grid {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+
+    .related-article-content {
+      padding: 1rem;
+    }
+
+    .related-article-title {
+      font-size: 1rem;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .related-articles-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

@@ -4,6 +4,7 @@ import { ENABLE_LIGHTBOX } from '../../server-constants.ts'
 import * as interfaces from '../../lib/interfaces'
 import { getImageFromNotionUrl } from '../../lib/image-helpers'
 import Caption from './Caption.astro'
+import ImageWithBlur from '../ImageWithBlur.astro'
 
 export interface Props {
   block: interfaces.Block
@@ -49,39 +50,41 @@ if (block.Image.External) {
     }
   }
 }
+
+const imageSrc = imageModule || imageUrl
+const lightboxHref = imageModule ? (imageModule as any).src : imageUrl
 ---
 
 <figure class="image">
   {
-    (imageModule || imageUrl) && (
+    imageSrc && (
       <div>
-        <div>
+        <div class="image-wrapper">
           {ENABLE_LIGHTBOX ? (
             <a 
               data-fslightbox 
-              href={imageModule ? (imageModule as any).src : imageUrl} 
+              href={lightboxHref} 
               data-type="image"
+              class="lightbox-link"
             >
-              {imageModule ? (
-                <AstroImage 
-                  src={imageModule} 
-                  alt={altText}
-                  loading="lazy"
-                />
-              ) : (
-                <img src={imageUrl} alt={altText} loading="lazy" />
-              )}
+              <ImageWithBlur
+                src={imageSrc}
+                alt={altText}
+                width={imageModule ? imageModule.width : block.Image.Width}
+                height={imageModule ? imageModule.height : block.Image.Height}
+                loading="lazy"
+                class="notion-image"
+              />
             </a>
           ) : (
-            imageModule ? (
-              <AstroImage 
-                src={imageModule} 
-                alt={altText}
-                loading="lazy"
-              />
-            ) : (
-              <img src={imageUrl} alt={altText} loading="lazy" />
-            )
+            <ImageWithBlur
+              src={imageSrc}
+              alt={altText}
+              width={imageModule ? imageModule.width : block.Image.Width}
+              height={imageModule ? imageModule.height : block.Image.Height}
+              loading="lazy"
+              class="notion-image"
+            />
           )}
         </div>
         <Caption richTexts={block.Image.Caption} />
@@ -93,15 +96,27 @@ if (block.Image.External) {
 <style>
   .image {
     display: flex;
+    flex-direction: column;
     margin: 0.2rem auto 0;
   }
   .image > div {
     margin: 0 auto;
+    width: 100%;
   }
-  .image > div > div {
+  .image-wrapper {
+    width: 100%;
   }
-  .image > div > div img {
+  .lightbox-link {
     display: block;
+    width: 100%;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .lightbox-link:hover {
+    opacity: 0.9;
+  }
+  .notion-image {
+    width: 100%;
     max-width: 100%;
   }
 </style>

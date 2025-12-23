@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets'
 import { NUMBER_OF_POSTS_PER_PAGE } from '../server-constants.ts'
+import ImageWithBlur from '../components/ImageWithBlur.astro'
 import {
   getPosts,
   getRankedPosts,
@@ -68,32 +69,27 @@ function estimateReadingTime(excerpt: string): string {
   <!-- Featured Section - Above main and aside -->
   {
     (featuredPost || topPosts.length > 0) && (
-      <section slot="featured" class="mb-12 px-5 py-8 max-sm:px-2.5 max-sm:py-5" style="max-width: 1200px; margin: 0 auto;">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <section slot="featured" class="mb-12 px-5 py-8 max-sm:px-2.5 max-sm:py-5" style="max-width: 1200px; margin: 0 auto; width: 100%;">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- Main Featured Article -->
           {
             featuredPost && (
-              <div class="lg:col-span-2">
+              <div class="md:col-span-2 lg:col-span-2">
                 <a href={getPostLink(featuredPost.Slug)} class="block group">
                   <div class="relative overflow-hidden rounded-lg mb-4 aspect-[16/10] bg-slate-200">
                     {
                       featuredPostImage ? (
-                        typeof featuredPostImage === 'string' ? (
-                          <img 
-                            src={featuredPostImage} 
+                        <div class="group-hover:scale-105 transition-transform duration-300">
+                          <ImageWithBlur
+                            src={featuredPostImage}
                             alt={featuredPost.Title}
-                            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                        ) : (
-                          <Image 
-                            src={featuredPostImage} 
-                            alt={featuredPost.Title}
-                            width={featuredPost.FeaturedImage?.Width}
-                            height={featuredPost.FeaturedImage?.Height}
-                            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            width={typeof featuredPostImage === 'string' ? undefined : featuredPostImage.width}
+                            height={typeof featuredPostImage === 'string' ? undefined : featuredPostImage.height}
                             loading="eager"
+                            aspectRatio="16/10"
+                            class="rounded-lg"
                           />
-                        )
+                        </div>
                       ) : (
                         <div class="w-full h-full flex items-center justify-center bg-slate-300">
                           <svg class="w-16 h-16 text-slate-500" fill="currentColor" viewBox="0 0 20 20">
@@ -191,7 +187,7 @@ function estimateReadingTime(excerpt: string): string {
         <div class="p-0" style="max-width: 100%; margin-left: -1.25rem; margin-right: -1.25rem;">
           <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 px-5">Kes últimu artigu i stória</h3>
           {posts.map((post, index) => (
-            <article class="flex gap-4 py-4 px-5 transition-colors last:border-b-0 max-sm:flex-col max-sm:gap-3 max-sm:py-4 max-sm:px-4 cursor-pointer hover:bg-slate-50">
+            <article class="flex gap-4 py-4 px-5 transition-all duration-200 last:border-b-0 max-sm:flex-col max-sm:gap-3 max-sm:py-4 max-sm:px-4 cursor-pointer hover:bg-slate-50 hover:shadow-sm rounded-lg">
               {post.FeaturedImage && post.FeaturedImage.Url && (
                 <div class="w-32 aspect-[4/5] rounded-md overflow-hidden bg-slate-200 max-sm:w-full max-sm:aspect-video">
                   <PostFeaturedImage post={post} />

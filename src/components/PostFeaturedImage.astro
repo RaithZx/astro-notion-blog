@@ -1,13 +1,14 @@
 ---
-import { Image } from 'astro:assets'
 import type { Post } from '../lib/interfaces.ts'
 import { getImageFromNotionUrl } from '../lib/image-helpers'
+import ImageWithBlur from './ImageWithBlur.astro'
 
 export interface Props {
   post: Post
+  loading?: 'lazy' | 'eager'
 }
 
-const { post } = Astro.props
+const { post, loading = 'lazy' } = Astro.props
 
 let imageModule: any = null
 if (post.FeaturedImage && post.FeaturedImage.Url) {
@@ -29,31 +30,13 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
 
 {
   imageModule && (
-    <div class="post-featured-image">
-      {typeof imageModule === 'string' ? (
-        <img src={imageModule} alt={post.Title || "Featured image of the post"} />
-      ) : (
-        <Image 
-          src={imageModule} 
-          alt={post.Title || "Featured image of the post"}
-          width={imageModule.width}
-          height={imageModule.height}
-          loading="eager"
-        />
-      )}
-    </div>
+    <ImageWithBlur
+      src={imageModule}
+      alt={post.Title || "Featured image of the post"}
+      width={typeof imageModule === 'string' ? undefined : imageModule.width}
+      height={typeof imageModule === 'string' ? undefined : imageModule.height}
+      loading={loading}
+      class="post-featured-image"
+    />
   )
 }
-
-<style>
-  .post-featured-image {
-    width: 100%;
-    height: 100%;
-  }
-  .post-featured-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-</style>

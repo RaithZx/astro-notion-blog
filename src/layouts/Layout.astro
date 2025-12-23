@@ -7,6 +7,8 @@ import '../styles/syntax-coloring.css'
 import GoogleAnalytics from '../components/GoogleAnalytics.astro'
 import SearchModal from '../components/SearchModal.astro'
 import ComingSoon from '../components/ComingSoon.astro'
+import SocialIcons from '../components/SocialIcons.astro'
+import BackToTop from '../components/BackToTop.astro'
 
 export interface Props {
   title: string
@@ -99,8 +101,13 @@ if (database.Icon && database.Icon.Type === 'file') {
       <>
     <GoogleAnalytics trackingId={PUBLIC_GA_TRACKING_ID} />
     
+    <!-- Skip to content link for accessibility -->
+    <a href="#main-content" class="skip-to-content">
+      Pula pa kontenidu prinsipal
+    </a>
+    
     <!-- Sticky Navigation Header -->
-    <header id="main-header" class="sticky top-0 z-50 border-b border-slate-200">
+    <header id="main-header" class="sticky top-0 z-40 border-b border-slate-200">
       <div class="px-5 max-sm:px-2.5 md:px-[3.25rem]">
         <div class="flex items-center justify-between py-3">
           <!-- Left Side: Mobile Menu + Logo -->
@@ -108,10 +115,12 @@ if (database.Icon && database.Icon.Type === 'file') {
             <!-- Mobile Menu Button -->
             <button 
               id="mobile-menu-button" 
-              class="bg-transparent border-0 text-slate-600 text-2xl cursor-pointer p-2 hover:bg-slate-100 rounded"
-              aria-label="Toggle mobile menu"
+              class="bg-transparent border-0 text-slate-600 text-2xl cursor-pointer p-2 hover:bg-slate-100 rounded focus-visible:outline-2 focus-visible:outline-blue-500 focus-visible:outline-offset-2"
+              aria-label="Abre menu mobil"
+              aria-expanded="false"
+              aria-controls="mobile-drawer"
             >
-              ☰
+              <span aria-hidden="true">☰</span>
             </button>
             <!-- Logo/Text -->
             <a href={getNavLink('/')} class="text-slate-700 no-underline text-lg font-medium hover:text-slate-900 transition-colors">
@@ -132,8 +141,8 @@ if (database.Icon && database.Icon.Type === 'file') {
           <div class="flex items-center gap-3">
             <!-- Search Button (All screens) -->
             <button 
-              class="open-search-modal bg-transparent border-0 text-slate-600 cursor-pointer p-2 hover:bg-slate-100 rounded transition-colors"
-              aria-label="Search"
+              class="open-search-modal bg-transparent border-0 text-slate-600 cursor-pointer p-2 hover:bg-slate-100 rounded transition-colors focus-visible:outline-2 focus-visible:outline-blue-500 focus-visible:outline-offset-2"
+              aria-label="Abre piskiza"
               type="button"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -150,25 +159,25 @@ if (database.Icon && database.Icon.Type === 'file') {
       </div>
       
       <!-- Mobile Navigation Drawer -->
-      <div id="mobile-drawer" class="md:hidden fixed inset-0 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out">
+      <div id="mobile-drawer" class="md:hidden fixed inset-0 transform -translate-x-full transition-transform duration-300 ease-in-out pointer-events-none" style="z-index: 9999 !important;">
         <!-- Overlay -->
-        <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 pointer-events-auto" style="z-index: 10000;"></div>
         
         <!-- Drawer Content -->
-        <div class="relative flex flex-col w-80 max-w-sm h-full bg-white shadow-xl">
+        <div class="mobile-drawer-content relative flex flex-col w-80 max-w-sm h-full bg-white shadow-xl pointer-events-auto" style="z-index: 10001 !important; background-color: white !important; opacity: 1 !important;">
           <!-- Drawer Header -->
-          <div class="flex items-center justify-end p-4 border-b border-slate-200">
+          <div class="flex items-center justify-end p-4 border-b border-slate-200 bg-white">
             <button 
               id="mobile-close-button" 
-              class="bg-transparent border-0 text-slate-600 text-2xl cursor-pointer p-2 hover:bg-slate-100 rounded"
-              aria-label="Close mobile menu"
+              class="bg-transparent border-0 text-slate-600 text-2xl cursor-pointer p-2 hover:bg-slate-100 rounded focus-visible:outline-2 focus-visible:outline-blue-500 focus-visible:outline-offset-2"
+              aria-label="Fecha menu mobil"
             >
-              ✕
+              <span aria-hidden="true">✕</span>
             </button>
           </div>
           
           <!-- Drawer Navigation -->
-          <div class="flex-1 p-4">
+          <div class="flex-1 p-4 bg-white">
             <nav class="space-y-2">
               <a href={getNavLink('/')} class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Inisiu</a>
               <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Saúdi</a>
@@ -215,17 +224,16 @@ if (database.Icon && database.Icon.Type === 'file') {
       </div> -->
     </header>
 
-    <div class="min-h-screen bg-slate-50" style="overflow-x: hidden; max-width: 100vw;">
+    <div class="min-h-screen bg-slate-50" style="overflow-x: hidden; max-width: 100vw; position: relative; z-index: 1;">
       <slot name="featured" />
-      <div class="flex gap-3 px-5 py-8 max-sm:flex-col max-sm:gap-5 max-sm:px-2.5 max-sm:py-5" style="max-width: 1200px; margin: 0 auto; overflow-x: hidden;">
-        <!-- <main class="flex-[2] p-8  max-sm:p-5"> -->
-        <main class="flex-[3]  p-0  max-sm:p-5" style="max-width: 100%; overflow-x: hidden; min-width: 0;">
+      <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 px-5 py-8 max-sm:px-2.5 max-sm:py-5" style="max-width: 1200px; margin: 0 auto; overflow-x: hidden; position: relative; z-index: 1;">
+        <main id="main-content" class="flex-1 lg:flex-[3] p-0 max-sm:p-5" style="max-width: 100%; overflow-x: hidden; min-width: 0; position: relative; z-index: 1;" tabindex="-1">
           <div class="main-content-wrapper" style="max-width: 100%;">
             <slot name="main" />
           </div>
         </main>
 
-        <aside class="flex-1  p-8  h-fit max-sm:p-5" style="min-width: 280px; max-width: 320px;">
+        <aside class="w-full lg:w-auto lg:flex-1 lg:max-w-xs p-0 lg:p-8 h-fit max-sm:p-5">
           <!-- <SearchButton /> -->
           <slot name="aside" />
         </aside>
@@ -234,36 +242,21 @@ if (database.Icon && database.Icon.Type === 'file') {
 
     <SearchModal />
     
+    <BackToTop />
+    
     <!-- Footer -->
     <footer class="bg-slate-800 text-white mt-16">
-      <div class="px-5 max-sm:px-2.5 py-12">
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div class="px-5 max-sm:px-2.5 md:px-8 lg:px-12 py-12">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 max-w-7xl mx-auto">
           <!-- Brand Section -->
           <div class="lg:col-span-1">
               <div class="flex items-center space-x-2 mb-4">
-                <img src={getStaticFilePath('/ligadu_logo.png')} alt="Ligadu Logo" class="w-32 h-16" />
-                <!-- <h3 class="text-xl font-bold">Ligadu</h3> -->
+                <img src={getStaticFilePath('/ligadu_logo.png')} alt="Ligadu Logo" class="h-12 w-auto max-w-[140px]" />
               </div>
-            <p class="text-slate-300 text-sm mb-4">
+            <p class="text-slate-300 text-sm mb-6 leading-relaxed">
               Artigus di siensia, teknolojia i saúdi.
             </p>
-            <div class="flex space-x-4">
-              <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="Facebook">
-                <span class="text-xl">📘</span>
-              </a>
-              <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="Twitter">
-                <span class="text-xl">🐦</span>
-              </a>
-              <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="Instagram">
-                <span class="text-xl">📷</span>
-              </a>
-              <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="LinkedIn">
-                <span class="text-xl">💼</span>
-              </a>
-              <a href="#" class="text-slate-400 hover:text-white transition-colors" aria-label="YouTube">
-                <span class="text-xl">📺</span>
-              </a>
-            </div>
+            <SocialIcons />
           </div>
           
           <!-- Quick Links -->
@@ -290,14 +283,14 @@ if (database.Icon && database.Icon.Type === 'file') {
           </div>
           
           <!-- Newsletter & Contact -->
-          <div>
+          <div class="sm:col-span-2 lg:col-span-1">
             <h4 class="text-lg font-semibold mb-4">Fika ligadu</h4>
-            <p class="text-slate-300 text-sm mb-4">
+            <p class="text-slate-300 text-sm mb-6 leading-relaxed">
               Resebe kes ultimu artigus i notísias sobri siénsia, teknolojia i saúdi.
             </p>
             <button 
               id="footer-newsletter-btn"
-              class="newsletter-btn w-full bg-transparent border border-slate-400 text-slate-200 px-4 py-2 rounded text-sm font-normal cursor-pointer hover:bg-slate-700 hover:border-slate-300 transition-colors"
+              class="newsletter-btn w-full bg-transparent border-2 border-slate-400 text-slate-200 px-4 py-3 rounded-lg text-sm font-medium cursor-pointer hover:bg-slate-700 hover:border-slate-300 hover:text-white transition-all duration-200 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
             >
               Inskreve na Newsletter
             </button>
@@ -305,13 +298,23 @@ if (database.Icon && database.Icon.Type === 'file') {
         </div>
         
         <!-- Bottom Bar -->
-        <div class="border-t border-slate-700 mt-8 pt-8">
-          <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div class="text-sm text-slate-400">
+        <div class="border-t border-slate-700 mt-12 pt-8 max-w-7xl mx-auto">
+          <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 gap-4">
+            <div class="text-sm text-slate-400 text-center md:text-left">
               © {new Date().getFullYear()} {database.Title}. Tudu direitu rezervadu.
             </div>
             <div class="flex items-center space-x-6 text-sm text-slate-400">
-              <a href="#" class="hover:text-white transition-colors">🇨🇻</a>
+              <a 
+                href="#" 
+                class="hover:text-white transition-colors flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded"
+                aria-label="Cape Verde"
+                title="Cabo Verde"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="flex-shrink-0">
+                  <circle cx="12" cy="12" r="10"></circle>
+                </svg>
+                <span class="hidden sm:inline">Cabo Verde</span>
+              </a>
             </div>
           </div>
         </div>
@@ -331,10 +334,10 @@ if (database.Icon && database.Icon.Type === 'file') {
             <h2 class="text-2xl font-bold text-slate-800">Inskreve na Newsletter</h2>
             <button 
               id="newsletter-close-button" 
-              class="bg-transparent border-0 text-slate-600 text-2xl cursor-pointer p-2 hover:bg-slate-100 rounded"
-              aria-label="Close newsletter modal"
+              class="bg-transparent border-0 text-slate-600 text-2xl cursor-pointer p-2 hover:bg-slate-100 rounded focus-visible:outline-2 focus-visible:outline-blue-500 focus-visible:outline-offset-2"
+              aria-label="Fecha modal di newsletter"
             >
-              ✕
+              <span aria-hidden="true">✕</span>
             </button>
           </div>
           
@@ -431,12 +434,29 @@ if (database.Icon && database.Icon.Type === 'file') {
         // Mobile Menu Functions
         function openMobileMenu() {
           mobileDrawer.classList.remove('-translate-x-full');
+          mobileDrawer.style.pointerEvents = 'auto';
+          mobileDrawer.style.zIndex = '9999';
+          mobileMenuButton.setAttribute('aria-expanded', 'true');
           document.body.style.overflow = 'hidden';
+          // Ensure main content stays below drawer
+          const mainContent = document.getElementById('main-content');
+          const mainContainer = document.querySelector('.min-h-screen');
+          if (mainContent) mainContent.style.zIndex = '1';
+          if (mainContainer) mainContainer.style.zIndex = '1';
         }
         
         function closeMobileMenu() {
           mobileDrawer.classList.add('-translate-x-full');
+          setTimeout(() => {
+            mobileDrawer.style.pointerEvents = 'none';
+          }, 300);
+          mobileMenuButton.setAttribute('aria-expanded', 'false');
           document.body.style.overflow = '';
+          // Reset main content z-index
+          const mainContent = document.getElementById('main-content');
+          const mainContainer = document.querySelector('.min-h-screen');
+          if (mainContent) mainContent.style.zIndex = '';
+          if (mainContainer) mainContainer.style.zIndex = '';
         }
         
         // Newsletter Modal Functions
@@ -481,23 +501,61 @@ if (database.Icon && database.Icon.Type === 'file') {
         newsletterOverlay.addEventListener('click', closeNewsletterModal);
         
         // Newsletter Form Submission
-        newsletterForm.addEventListener('submit', function(e) {
+        newsletterForm.addEventListener('submit', async function(e) {
           e.preventDefault();
           
           const email = document.getElementById('newsletter-email').value;
           const name = document.getElementById('newsletter-name').value;
           const privacy = document.getElementById('newsletter-privacy').checked;
+          const submitButton = newsletterForm.querySelector('button[type="submit"]');
           
           if (!privacy) {
-            alert('Por favor, konkordo ku a régras di privasidadi i régras di uzu i lisénsa di uzu di site.');
+            showNotification('Por favor, konkordo ku a régras di privasidadi i régras di uzu i lisénsa di uzu di site.', 'error');
             return;
           }
           
-          // Here you would typically send the data to your newsletter service
-          // For now, we'll just show a success message
-          alert(`Obrigadu! ${name ? name + ', ' : ''}inskrevu ku suksesu na newsletter.`);
-          closeNewsletterModal();
+          // Show loading state
+          if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="loading-spinner"></span> Enviadu...';
+          }
+          
+          try {
+            // Here you would typically send the data to your newsletter service
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Show success message
+            showNotification(`Obrigadu! ${name ? name + ', ' : ''}inskrevu ku suksesu na newsletter.`, 'success');
+            closeNewsletterModal();
+          } catch (error) {
+            showNotification('Erru durante inskrisaun. Pur favor, tenta otu vez.', 'error');
+          } finally {
+            if (submitButton) {
+              submitButton.disabled = false;
+              submitButton.innerHTML = '<span class="text-lg">✉</span> Inskreve na Newsletter';
+            }
+          }
         });
+        
+        // Notification system
+        function showNotification(message, type = 'success') {
+          const notification = document.createElement('div');
+          notification.className = `notification notification-${type}`;
+          notification.textContent = message;
+          document.body.appendChild(notification);
+          
+          setTimeout(() => {
+            notification.classList.add('show');
+          }, 10);
+          
+          setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+              document.body.removeChild(notification);
+            }, 300);
+          }, 3000);
+        }
         
         // Close modals on escape key
         document.addEventListener('keydown', function(e) {
@@ -584,6 +642,12 @@ if (database.Icon && database.Icon.Type === 'file') {
     height: auto;
   }
 
+  html {
+    overflow-x: hidden;
+    max-width: 100vw;
+    scroll-behavior: smooth;
+  }
+
   html,
   body {
     padding: 0;
@@ -591,6 +655,13 @@ if (database.Icon && database.Icon.Type === 'file') {
     font-size: 17px;
     overflow-x: hidden;
     max-width: 100vw;
+    width: 100%;
+  }
+
+  /* Ensure all containers respect viewport width */
+  body > * {
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 
   body {
@@ -604,6 +675,18 @@ if (database.Icon && database.Icon.Type === 'file') {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
+  }
+  
+  /* Smooth transitions for interactive elements */
+  a, button {
+    transition: all 0.2s ease;
+  }
+  
+  /* Card hover effects */
+  article:hover,
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
 
   figure {
@@ -775,7 +858,40 @@ if (database.Icon && database.Icon.Type === 'file') {
   
   /* Mobile Drawer Styles */
   #mobile-drawer {
-    z-index: 9999;
+    z-index: 9999 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+  }
+  
+  /* Ensure drawer content is always visible and on top */
+  #mobile-drawer > div:last-child {
+    background-color: white !important;
+    position: relative !important;
+    z-index: 10001 !important;
+    min-height: 100vh;
+  }
+  
+  /* Force white background on drawer content */
+  .mobile-drawer-content {
+    background-color: white !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: relative !important;
+    z-index: 10001 !important;
+  }
+  
+  /* Force white background on all drawer children */
+  .mobile-drawer-content > * {
+    background-color: white !important;
+  }
+  
+  /* Ensure drawer is visible when open */
+  #mobile-drawer:not(.-translate-x-full) .mobile-drawer-content {
+    opacity: 1 !important;
+    visibility: visible !important;
   }
   
   #mobile-drawer.show {
@@ -790,6 +906,22 @@ if (database.Icon && database.Icon.Type === 'file') {
   /* Prevent body scroll when mobile menu is open */
   body.mobile-menu-open {
     overflow: hidden;
+  }
+  
+  /* Overlay styling - must be below drawer content */
+  #mobile-overlay {
+    z-index: 10000 !important;
+    position: fixed !important;
+  }
+  
+  /* Ensure main content stays below drawer */
+  @media (max-width: 767px) {
+    body:has(#mobile-drawer:not(.-translate-x-full)) main,
+    body:has(#mobile-drawer:not(.-translate-x-full)) #main-content,
+    body:has(#mobile-drawer:not(.-translate-x-full)) .min-h-screen {
+      position: relative;
+      z-index: 1;
+    }
   }
   
   /* Responsive main content */
@@ -931,5 +1063,92 @@ if (database.Icon && database.Icon.Type === 'file') {
   
   #main-header.scrolled .border-b {
     border-color: rgba(226, 232, 240, 0.9);
+  }
+  
+  /* Skip to content link */
+  .skip-to-content {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    z-index: 10000;
+    padding: 0.75rem 1.5rem;
+    background-color: #3b82f6;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 0 0 0.5rem 0;
+    transition: top 0.2s ease;
+  }
+  
+  .skip-to-content:focus {
+    top: 0;
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+  
+  /* Improved focus states */
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
+  
+  /* Loading Spinner */
+  .loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: currentColor;
+    animation: spin 0.6s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Notification System */
+  .notification {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(1rem);
+    transition: all 0.3s ease;
+    max-width: 400px;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  .notification.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .notification-success {
+    background-color: #10b981;
+    color: white;
+  }
+  
+  .notification-error {
+    background-color: #ef4444;
+    color: white;
+  }
+  
+  @media (max-width: 640px) {
+    .notification {
+      bottom: 1rem;
+      right: 1rem;
+      left: 1rem;
+      max-width: none;
+    }
   }
 </style>

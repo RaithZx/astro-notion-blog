@@ -6,16 +6,22 @@
 
   <div class="search-modal">
     <div class="search-prompt">
-      <input type="text" placeholder="Piskiza..." />
+      <input type="text" placeholder="Piskiza..." aria-label="Piskiza" />
+      <div class="search-hints">
+        <span class="hint-item"><kbd>↑↓</kbd> Naviga</span>
+        <span class="hint-item"><kbd>Enter</kbd> Abri</span>
+        <span class="hint-item"><kbd>Esc</kbd> Fecha</span>
+      </div>
     </div>
     <div class="search-result">
+      <div class="search-loading" style="display: none;">
+        <div class="loading-spinner"></div>
+        <span>Karrega...</span>
+      </div>
+      <div class="search-empty" style="display: none;">
+        <p>Nunka rezultadu enkontradu.</p>
+      </div>
       <ul>
-        <li class="selected">
-          <a href="#">
-            <div class="search-result-title"></div>
-            <div class="search-result-description"></div>
-          </a>
-        </li>
       </ul>
     </div>
   </div>
@@ -39,40 +45,141 @@
   div.search-modal {
     z-index: 100;
     position: fixed;
-    top: 100px;
-    left: 20%;
-    width: 60%;
-    border-radius: 6px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    border-radius: 12px;
     background-color: var(--bg);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
   @media (max-width: 640px) {
     div.search-modal {
-      left: 0;
-      width: 100%;
+      top: 10%;
+      transform: translate(-50%, 0);
+      width: 95%;
+      max-height: 85vh;
+      border-radius: 8px;
     }
   }
 
   div.search-prompt {
-    margin: 6px 0;
-    padding: 0 6px;
+    margin: 0;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--hr-border);
   }
   div.search-prompt input {
     width: 100%;
     border: 0px solid transparent;
-    padding: 0.4rem;
+    padding: 0.75rem;
     background-color: var(--input-bg);
     color: var(--fg);
-    font-size: 1.2rem;
-    line-height: 1.6rem;
+    font-size: 1.1rem;
+    line-height: 1.5rem;
+    border-radius: 6px;
+    outline: none;
+  }
+  div.search-prompt input:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+  
+  .search-hints {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--hr-border);
+    flex-wrap: wrap;
+  }
+  
+  .hint-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: #94a3b8;
+  }
+  
+  .hint-item kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    height: 1.25rem;
+    padding: 0 0.25rem;
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    font-size: 0.6875rem;
+    font-family: monospace;
+    color: #475569;
+  }
+  
+  @media (max-width: 640px) {
+    .search-hints {
+      gap: 0.75rem;
+    }
+    
+    .hint-item {
+      font-size: 0.6875rem;
+    }
   }
 
   div.search-result {
-    border-top: 1px solid var(--hr-border);
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
   }
   div.search-result ul {
     list-style: none;
-    margin: 0.3rem;
-    padding: 0;
+    margin: 0;
+    padding: 0.5rem;
+  }
+  
+  .search-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    color: #64748b;
+  }
+  
+  .search-loading .loading-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid #e2e8f0;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .search-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: #64748b;
+    text-align: center;
+  }
+  
+  .search-empty p {
+    margin: 0;
+    font-size: 0.875rem;
   }
   div.search-result ul > :global(li) {
   }
@@ -82,7 +189,12 @@
     border-radius: var(--radius);
   }
   div.search-result ul > :global(li.selected > a) {
-    background-color: rgba(241, 241, 239, 1);
+    background-color: #eff6ff;
+    border-left: 3px solid #3b82f6;
+  }
+  
+  div.search-result ul > :global(li > a:hover) {
+    background-color: #f8fafc;
   }
 
   div.search-result :global(div.search-result-title) {
@@ -110,9 +222,42 @@
       document.querySelector('.search-prompt input').focus()
 
       if (!fetched) {
-        await fetchRSS()
+        showLoading()
+        try {
+          await fetchRSS()
+        } catch (error) {
+          showError('Erru durante karga di dados.')
+        } finally {
+          hideLoading()
+        }
       }
       searchAndRender()
+    }
+    
+    function showLoading() {
+      const loading = document.querySelector('.search-loading')
+      const empty = document.querySelector('.search-empty')
+      const ul = document.querySelector('.search-result ul')
+      if (loading) loading.style.display = 'flex'
+      if (empty) empty.style.display = 'none'
+      if (ul) ul.style.display = 'none'
+    }
+    
+    function hideLoading() {
+      const loading = document.querySelector('.search-loading')
+      const ul = document.querySelector('.search-result ul')
+      if (loading) loading.style.display = 'none'
+      if (ul) ul.style.display = 'block'
+    }
+    
+    function showError(message) {
+      const empty = document.querySelector('.search-empty')
+      const ul = document.querySelector('.search-result ul')
+      if (empty) {
+        empty.querySelector('p').textContent = message
+        empty.style.display = 'block'
+      }
+      if (ul) ul.style.display = 'none'
     }
 
     function closeModal() {
@@ -217,7 +362,15 @@
 
     function renderResults(results) {
       const ul = document.querySelector('.search-result ul')
+      const empty = document.querySelector('.search-empty')
       ul.innerHTML = ''
+      
+      if (results.length === 0) {
+        if (empty) empty.style.display = 'block'
+        return
+      }
+      
+      if (empty) empty.style.display = 'none'
 
       results.forEach((item) => {
         const li = document.createElement('li')

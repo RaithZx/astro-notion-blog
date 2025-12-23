@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets'
 import * as interfaces from '../../lib/interfaces.ts'
+import ImageWithBlur from '../../components/ImageWithBlur.astro'
 import {
   getPosts,
   getAllPosts,
@@ -17,6 +18,7 @@ import {
   filePath,
   extractTargetBlocks,
   getDateStr,
+  getNavLink,
 } from '../../lib/blog-helpers.ts'
 import { getImageFromNotionUrl } from '../../lib/image-helpers.ts'
 import Layout from '../../layouts/Layout.astro'
@@ -28,6 +30,9 @@ import PostRelativeLink from '../../components/PostRelativeLink.astro'
 import BlogPostsLink from '../../components/BlogPostsLink.astro'
 import BlogTagsLink from '../../components/BlogTagsLink.astro'
 import NoContents from '../../components/NoContents.astro'
+import Breadcrumbs from '../../components/Breadcrumbs.astro'
+import ShareButtons from '../../components/ShareButtons.astro'
+import RelatedArticles from '../../components/RelatedArticles.astro'
 
 export async function getStaticPaths() {
   const posts = await getAllPosts()
@@ -103,19 +108,41 @@ function estimateReadingTime(excerpt: string): string {
 >
   <div slot="main" class="p-0">
     <div class="mx-auto mb-10">
+      <Breadcrumbs 
+        items={[
+          { label: 'Inisiu', href: getNavLink('/') },
+          { label: 'Artigus', href: getNavLink('/') },
+          { label: post.Title }
+        ]}
+      />
+      
       <header class="pb-5">
         <PostDate post={post} />
         <PostTags post={post} />
         <PostTitle post={post} enableLink={false} />
       </header>
       
+      <ShareButtons 
+        title={post.Title}
+        url={new URL(getPostLink(post.Slug), Astro.site).toString()}
+        description={post.Excerpt}
+      />
+      
       <PostBody blocks={blocks} />
+      
+      <ShareButtons 
+        title={post.Title}
+        url={new URL(getPostLink(post.Slug), Astro.site).toString()}
+        description={post.Excerpt}
+      />
       
       <PostTags post={post} />
 
-      <footer class="border-t border-dashed border-slate-400 mx-auto pt-10 max-sm:mb-10">
-        <PostRelativeLink prevPost={prevPost} nextPost={nextPost} />
-      </footer>
+      <RelatedArticles 
+        posts={postsHavingSameTag.length > 0 ? postsHavingSameTag : rankedPosts}
+        currentPostSlug={post.Slug}
+        title="Bu ta gosta di lê otu artigu"
+      />
     </div>
   </div>
 
@@ -133,7 +160,7 @@ function estimateReadingTime(excerpt: string): string {
               .map((relatedPost: interfaces.Post) => (
                 <a 
                   href={getPostLink(relatedPost.Slug)} 
-                  class="block group bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md hover:border-blue-300 transition-all"
+                  class="block group bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md hover:border-blue-300 hover:-translate-y-1 transition-all duration-200"
                 >
                   <div class="space-y-2">
                     {(() => {
@@ -143,24 +170,15 @@ function estimateReadingTime(excerpt: string): string {
                         .findIndex((p: interfaces.Post) => p.Slug === relatedPost.Slug)
                       const image = imageIndex >= 0 ? postsHavingSameTagImages[imageIndex] : null
                       return image && (
-                        <div class="w-full aspect-video rounded-md overflow-hidden bg-slate-200">
-                          {typeof image === 'string' ? (
-                            <img
-                              src={image}
-                              alt={relatedPost.Title}
-                              class="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <Image
-                              src={image}
-                              alt={relatedPost.Title}
-                              width={relatedPost.FeaturedImage?.Width}
-                              height={relatedPost.FeaturedImage?.Height}
-                              class="w-full h-full object-cover"
-                              loading="lazy"
-                            />
-                          )}
-                        </div>
+                        <ImageWithBlur
+                          src={image}
+                          alt={relatedPost.Title}
+                          width={typeof image === 'string' ? undefined : image.width}
+                          height={typeof image === 'string' ? undefined : image.height}
+                          loading="lazy"
+                          aspectRatio="16/9"
+                          class="rounded-md"
+                        />
                       )
                     })()}
                     <h4 class="m-0 text-sm font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
@@ -191,31 +209,22 @@ function estimateReadingTime(excerpt: string): string {
               .map((rankedPost: interfaces.Post) => (
                 <a 
                   href={getPostLink(rankedPost.Slug)} 
-                  class="block group bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md hover:border-blue-300 transition-all"
+                  class="block group bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md hover:border-blue-300 hover:-translate-y-1 transition-all duration-200"
                 >
                   <div class="space-y-2">
                     {(() => {
                       const imageIndex = rankedPosts.slice(0, 5).findIndex((p: interfaces.Post) => p.Slug === rankedPost.Slug)
                       const image = imageIndex >= 0 ? rankedPostsImages[imageIndex] : null
                       return image && (
-                        <div class="w-full aspect-video rounded-md overflow-hidden bg-slate-200">
-                          {typeof image === 'string' ? (
-                            <img
-                              src={image}
-                              alt={rankedPost.Title}
-                              class="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <Image
-                              src={image}
-                              alt={rankedPost.Title}
-                              width={rankedPost.FeaturedImage?.Width}
-                              height={rankedPost.FeaturedImage?.Height}
-                              class="w-full h-full object-cover"
-                              loading="lazy"
-                            />
-                          )}
-                        </div>
+                        <ImageWithBlur
+                          src={image}
+                          alt={rankedPost.Title}
+                          width={typeof image === 'string' ? undefined : image.width}
+                          height={typeof image === 'string' ? undefined : image.height}
+                          loading="lazy"
+                          aspectRatio="16/9"
+                          class="rounded-md"
+                        />
                       )
                     })()}
                     <h4 class="m-0 text-sm font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
@@ -246,31 +255,22 @@ function estimateReadingTime(excerpt: string): string {
               .map((recentPost: interfaces.Post) => (
                 <a 
                   href={getPostLink(recentPost.Slug)} 
-                  class="block group bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md hover:border-blue-300 transition-all"
+                  class="block group bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md hover:border-blue-300 hover:-translate-y-1 transition-all duration-200"
                 >
                   <div class="space-y-2">
                     {(() => {
                       const imageIndex = recentPosts.slice(0, 5).findIndex((p: interfaces.Post) => p.Slug === recentPost.Slug)
                       const image = imageIndex >= 0 ? recentPostsImages[imageIndex] : null
                       return image && (
-                        <div class="w-full aspect-video rounded-md overflow-hidden bg-slate-200">
-                          {typeof image === 'string' ? (
-                            <img
-                              src={image}
-                              alt={recentPost.Title}
-                              class="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <Image
-                              src={image}
-                              alt={recentPost.Title}
-                              width={recentPost.FeaturedImage?.Width}
-                              height={recentPost.FeaturedImage?.Height}
-                              class="w-full h-full object-cover"
-                              loading="lazy"
-                            />
-                          )}
-                        </div>
+                        <ImageWithBlur
+                          src={image}
+                          alt={recentPost.Title}
+                          width={typeof image === 'string' ? undefined : image.width}
+                          height={typeof image === 'string' ? undefined : image.height}
+                          loading="lazy"
+                          aspectRatio="16/9"
+                          class="rounded-md"
+                        />
                       )
                     })()}
                     <h4 class="m-0 text-sm font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">

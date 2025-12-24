@@ -33,6 +33,7 @@ import NoContents from '../../components/NoContents.astro'
 import Breadcrumbs from '../../components/Breadcrumbs.astro'
 import ShareButtons from '../../components/ShareButtons.astro'
 import RelatedArticles from '../../components/RelatedArticles.astro'
+import SubscribeBanner from '../../components/subscribeBanner.astro'
 
 export async function getStaticPaths() {
   const posts = await getAllPosts()
@@ -85,7 +86,7 @@ const recentPostsImages = recentPosts.slice(0, 5).map(loadPostImage)
 // Helper function to format date as "12 Jul 2025"
 function formatDateShort(date: string): string {
   const dt = new Date(date)
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const months = ['Jan', 'Feb', 'Mar', 'Abr', 'Maiu', 'Jun', 'Jul', 'Ago', 'Set', 'Otu', 'Nov', 'Diz']
   const day = dt.getDate()
   const month = months[dt.getMonth()]
   const year = dt.getFullYear()
@@ -130,6 +131,9 @@ function estimateReadingTime(excerpt: string): string {
       
       <PostBody blocks={blocks} />
       
+      <!-- Article end marker for scroll tracking -->
+      <div id="article-content-end" style="height: 1px;"></div>
+      
       <ShareButtons 
         title={post.Title}
         url={new URL(getPostLink(post.Slug), Astro.site).toString()}
@@ -137,6 +141,9 @@ function estimateReadingTime(excerpt: string): string {
       />
       
       <PostTags post={post} />
+
+      <!-- Newsletter Subscription Banner - At the end of page -->
+      <SubscribeBanner />
 
       <RelatedArticles 
         posts={postsHavingSameTag.length > 0 ? postsHavingSameTag : rankedPosts}

@@ -1,32 +1,112 @@
 ---
-export interface SubscribeBannerProps {
-  title: string;
-  description: string;
-  email: string;
-  buttonText: string;
-}
-
-const { title, description, email, buttonText } = Astro.props;
+// Inline newsletter subscription banner with form logic
+// Newsletter API URL - defaults to relative path for production (Coolify proxy)
+const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
 ---
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-lg p-6 mb-8 relative overflow-hidden">
-      <div class="absolute -top-1/2 -right-1/2 w-full h-full bg-white/10 rounded-full rotate-45"></div>
-      <div class="relative z-10">
-        <div class="flex justify-between items-center mb-4">
-          <div class="font-bold text-2xl">📧</div>
-          <div class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">Di grasa</div>
-        </div>
-        <h2 class="m-0 mb-2 text-xl font-bold text-white">Fika ligadu</h2>
-        <p class="m-0 mb-4 text-sm opacity-90 text-white">Resebe kes ultimu artigu i stórias na bu email 
-		</p>
-	<div class="flex gap-3 max-sm:flex-col">
-           <input 
-             type="email" 
-             placeholder="Bu email" 
-             class="flex-1 px-4 py-2 rounded-md border-0 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-white/50"
-           />
-           <button class="bg-white text-blue-600 border-0 px-6 py-2 rounded-md font-semibold cursor-pointer transition-transform hover:-translate-y-0.5 hover:bg-blue-50 whitespace-nowrap">
-             Inskreve
-           </button>
-         </div>
-      </div>
+<div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-lg p-6 mb-8 relative overflow-hidden">
+  <div class="absolute -top-1/2 -right-1/2 w-full h-full bg-white/10 rounded-full rotate-45"></div>
+  <div class="relative z-10">
+    <div class="flex justify-between items-center mb-4">
+      <div class="font-bold text-2xl">📧</div>
+      <div class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">Di grasa</div>
     </div>
+    <h2 class="m-0 mb-2 text-xl font-bold text-white">Fika ligadu</h2>
+    <p class="m-0 mb-4 text-sm opacity-90 text-white">Resebe kes ultimu artigu i stórias na bu email</p>
+    
+    <form id="inline-newsletter-form" class="flex gap-3 max-sm:flex-col">
+      <input 
+        type="email" 
+        id="inline-email"
+        name="email"
+        placeholder="Bu email" 
+        required
+        class="flex-1 px-4 py-2 rounded-md border-0 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-white/50"
+      />
+      <input 
+        type="text" 
+        name="honeypot" 
+        id="inline-honeypot"
+        style="position: absolute; left: -9999px; opacity: 0;" 
+        tabindex="-1" 
+        autocomplete="off"
+        aria-hidden="true"
+      />
+      <button type="submit" class="bg-white text-blue-600 border-0 px-6 py-2 rounded-md font-semibold cursor-pointer transition-transform hover:-translate-y-0.5 hover:bg-blue-50 whitespace-nowrap">
+        Inskreve
+      </button>
+    </form>
+    
+    <p id="inline-message" class="m-0 mt-2 text-xs hidden"></p>
+  </div>
+</div>
+
+<script define:vars={{ newsletterApiUrl }}>
+  const inlineForm = document.getElementById('inline-newsletter-form');
+  const inlineMessage = document.getElementById('inline-message');
+  const inlineEmail = document.getElementById('inline-email');
+  const inlineHoneypot = document.getElementById('inline-honeypot');
+  
+  // Newsletter API configuration
+  const API_BASE_URL = newsletterApiUrl || '';
+  
+  if (inlineForm) {
+    inlineForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(inlineForm);
+      const email = formData.get('email');
+      const honeypot = formData.get('honeypot');
+      const submitButton = inlineForm.querySelector('button[type="submit"]');
+      
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Enviadu...';
+      }
+      
+      try {
+        const apiUrl = API_BASE_URL ? `${API_BASE_URL}/api/subscribe` : '/api/subscribe';
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            email, 
+            privacy: true, // Implicit consent from inline form
+            honeypot 
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+          // Mark as subscribed
+          localStorage.setItem('newsletter_subscribed', 'true');
+          
+          if (inlineMessage) {
+            inlineMessage.textContent = data.message;
+            inlineMessage.className = 'm-0 mt-2 text-xs text-green-200';
+            inlineMessage.classList.remove('hidden');
+          }
+          inlineForm.reset();
+        } else {
+          if (inlineMessage) {
+            inlineMessage.textContent = data.error || 'Erru durante inskrisaun.';
+            inlineMessage.className = 'm-0 mt-2 text-xs text-red-200';
+            inlineMessage.classList.remove('hidden');
+          }
+        }
+      } catch (error) {
+        console.error('Subscription error:', error);
+        if (inlineMessage) {
+          inlineMessage.textContent = 'Erru di koneksaun. Tenta otu vez.';
+          inlineMessage.className = 'm-0 mt-2 text-xs text-red-200';
+          inlineMessage.classList.remove('hidden');
+        }
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Inskreve';
+        }
+      }
+    });
+  }
+</script>

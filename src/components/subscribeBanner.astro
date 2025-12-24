@@ -1,42 +1,84 @@
 ---
-// Inline newsletter subscription banner with form logic
+// Inline newsletter subscription banner with form logic - Compact modern design
 // Newsletter API URL - defaults to relative path for production (Coolify proxy)
 const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
 ---
-<div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-lg p-6 mb-8 relative overflow-hidden">
-  <div class="absolute -top-1/2 -right-1/2 w-full h-full bg-white/10 rounded-full rotate-45"></div>
-  <div class="relative z-10">
-    <div class="flex justify-between items-center mb-4">
-      <div class="font-bold text-2xl">📧</div>
-      <div class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">Di grasa</div>
+<!-- Newsletter Banner - Compact Modern Design -->
+<div class="mt-12 mb-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg overflow-hidden">
+  <div class="relative px-6 py-5">
+    <!-- Decorative background element -->
+    <div class="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-24 -mt-24 blur-3xl"></div>
+    
+    <div class="relative z-10">
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2.5">
+          <!-- Icon -->
+          <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+          
+          <!-- Text -->
+          <div>
+            <h3 class="text-base font-bold text-white m-0 mb-0.5 leading-tight">Fika Ligadu</h3>
+            <p class="text-blue-50 text-xs m-0 leading-tight">Resebe artigus na bu email</p>
+          </div>
+        </div>
+        
+        <!-- Badge -->
+        <span class="bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-xs font-medium text-white flex-shrink-0">
+          Gratis
+        </span>
+      </div>
+      
+      <!-- Form -->
+      <form id="inline-newsletter-form" class="flex gap-2 max-sm:flex-col">
+        <div class="flex-1">
+          <input 
+            type="email" 
+            id="inline-email"
+            name="email"
+            placeholder="bu@email.com" 
+            required
+            class="w-full px-3 py-2 border-0 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-white/50 shadow-md"
+          />
+        </div>
+        
+        <!-- Honeypot -->
+        <input 
+          type="text" 
+          name="honeypot" 
+          id="inline-honeypot"
+          style="position: absolute; left: -9999px; opacity: 0;" 
+          tabindex="-1" 
+          autocomplete="off"
+          aria-hidden="true"
+        />
+        
+        <button 
+          type="submit" 
+          class="bg-white hover:bg-blue-50 text-blue-600 text-sm font-semibold border-0 px-5 py-2 rounded-lg cursor-pointer transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap flex items-center justify-center gap-1.5"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+          </svg>
+          Inskreve
+        </button>
+      </form>
+      
+      <!-- Success/Error Message -->
+      <p id="inline-message" class="m-0 mt-2.5 text-xs font-medium hidden"></p>
+      
+      <!-- Trust Badge -->
+      <p class="text-xs text-blue-50/90 mt-3 mb-0 flex items-center gap-1">
+        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        Nunka spam
+      </p>
     </div>
-    <h2 class="m-0 mb-2 text-xl font-bold text-white">Fika ligadu</h2>
-    <p class="m-0 mb-4 text-sm opacity-90 text-white">Resebe kes ultimu artigu i stórias na bu email</p>
-    
-    <form id="inline-newsletter-form" class="flex gap-3 max-sm:flex-col">
-      <input 
-        type="email" 
-        id="inline-email"
-        name="email"
-        placeholder="Bu email" 
-        required
-        class="flex-1 px-4 py-2 rounded-md border-0 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-white/50"
-      />
-      <input 
-        type="text" 
-        name="honeypot" 
-        id="inline-honeypot"
-        style="position: absolute; left: -9999px; opacity: 0;" 
-        tabindex="-1" 
-        autocomplete="off"
-        aria-hidden="true"
-      />
-      <button type="submit" class="bg-white text-blue-600 border-0 px-6 py-2 rounded-md font-semibold cursor-pointer transition-transform hover:-translate-y-0.5 hover:bg-blue-50 whitespace-nowrap">
-        Inskreve
-      </button>
-    </form>
-    
-    <p id="inline-message" class="m-0 mt-2 text-xs hidden"></p>
   </div>
 </div>
 
@@ -60,7 +102,12 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
       
       if (submitButton) {
         submitButton.disabled = true;
-        submitButton.textContent = 'Enviadu...';
+        submitButton.innerHTML = `
+          <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          <span class="text-xs">Enviadu...</span>
+        `;
       }
       
       try {
@@ -70,7 +117,7 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
             email, 
-            privacy: true, // Implicit consent from inline form
+            privacy: true,
             honeypot 
           })
         });
@@ -78,35 +125,40 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
         const data = await response.json();
         
         if (response.ok && data.success) {
-          // Mark as subscribed
           localStorage.setItem('newsletter_subscribed', 'true');
           
           if (inlineMessage) {
-            inlineMessage.textContent = data.message;
-            inlineMessage.className = 'm-0 mt-2 text-xs text-green-200';
+            inlineMessage.textContent = '✓ ' + data.message;
+            inlineMessage.className = 'm-0 mt-2.5 text-xs font-medium text-white bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-lg';
             inlineMessage.classList.remove('hidden');
           }
           inlineForm.reset();
         } else {
           if (inlineMessage) {
-            inlineMessage.textContent = data.error || 'Erru durante inskrisaun.';
-            inlineMessage.className = 'm-0 mt-2 text-xs text-red-200';
+            inlineMessage.textContent = '✕ ' + (data.error || 'Erru durante inskrisaun.');
+            inlineMessage.className = 'm-0 mt-2.5 text-xs font-medium text-red-100 bg-red-500/30 backdrop-blur-sm px-3 py-1.5 rounded-lg';
             inlineMessage.classList.remove('hidden');
           }
         }
       } catch (error) {
         console.error('Subscription error:', error);
         if (inlineMessage) {
-          inlineMessage.textContent = 'Erru di koneksaun. Tenta otu vez.';
-          inlineMessage.className = 'm-0 mt-2 text-xs text-red-200';
+          inlineMessage.textContent = '✕ Erru di koneksaun. Tenta otu vez.';
+          inlineMessage.className = 'm-0 mt-2.5 text-xs font-medium text-red-100 bg-red-500/30 backdrop-blur-sm px-3 py-1.5 rounded-lg';
           inlineMessage.classList.remove('hidden');
         }
       } finally {
         if (submitButton) {
           submitButton.disabled = false;
-          submitButton.textContent = 'Inskreve';
+          submitButton.innerHTML = `
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+            Inskreve
+          `;
         }
       }
     });
   }
 </script>
+

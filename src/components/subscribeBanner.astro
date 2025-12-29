@@ -23,13 +23,13 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
           <!-- Text -->
           <div>
             <h3 class="text-base font-bold text-white m-0 mb-0.5 leading-tight">Fika Ligadu</h3>
-            <p class="text-blue-50 text-xs m-0 leading-tight">Resebe artigus na bu email</p>
+            <p class="text-blue-50 text-xs m-0 leading-tight">Resebe kes ultimu artigu i stórias na bu email</p>
           </div>
         </div>
         
         <!-- Badge -->
         <span class="bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-xs font-medium text-white flex-shrink-0">
-          Gratis
+          Di grasa
         </span>
       </div>
       
@@ -40,7 +40,7 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
             type="email" 
             id="inline-email"
             name="email"
-            placeholder="bu@email.com" 
+            placeholder="Bu email" 
             required
             class="w-full px-3 py-2 border-0 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-white/50 shadow-md"
           />
@@ -171,7 +171,7 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
           inlineForm.reset();
         } else {
           if (inlineMessage) {
-            inlineMessage.textContent = '✕ ' + (data.error || 'Erru durante inskrisaun.');
+            inlineMessage.textContent = '✕ ' + (data.error || 'Algun eru kontise duranti bu inskrison. Pur favor, tenta otu bês.');
             inlineMessage.className = 'm-0 mt-2.5 text-xs font-medium text-red-100 bg-red-500/30 backdrop-blur-sm px-3 py-1.5 rounded-lg';
             inlineMessage.classList.remove('hidden');
           }
@@ -179,7 +179,7 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
       } catch (error) {
         console.error('Subscription error:', error);
         if (inlineMessage) {
-          inlineMessage.textContent = '✕ Erru di koneksaun. Tenta otu vez.';
+          inlineMessage.textContent = '✕ Eru di ligason. Tenta otu bês.';
           inlineMessage.className = 'm-0 mt-2.5 text-xs font-medium text-red-100 bg-red-500/30 backdrop-blur-sm px-3 py-1.5 rounded-lg';
           inlineMessage.classList.remove('hidden');
         }

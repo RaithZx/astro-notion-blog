@@ -162,48 +162,46 @@ if (database.Icon && database.Icon.Type === 'file') {
       </div>
       
       <!-- Mobile Navigation Drawer -->
-      <div id="mobile-drawer" class="md:hidden fixed inset-0 transform -translate-x-full transition-transform duration-300 ease-in-out pointer-events-none" style="z-index: 9999 !important;">
-        <!-- Overlay -->
-        <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 pointer-events-auto" style="z-index: 10000;"></div>
+      <!-- Overlay -->
+      <div id="mobile-overlay" class="md:hidden fixed inset-0 bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 pointer-events-none" style="z-index: 9998;"></div>
+      
+      <!-- Drawer Content -->
+      <div id="mobile-drawer" class="md:hidden fixed top-0 left-0 w-80 max-w-sm h-full bg-white shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out pointer-events-none flex flex-col" style="z-index: 9999;">
+        <!-- Drawer Header -->
+        <div class="flex items-center justify-end p-4 border-b border-slate-200 bg-white">
+          <button 
+            id="mobile-close-button" 
+            class="bg-transparent border-0 text-slate-600 text-2xl cursor-pointer p-2 hover:bg-slate-100 rounded focus-visible:outline-2 focus-visible:outline-blue-500 focus-visible:outline-offset-2"
+            aria-label="Fecha menu mobil"
+          >
+            <span aria-hidden="true">✕</span>
+          </button>
+        </div>
         
-        <!-- Drawer Content -->
-        <div class="mobile-drawer-content relative flex flex-col w-80 max-w-sm h-full bg-white shadow-xl pointer-events-auto" style="z-index: 10001 !important; background-color: white !important; opacity: 1 !important;">
-          <!-- Drawer Header -->
-          <div class="flex items-center justify-end p-4 border-b border-slate-200 bg-white">
-            <button 
-              id="mobile-close-button" 
-              class="bg-transparent border-0 text-slate-600 text-2xl cursor-pointer p-2 hover:bg-slate-100 rounded focus-visible:outline-2 focus-visible:outline-blue-500 focus-visible:outline-offset-2"
-              aria-label="Fecha menu mobil"
-            >
-              <span aria-hidden="true">✕</span>
-            </button>
-          </div>
+        <!-- Drawer Navigation -->
+        <div class="flex-1 p-4 bg-white overflow-y-auto">
+          <nav class="space-y-2">
+            <a href={getNavLink('/')} class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Inisiu</a>
+            <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Saúdi</a>
+            <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Siénsia</a>
+            <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Tekinolojia</a>
+            <a href={getNavLink('/kontaktu')} class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Kontaktu</a>
+          </nav>
           
-          <!-- Drawer Navigation -->
-          <div class="flex-1 p-4 bg-white">
-            <nav class="space-y-2">
-              <a href={getNavLink('/')} class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Inisiu</a>
-              <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Saúdi</a>
-              <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Siénsia</a>
-              <a href="#" class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Tekinolojia</a>
-              <a href={getNavLink('/kontaktu')} class="block text-slate-600 no-underline py-3 px-4 font-medium rounded hover:text-slate-800 hover:bg-slate-100">Kontaktu</a>
-            </nav>
-            
-            <!-- Mobile Search and CTA Buttons -->
-            <div class="mt-6 pt-6 border-t border-slate-200 space-y-3">
-              <button 
-                class="open-search-modal w-full bg-transparent border border-slate-300 text-slate-700 px-4 py-2 rounded text-sm font-normal cursor-pointer hover:bg-slate-50 flex items-center justify-center gap-2"
-                type="button"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-                <span>Piskiza...</span>
-              </button>
-              <button class="newsletter-btn w-full bg-transparent border border-slate-300 text-slate-700 px-4 py-2 rounded text-sm font-normal cursor-pointer hover:bg-slate-50">
-                Inskreve
-              </button>
-            </div>
+          <!-- Mobile Search and CTA Buttons -->
+          <div class="mt-6 pt-6 border-t border-slate-200 space-y-3">
+            <button 
+              class="open-search-modal w-full bg-transparent border border-slate-300 text-slate-700 px-4 py-2 rounded text-sm font-normal cursor-pointer hover:bg-slate-50 flex items-center justify-center gap-2"
+              type="button"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+              <span>Piskiza...</span>
+            </button>
+            <button class="newsletter-btn w-full bg-transparent border border-slate-300 text-slate-700 px-4 py-2 rounded text-sm font-normal cursor-pointer hover:bg-slate-50">
+              Inskreve
+            </button>
           </div>
         </div>
       </div>
@@ -468,30 +466,45 @@ if (database.Icon && database.Icon.Type === 'file') {
         
         // Mobile Menu Functions
         function openMobileMenu() {
-          mobileDrawer.classList.remove('-translate-x-full');
-          mobileDrawer.style.pointerEvents = 'auto';
-          mobileDrawer.style.zIndex = '9999';
+          const drawer = document.getElementById('mobile-drawer');
+          const overlay = document.getElementById('mobile-overlay');
+          
+          // Enable pointer events
+          drawer.style.pointerEvents = 'auto';
+          overlay.style.pointerEvents = 'auto';
+          
+          // Show overlay
+          overlay.classList.remove('opacity-0');
+          overlay.classList.add('opacity-100');
+          
+          // Slide in drawer
+          drawer.classList.remove('-translate-x-full');
+          drawer.classList.add('translate-x-0');
+          
           mobileMenuButton.setAttribute('aria-expanded', 'true');
           document.body.style.overflow = 'hidden';
-          // Ensure main content stays below drawer
-          const mainContent = document.getElementById('main-content');
-          const mainContainer = document.querySelector('.min-h-screen');
-          if (mainContent) mainContent.style.zIndex = '1';
-          if (mainContainer) mainContainer.style.zIndex = '1';
         }
         
         function closeMobileMenu() {
-          mobileDrawer.classList.add('-translate-x-full');
+          const drawer = document.getElementById('mobile-drawer');
+          const overlay = document.getElementById('mobile-overlay');
+          
+          // Slide out drawer
+          drawer.classList.remove('translate-x-0');
+          drawer.classList.add('-translate-x-full');
+          
+          // Hide overlay
+          overlay.classList.remove('opacity-100');
+          overlay.classList.add('opacity-0');
+          
+          // Disable pointer events after animation
           setTimeout(() => {
-            mobileDrawer.style.pointerEvents = 'none';
+            drawer.style.pointerEvents = 'none';
+            overlay.style.pointerEvents = 'none';
           }, 300);
+          
           mobileMenuButton.setAttribute('aria-expanded', 'false');
           document.body.style.overflow = '';
-          // Reset main content z-index
-          const mainContent = document.getElementById('main-content');
-          const mainContainer = document.querySelector('.min-h-screen');
-          if (mainContent) mainContent.style.zIndex = '';
-          if (mainContainer) mainContainer.style.zIndex = '';
         }
         
         // Newsletter Modal Functions
@@ -982,72 +995,13 @@ if (database.Icon && database.Icon.Type === 'file') {
     }
   }
   
-  /* Mobile Drawer Styles */
+  /* Mobile Drawer and Overlay Styles */
   #mobile-drawer {
     z-index: 9999 !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
   }
   
-  /* Ensure drawer content is always visible and on top */
-  #mobile-drawer > div:last-child {
-    background-color: white !important;
-    position: relative !important;
-    z-index: 10001 !important;
-    min-height: 100vh;
-  }
-  
-  /* Force white background on drawer content */
-  .mobile-drawer-content {
-    background-color: white !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    position: relative !important;
-    z-index: 10001 !important;
-  }
-  
-  /* Force white background on all drawer children */
-  .mobile-drawer-content > * {
-    background-color: white !important;
-  }
-  
-  /* Ensure drawer is visible when open */
-  #mobile-drawer:not(.-translate-x-full) .mobile-drawer-content {
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
-  
-  #mobile-drawer.show {
-    transform: translateX(0);
-  }
-  
-  /* Smooth transitions for mobile menu */
-  .mobile-menu-transition {
-    transition: transform 0.3s ease-in-out;
-  }
-  
-  /* Prevent body scroll when mobile menu is open */
-  body.mobile-menu-open {
-    overflow: hidden;
-  }
-  
-  /* Overlay styling - must be below drawer content */
   #mobile-overlay {
-    z-index: 10000 !important;
-    position: fixed !important;
-  }
-  
-  /* Ensure main content stays below drawer */
-  @media (max-width: 767px) {
-    body:has(#mobile-drawer:not(.-translate-x-full)) main,
-    body:has(#mobile-drawer:not(.-translate-x-full)) #main-content,
-    body:has(#mobile-drawer:not(.-translate-x-full)) .min-h-screen {
-      position: relative;
-      z-index: 1;
-    }
+    z-index: 9998 !important;
   }
   
   /* Responsive main content */

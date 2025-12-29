@@ -4,7 +4,7 @@
 const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
 ---
 <!-- Newsletter Banner - Compact Modern Design -->
-<div class="mt-12 mb-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg overflow-hidden">
+<div id="inline-newsletter-banner" class="mt-12 mb-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg overflow-hidden">
   <div class="relative px-6 py-5">
     <!-- Decorative background element -->
     <div class="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-24 -mt-24 blur-3xl"></div>
@@ -87,9 +87,27 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
   const inlineMessage = document.getElementById('inline-message');
   const inlineEmail = document.getElementById('inline-email');
   const inlineHoneypot = document.getElementById('inline-honeypot');
+  const inlineBanner = document.getElementById('inline-newsletter-banner');
   
   // Newsletter API configuration
   const API_BASE_URL = newsletterApiUrl || '';
+  
+  // 📊 TRACK: Inline banner viewed (when it enters viewport)
+  if (inlineBanner && typeof window.umami !== 'undefined') {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const articleTitle = document.querySelector('article h1')?.textContent?.trim();
+          window.umami.track('inline_banner_viewed', { 
+            article: articleTitle || 'unknown' 
+          });
+          observer.disconnect(); // Only track once
+        }
+      });
+    }, { threshold: 0.5 }); // Track when 50% visible
+    
+    observer.observe(inlineBanner);
+  }
   
   if (inlineForm) {
     inlineForm.addEventListener('submit', async function(e) {
@@ -99,6 +117,14 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
       const email = formData.get('email');
       const honeypot = formData.get('honeypot');
       const submitButton = inlineForm.querySelector('button[type="submit"]');
+      
+      // 📊 TRACK: Inline banner clicked
+      if (typeof window.umami !== 'undefined') {
+        const articleTitle = document.querySelector('article h1')?.textContent?.trim();
+        window.umami.track('inline_banner_clicked', { 
+          article: articleTitle || 'unknown' 
+        });
+      }
       
       if (submitButton) {
         submitButton.disabled = true;
@@ -125,6 +151,16 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
         const data = await response.json();
         
         if (response.ok && data.success) {
+          // 📊 TRACK: Subscription via inline banner
+          if (typeof window.umami !== 'undefined') {
+            const articleTitle = document.querySelector('article h1')?.textContent?.trim();
+            window.umami.track('newsletter_subscribed', {
+              source: 'inline_banner',
+              article: articleTitle || 'unknown',
+              already_subscribed: data.alreadySubscribed || false
+            });
+          }
+          
           localStorage.setItem('newsletter_subscribed', 'true');
           
           if (inlineMessage) {

@@ -22,6 +22,9 @@ const { title = 'Ligadu', description = 'Artigus di siensia, teknolojia i saúdi
 // Check if we should show the coming soon page
 const showComingSoon = COMING_SOON === 'true' || COMING_SOON === true
 
+// Check if we're in production for analytics tracking
+const isProduction = import.meta.env.PROD
+
 const database = await getDatabase()
 
 const siteTitle = title ? `${title}` : 'Ligadu'
@@ -95,7 +98,12 @@ if (database.Icon && database.Icon.Type === 'file') {
       integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0"
       crossorigin="anonymous"
     />
-	 <script defer src="https://stats.ligadu.com/script.js" data-website-id="3a333f58-6b50-445d-9ccf-3cec581bc5e9"></script>
+	 <script 
+      defer 
+      src="https://stats.ligadu.com/script.js" 
+      data-website-id="3a333f58-6b50-445d-9ccf-3cec581bc5e9"
+      data-do-not-track={isProduction ? "false" : "true"}
+    ></script>
   </head>
   <body>
     {showComingSoon ? (
@@ -483,6 +491,11 @@ if (database.Icon && database.Icon.Type === 'file') {
           
           mobileMenuButton.setAttribute('aria-expanded', 'true');
           document.body.style.overflow = 'hidden';
+          
+          // 📊 TRACK: Mobile menu opened
+          if (typeof window.umami !== 'undefined') {
+            window.umami.track('menu_opened', { device: 'mobile' });
+          }
         }
         
         function closeMobileMenu() {
@@ -507,10 +520,29 @@ if (database.Icon && database.Icon.Type === 'file') {
           document.body.style.overflow = '';
         }
         
+        // Newsletter tracking variables
+        let modalOpenTime = 0;
+        let currentTrigger = 'unknown';
+        const pageStartTime = Date.now();
+        
         // Newsletter Modal Functions
-        function openNewsletterModal() {
+        function openNewsletterModal(trigger = 'unknown') {
+          currentTrigger = trigger;
+          modalOpenTime = Date.now();
+          
           newsletterModal.classList.remove('hidden');
           document.body.style.overflow = 'hidden';
+          
+          // 📊 TRACK: Newsletter modal opened
+          if (typeof window.umami !== 'undefined') {
+            const articleTitle = document.querySelector('article h1')?.textContent?.trim();
+            window.umami.track('newsletter_modal_opened', {
+              trigger: trigger,
+              seconds_on_page: Math.round((Date.now() - pageStartTime) / 1000),
+              article: articleTitle || 'homepage'
+            });
+          }
+          
           // Focus on email input
           setTimeout(() => {
             document.getElementById('newsletter-email').focus();
@@ -518,10 +550,25 @@ if (database.Icon && database.Icon.Type === 'file') {
         }
         
         function closeNewsletterModal() {
+          const timeOpen = modalOpenTime > 0 ? Math.round((Date.now() - modalOpenTime) / 1000) : 0;
+          const emailInput = document.getElementById('newsletter-email');
+          const formTouched = emailInput && emailInput.value.length > 0;
+          
+          // 📊 TRACK: Modal dismissed (only if it was opened)
+          if (typeof window.umami !== 'undefined' && modalOpenTime > 0) {
+            const articleTitle = document.querySelector('article h1')?.textContent?.trim();
+            window.umami.track('newsletter_modal_dismissed', {
+              seconds_open: timeOpen,
+              had_interaction: formTouched,
+              article: articleTitle || 'homepage'
+            });
+          }
+          
           newsletterModal.classList.add('hidden');
           document.body.style.overflow = '';
           // Reset form
           newsletterForm.reset();
+          modalOpenTime = 0;
         }
         
         // Mobile Menu Event Listeners
@@ -533,7 +580,7 @@ if (database.Icon && database.Icon.Type === 'file') {
         ctaButtons.forEach(button => {
           button.addEventListener('click', function(e) {
             e.preventDefault();
-            openNewsletterModal();
+            openNewsletterModal('cta_click');
           });
         });
         
@@ -585,6 +632,17 @@ if (database.Icon && database.Icon.Type === 'file') {
             const data = await response.json();
             
             if (response.ok && data.success) {
+              // 📊 TRACK: Newsletter subscription
+              if (typeof window.umami !== 'undefined') {
+                const articleTitle = document.querySelector('article h1')?.textContent?.trim();
+                window.umami.track('newsletter_subscribed', {
+                  source: 'modal',
+                  article: articleTitle || 'homepage',
+                  seconds_to_convert: Math.round((Date.now() - pageStartTime) / 1000),
+                  already_subscribed: data.alreadySubscribed || false
+                });
+              }
+              
               // Mark as subscribed in localStorage
               localStorage.setItem('newsletter_subscribed', 'true');
               
@@ -656,7 +714,7 @@ if (database.Icon && database.Icon.Type === 'file') {
               // Trigger at 50% of article content
               if (articleScrollPercent > 50) {
                 hasShownModal = true;
-                setTimeout(openNewsletterModal, 500);
+                setTimeout(() => openNewsletterModal('scroll'), 500);
               }
             } else {
               // Fallback for other pages: use main content area
@@ -674,7 +732,7 @@ if (database.Icon && database.Icon.Type === 'file') {
               // Trigger at 50% of content
               if (contentScrollPercent > 50 && scrollPosition > contentTop) {
                 hasShownModal = true;
-                setTimeout(openNewsletterModal, 500);
+                setTimeout(() => openNewsletterModal('scroll'), 500);
               }
             }
           });
@@ -683,7 +741,7 @@ if (database.Icon && database.Icon.Type === 'file') {
           setTimeout(() => {
             if (!hasShownModal && !localStorage.getItem('newsletter_subscribed')) {
               hasShownModal = true;
-              openNewsletterModal();
+              openNewsletterModal('time_delay');
             }
           }, 30000);
           
@@ -691,7 +749,7 @@ if (database.Icon && database.Icon.Type === 'file') {
           document.addEventListener('mouseleave', function(e) {
             if (e.clientY < 10 && !hasShownModal && !localStorage.getItem('newsletter_subscribed')) {
               hasShownModal = true;
-              openNewsletterModal();
+              openNewsletterModal('exit_intent');
             }
           });
         }
@@ -732,6 +790,171 @@ if (database.Icon && database.Icon.Type === 'file') {
             });
             ticking = true;
           }
+        });
+      });
+    </script>
+    
+    <!-- 📊 UMAMI ANALYTICS TRACKING -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Wait for Umami to load
+        if (typeof window.umami === 'undefined') {
+          console.warn('Umami not loaded - tracking disabled');
+          return;
+        }
+        
+        // Get article title if on article page
+        const articleTitle = document.querySelector('article h1')?.textContent?.trim() || null;
+        const isArticlePage = articleTitle !== null;
+        
+        // ========================================
+        // 1. ARTICLE TRACKING
+        // ========================================
+        
+        if (isArticlePage) {
+          // Track article view
+          window.umami.track('article_viewed', { 
+            article: articleTitle 
+          });
+          
+          // Scroll depth tracking
+          const depthMarkers = { 25: false, 50: false, 75: false, 90: false, 100: false };
+          let maxScrollDepth = 0;
+          const pageLoadTime = Date.now();
+          
+          function calculateScrollDepth() {
+            const articleEnd = document.getElementById('article-content-end');
+            if (!articleEnd) {
+              // Fallback to full page scroll
+              const windowHeight = window.innerHeight;
+              const documentHeight = document.body.scrollHeight;
+              const scrollTop = window.scrollY;
+              return Math.min(100, Math.round(((scrollTop + windowHeight) / documentHeight) * 100));
+            }
+            
+            const articleRect = articleEnd.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            const scrollY = window.scrollY;
+            const articleHeight = articleRect.top + scrollY;
+            
+            if (articleHeight <= viewportHeight) return 100; // Short article
+            return Math.min(100, Math.max(0, Math.round((scrollY / (articleHeight - viewportHeight)) * 100)));
+          }
+          
+          // Throttled scroll handler for depth tracking
+          let scrollTimeout;
+          window.addEventListener('scroll', () => {
+            if (scrollTimeout) return;
+            
+            scrollTimeout = setTimeout(() => {
+              const currentDepth = calculateScrollDepth();
+              maxScrollDepth = Math.max(maxScrollDepth, currentDepth);
+              
+              // Track milestone depths
+              Object.keys(depthMarkers).forEach(depth => {
+                const depthNum = parseInt(depth);
+                if (currentDepth >= depthNum && !depthMarkers[depth]) {
+                  depthMarkers[depth] = true;
+                  window.umami.track('article_scroll_depth', { 
+                    depth: `${depth}%`, 
+                    article: articleTitle 
+                  });
+                  
+                  // Track completion at 90%
+                  if (depthNum === 90) {
+                    const timeSpent = Math.round((Date.now() - pageLoadTime) / 1000);
+                    window.umami.track('article_completed', { 
+                      article: articleTitle,
+                      time_spent: timeSpent
+                    });
+                  }
+                }
+              });
+              
+              scrollTimeout = null;
+            }, 200);
+          });
+          
+          // Reading time tracking
+          let startTime = Date.now();
+          let isActive = true;
+          let totalActiveTime = 0;
+          
+          // Track active vs idle time
+          document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+              totalActiveTime += Date.now() - startTime;
+              isActive = false;
+            } else {
+              startTime = Date.now();
+              isActive = true;
+            }
+          });
+          
+          // Send reading time on page unload
+          window.addEventListener('beforeunload', () => {
+            const finalTime = isActive ? Date.now() - startTime : 0;
+            const totalSeconds = Math.round((totalActiveTime + finalTime) / 1000);
+            
+            // Only track if user spent meaningful time (>5 seconds)
+            if (totalSeconds > 5) {
+              window.umami.track('reading_time', {
+                article: articleTitle,
+                seconds: totalSeconds,
+                scroll_depth: maxScrollDepth,
+                completed: maxScrollDepth >= 90
+              });
+            }
+          });
+        }
+        
+        // ========================================
+        // 2. EXTERNAL LINK TRACKING
+        // ========================================
+        
+        document.querySelectorAll('a[href^="http"]').forEach(link => {
+          // Skip internal links
+          if (link.href.includes(window.location.hostname)) return;
+          
+          link.addEventListener('click', () => {
+            window.umami.track('external_link_clicked', {
+              url: link.href,
+              article: articleTitle || 'homepage'
+            });
+          });
+        });
+        
+        // ========================================
+        // 3. RELATED ARTICLES TRACKING
+        // ========================================
+        
+        document.querySelectorAll('.related-articles a, [class*="related"] a').forEach(link => {
+          link.addEventListener('click', () => {
+            const toArticle = link.textContent?.trim() || link.href;
+            if (articleTitle) {
+              window.umami.track('related_article_clicked', {
+                from: articleTitle,
+                to: toArticle
+              });
+            }
+          });
+        });
+        
+        // ========================================
+        // 4. SHARE BUTTON TRACKING
+        // ========================================
+        
+        // Add data-share-platform attribute to your share buttons
+        document.querySelectorAll('[data-share-platform]').forEach(button => {
+          button.addEventListener('click', () => {
+            const platform = button.getAttribute('data-share-platform');
+            if (articleTitle) {
+              window.umami.track('article_shared', {
+                platform: platform,
+                article: articleTitle
+              });
+            }
+          });
         });
       });
     </script>

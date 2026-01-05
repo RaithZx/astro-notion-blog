@@ -457,6 +457,22 @@ if (database.Icon && database.Icon.Type === 'file') {
         // Newsletter API configuration
         const API_BASE_URL = newsletterApiUrl || '';
         
+        // 🔒 CSRF Protection: Helper function to get CSRF token
+        async function getCsrfToken() {
+          try {
+            const apiUrl = API_BASE_URL ? `${API_BASE_URL}/api/csrf-token` : '/api/csrf-token';
+            const response = await fetch(apiUrl, {
+              credentials: 'include'  // Important for cookies
+            });
+            if (!response.ok) throw new Error('Failed to get CSRF token');
+            const data = await response.json();
+            return data.csrfToken;
+          } catch (error) {
+            console.error('CSRF token error:', error);
+            return null;
+          }
+        }
+        
         // Mobile Menu Elements
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileCloseButton = document.getElementById('mobile-close-button');
@@ -610,6 +626,13 @@ if (database.Icon && database.Icon.Type === 'file') {
             return;
           }
           
+          // 🔒 Get CSRF token before submitting
+          const csrfToken = await getCsrfToken();
+          if (!csrfToken) {
+            showNotification('Eru di siguransa. Pur favor, atualiza pájina i tenta otu bês.', 'error');
+            return;
+          }
+          
           // Show loading state
           if (submitButton) {
             submitButton.disabled = true;
@@ -620,7 +643,11 @@ if (database.Icon && database.Icon.Type === 'file') {
             const apiUrl = API_BASE_URL ? `${API_BASE_URL}/api/subscribe` : '/api/subscribe';
             const response = await fetch(apiUrl, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken  // 🔒 Include CSRF token
+              },
+              credentials: 'include',  // 🔒 Include cookies
               body: JSON.stringify({ 
                 email, 
                 name, 

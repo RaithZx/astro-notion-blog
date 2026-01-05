@@ -92,6 +92,22 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
   // Newsletter API configuration
   const API_BASE_URL = newsletterApiUrl || '';
   
+  // 🔒 CSRF Protection: Helper function to get CSRF token
+  async function getCsrfToken() {
+    try {
+      const apiUrl = API_BASE_URL ? `${API_BASE_URL}/api/csrf-token` : '/api/csrf-token';
+      const response = await fetch(apiUrl, {
+        credentials: 'include'  // Important for cookies
+      });
+      if (!response.ok) throw new Error('Failed to get CSRF token');
+      const data = await response.json();
+      return data.csrfToken;
+    } catch (error) {
+      console.error('CSRF token error:', error);
+      return null;
+    }
+  }
+  
   // 📊 TRACK: Inline banner viewed (when it enters viewport)
   if (inlineBanner && typeof window.umami !== 'undefined') {
     const observer = new IntersectionObserver((entries) => {
@@ -126,6 +142,17 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
         });
       }
       
+      // 🔒 Get CSRF token before submitting
+      const csrfToken = await getCsrfToken();
+      if (!csrfToken) {
+        if (inlineMessage) {
+          inlineMessage.textContent = '✕ Eru di siguransa. Pur favor, atualiza pájina i tenta otu bês.';
+          inlineMessage.className = 'm-0 mt-2.5 text-xs font-medium text-red-100 bg-red-500/30 backdrop-blur-sm px-3 py-1.5 rounded-lg';
+          inlineMessage.classList.remove('hidden');
+        }
+        return;
+      }
+      
       if (submitButton) {
         submitButton.disabled = true;
         submitButton.innerHTML = `
@@ -140,7 +167,11 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
         const apiUrl = API_BASE_URL ? `${API_BASE_URL}/api/subscribe` : '/api/subscribe';
         const response = await fetch(apiUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken  // 🔒 Include CSRF token
+          },
+          credentials: 'include',  // 🔒 Include cookies
           body: JSON.stringify({ 
             email, 
             privacy: true,

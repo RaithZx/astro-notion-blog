@@ -6,7 +6,6 @@ import {
   getPosts,
   getRankedPosts,
   getAllTags,
-  getNumberOfPages,
   getFeaturedPost,
   getTopPosts,
 } from '../lib/notion/client.ts'
@@ -18,7 +17,6 @@ import PostTitle from '../components/PostTitle.astro'
 import PostFeaturedImage from '../components/PostFeaturedImage.astro'
 import PostExcerpt from '../components/PostExcerpt.astro'
 import ReadMoreLink from '../components/ReadMoreLink.astro'
-import Pagination from '../components/Pagination.astro'
 import BlogPostsLink from '../components/BlogPostsLink.astro'
 import BlogTagsLink from '../components/BlogTagsLink.astro'
 import { getPostLink } from '../lib/blog-helpers.ts'
@@ -27,11 +25,10 @@ import { getImageFromNotionUrl } from '../lib/image-helpers.ts'
 const labels = {
   categories: 'Kategorias',
 }
-const [posts, rankedPosts, tags, numberOfPages, featuredPost, topPosts] = await Promise.all([
+const [posts, rankedPosts, tags, featuredPost, topPosts] = await Promise.all([
   getPosts(NUMBER_OF_POSTS_PER_PAGE),
   getRankedPosts(),
   getAllTags(),
-  getNumberOfPages(),
   getFeaturedPost(),
   getTopPosts(4),
 ])
@@ -139,16 +136,65 @@ function estimateReadingTime(excerpt: string): string {
           <!-- Top Stories -->
           {
             topPosts.length > 0 && (
-              <div class="space-y-6">
+              <div class="space-y-4">
                 <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Artigus distakadu</h3>
                 {
                   topPosts.map((post) => (
                     <a href={getPostLink(post.Slug)} class="block group">
-                      <div class="flex-1 min-w-0">
-                        <h4 class="text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug line-clamp-2 mb-1">
+                      <div class="flex gap-3">
+                        {post.FeaturedImage && post.FeaturedImage.Url && (
+                          <div class="w-24 h-16 flex-shrink-0 rounded-md overflow-hidden">
+                            <div class="w-full h-full group-hover:scale-105 transition-transform duration-300">
+                              <PostFeaturedImage post={post} />
+                            </div>
+                          </div>
+                        )}
+                        <div class="flex-1 min-w-0">
+                          <h4 class="text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug line-clamp-2 mb-1">
+                            {post.Title}
+                          </h4>
+                          <div class="flex items-center gap-1.5 text-xs text-slate-500">
+                            {post.Date && (
+                              <span>{formatDateShort(post.Date)}</span>
+                            )}
+                            {post.Tags && post.Tags.length > 0 && (
+                              <>
+                                <span>·</span>
+                                <span>{post.Tags[0].name}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                  ))
+                }
+              </div>
+            )
+          }
+        </div>
+
+        <!-- Latest Articles Section - Same width as hero -->
+        {
+          posts.length > 0 && (
+            <div class="mt-12">
+              <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6">Kes últimu artigu i stória</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {posts.map((post) => (
+                  <article class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
+                    <a href={getPostLink(post.Slug)} class="block">
+                      {post.FeaturedImage && post.FeaturedImage.Url && (
+                        <div class="aspect-[16/10] overflow-hidden">
+                          <div class="w-full h-full group-hover:scale-105 transition-transform duration-300">
+                            <PostFeaturedImage post={post} />
+                          </div>
+                        </div>
+                      )}
+                      <div class="p-4">
+                        <h1 class="m-0 text-lg font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
                           {post.Title}
-                        </h4>
-                        <div class="flex items-center gap-1.5 text-xs text-slate-500">
+                        </h1>
+                        <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-2">
                           {post.Date && (
                             <span>{formatDateShort(post.Date)}</span>
                           )}
@@ -165,102 +211,26 @@ function estimateReadingTime(excerpt: string): string {
                             </>
                           )}
                         </div>
+                        <p class="m-0 mt-2 text-slate-600 text-sm leading-relaxed line-clamp-2">
+                          {post.Excerpt}
+                        </p>
+                        <div class="flex justify-start mt-3">
+                          <PostTags post={post} enableLink={true} />
+                        </div>
                       </div>
                     </a>
-                  ))
-                }
+                  </article>
+                ))}
               </div>
-            )
-          }
-        </div>
+            </div>
+          )
+        }
       </section>
     )
   }
 
-  <div slot="main" class="" style="max-width: 100%;">
-  <!-- <div slot="main" class="bg-white rounded-lg p-0 shadow-sm"> -->
-
-    {
-      posts.length === 0 ? (
-        <NoContents contents={posts} />
-      ) : (
-        <div class="p-0" style="max-width: 100%; margin-left: -1.25rem; margin-right: -1.25rem;">
-          <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 px-5">Kes últimu artigu i stória</h3>
-          {posts.map((post, index) => (
-            <article class="flex gap-4 py-4 px-5 transition-all duration-200 last:border-b-0 max-sm:flex-col max-sm:gap-3 max-sm:py-4 max-sm:px-4 cursor-pointer hover:bg-slate-50 hover:shadow-sm rounded-lg">
-              {post.FeaturedImage && post.FeaturedImage.Url && (
-                <div class="w-32 aspect-[4/5] rounded-md overflow-hidden bg-slate-200 max-sm:w-full max-sm:aspect-video">
-                  <PostFeaturedImage post={post} />
-                </div>
-              )}
-              <div class="flex-1 min-w-0 flex flex-col justify-between">
-                <div>
-                  <h1 class="m-0 text-lg font-bold text-slate-900 leading-tight hover:text-blue-600 transition-colors">
-                    <PostTitle post={post} enableLink={true} />
-                  </h1>
-                  <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
-                    {post.Date && (
-                      <span>{formatDateShort(post.Date)}</span>
-                    )}
-                    {post.Tags && post.Tags.length > 0 && (
-                      <>
-                        <span>·</span>
-                        <span>{post.Tags[0].name}</span>
-                      </>
-                    )}
-                    {post.Excerpt && (
-                      <>
-                        <span>·</span>
-                        <span>{estimateReadingTime(post.Excerpt)}</span>
-                      </>
-                    )}
-                  </div>
-                  <p class="m-0 text-slate-600 text-base leading-relaxed line-clamp-3">
-                    {post.Excerpt}
-                  </p>
-                </div>
-                <div class="flex justify-end">
-                  <PostTags post={post} enableLink={true} />
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      )
-    }
-
-    <footer class="py-8 px-8 border-t border-slate-200 text-center">
-      <Pagination currentPage={1} numberOfPages={numberOfPages} tag="" />
-    </footer>
-  </div>
-
-  <div slot="aside" class="flex flex-col gap-3">
-    <!-- Advertisement 1 -->
-    <!-- <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-lg p-6 relative overflow-hidden">
-      <div class="absolute -top-1/2 -right-1/2 w-full h-full bg-white/10 rounded-full rotate-45"></div>
-      <div class="relative z-10">
-        <div class="flex justify-between items-center mb-4">
-          <div class="font-bold text-xl">WIZ</div>
-          <div class="bg-white/20 px-2 py-1 rounded text-xs font-medium">Gartner</div>
-        </div>
-        <h3 class="m-0 mb-2.5 text-lg font-semibold">2025 Gartner Market Guide for CNAPP</h3>
-        <p class="m-0 mb-5 text-sm opacity-90">Wiz named a Representative Vendor</p>
-        <button class="bg-white text-indigo-500 border-0 px-5 py-2.5 rounded-md font-semibold cursor-pointer transition-transform hover:-translate-y-0.5">Download now</button>
-      </div>
-    </div> -->
-	    <!-- Newsletter Subscription Banner -->
-
-
-    <!-- Call to Action -->
-    <!-- <div class="bg-blue-600 text-white rounded-lg p-6 text-center">
-      <div class="cta-content">
-        <div class="text-4xl mb-4">🔒</div>
-        <h3 class="m-0 mb-2.5 text-lg font-semibold">Share your cybersecurity experience and expertise.</h3>
-        <p class="m-0 text-sm opacity-90">Join our community of security professionals</p>
-      </div>
-    </div> -->
-
-  </div>
+  <!-- Empty main slot since content is in featured section -->
+  <div slot="main" class="hidden"></div>
 </Layout>
 
 

@@ -562,3 +562,4 @@ For deeper analysis, connect Umami database to Metabase:
 **Owner:** Marketing/Analytics Team  
 **Review Cycle:** Quarterly
 
+

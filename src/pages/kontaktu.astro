@@ -15,7 +15,7 @@ const database = await getDatabase()
     <div class="max-w-4xl mx-auto">
       <h1 class="text-4xl font-bold text-slate-800 mb-8">Nos Kontaktu</h1>
       
-      <div class="grid md:grid-cols-2 gap-8 mb-12">
+      <div class="mb-12">
         <!-- Contact Information -->
         <div class="space-y-6">
           <h2 class="text-2xl font-semibold text-slate-700 mb-4">Informason di Kontaktu</h2>
@@ -25,7 +25,7 @@ const database = await getDatabase()
               <div class="text-2xl">📧</div>
               <div>
                 <h3 class="font-semibold text-slate-700">Email</h3>
-                <p class="text-slate-600">kontaktu@ligadu.com</p>
+                <p class="text-slate-600">kontaktu [at] ligadu [dot] com</p>
               </div>
             </div>
             
@@ -37,112 +37,15 @@ const database = await getDatabase()
               </div>
             </div>
             
-            <!-- <div class="flex items-start space-x-3">
-              <div class="text-2xl">📍</div>
+            <div class="flex items-start space-x-3">
+              <div class="text-2xl">💼</div>
               <div>
-                <h3 class="font-semibold text-slate-700">Lokalizason</h3>
-                <p class="text-slate-600">Kabu Verdi</p>
+                <h3 class="font-semibold text-slate-700">LinkedIn</h3>
+                <a href="#" class="text-slate-600 hover:text-amber-600 transition-colors">Ligadu</a>
               </div>
-            </div> -->
+            </div>
           </div>
           
-          <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
-            <h3 class="font-semibold text-amber-800 mb-2">Dika</h3>
-            <p class="text-amber-700 text-sm">
-              Pa resebe un resposta mas rápidu uza kel formuláriu di baxu. Asi, nu pode organiza kes pergunta midjór i responde di akordu ku prioridadi.
-            </p>
-          </div>
-        </div>
-        
-        <!-- Contact Form -->
-        <div>
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">Manda Mensaji</h2>
-          
-          <form id="contact-form" class="space-y-4">
-            <div>
-              <label for="contact-name" class="block text-sm font-medium text-slate-700 mb-2">
-                Nomi *
-              </label>
-              <input 
-                type="text" 
-                id="contact-name" 
-                name="name"
-                required
-                class="w-full px-4 py-3 border border-slate-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                placeholder="Bu nomi konplétu"
-              />
-            </div>
-            
-            <div>
-              <label for="contact-email" class="block text-sm font-medium text-slate-700 mb-2">
-                Email *
-              </label>
-              <input 
-                type="email" 
-                id="contact-email" 
-                name="email"
-                required
-                class="w-full px-4 py-3 border border-slate-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                placeholder="bu@email.com"
-              />
-            </div>
-            
-            <div>
-              <label for="contact-subject" class="block text-sm font-medium text-slate-700 mb-2">
-                Asuntu *
-              </label>
-              <select 
-                id="contact-subject" 
-                name="subject"
-                required
-                class="w-full px-4 py-3 border border-slate-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-              >
-                <option value="">Skodje asuntu</option>
-                <option value="pergunta">Pergunta Jeral</option>
-                <option value="sujiston">Sujiston</option>
-                <option value="partnership">Kolabora ku nos</option>
-                <option value="technical">Prubléma Tékniku</option>
-                <option value="content">Sujiston di Konteúdu</option>
-                <option value="other">Otu asuntu</option>
-              </select>
-            </div>
-            
-            <div>
-              <label for="contact-message" class="block text-sm font-medium text-slate-700 mb-2">
-                Mensaji *
-              </label>
-              <textarea 
-                id="contact-message" 
-                name="message"
-                required
-                rows="5"
-                class="w-full px-4 py-3 border border-slate-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-vertical"
-                placeholder="Skrebe bu mensaji li..."
-              ></textarea>
-            </div>
-            
-            <div class="flex items-start">
-              <input 
-                type="checkbox" 
-                id="contact-privacy" 
-                name="privacy"
-                required
-                class="mt-1 h-4 w-4 text-amber-600 focus:ring-amber-500 border-slate-300 rounded"
-              />
-              <label for="contact-privacy" class="ml-2 text-sm text-slate-600">
-                Konkorda ku <a href="/privasidadi" class="text-amber-600 hover:text-amber-700 underline">régras di privasidadi</a> i 
-                <a href="/termus" class="text-amber-600 hover:text-amber-700 underline">termus di servisu</a>
-              </label>
-            </div>
-            
-            <button 
-              type="submit" 
-              class="w-full bg-amber-400 text-slate-900 border-0 px-6 py-3 rounded-lg font-bold cursor-pointer flex items-center justify-center gap-2 hover:bg-amber-500 transition-colors"
-            >
-              <span class="text-lg">📤</span>
-              Manda Mensaji
-            </button>
-          </form>
         </div>
       </div>
       
@@ -170,52 +73,5 @@ const database = await getDatabase()
     </div>
   </div>
   
-  <div slot="aside">
-    <div class="bg-white rounded-lg p-6 shadow-sm">
-      <h3 class="text-lg font-semibold text-slate-700 mb-4">Redi Sosial</h3>
-      <div class="space-y-3">
-        <a href="#" class="flex items-center space-x-3 text-slate-600 hover:text-amber-600 transition-colors">
-          <span class="text-xl">💼</span>
-          <span>LinkedIn</span>
-        </a>
-      </div>
-    </div>
-    
-    <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 mt-6">
-      <h3 class="text-lg font-semibold text-amber-800 mb-2"><em>Newsletter</em></h3>
-      <p class="text-amber-700 text-sm mb-4">
-        Resebe kes ultimu artigu i notísias diretamenti na bu email.
-      </p>
-      <button class="w-full bg-amber-400 text-slate-900 border-0 px-4 py-2 rounded font-bold cursor-pointer hover:bg-amber-500 transition-colors">
-        Inskreve Gosi li!
-      </button>
-    </div>
-  </div>
 </Layout>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const contactForm = document.getElementById('contact-form');
-    
-    contactForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const formData = new FormData(contactForm);
-      const name = formData.get('name');
-      const email = formData.get('email');
-      const subject = formData.get('subject');
-      const message = formData.get('message');
-      const privacy = formData.get('privacy');
-      
-      if (!privacy) {
-        alert('Pur favor, konkorda ku régras di privasidadi i régras di uzu.');
-        return;
-      }
-      
-      // Here you would typically send the data to your contact form handler
-      // For now, we'll just show a success message
-      alert(`Obrigadu, ${name}! Nu resebe bu mensaji. Nu ta responde mas rápidu posível.`);
-      contactForm.reset();
-    });
-  });
-</script>

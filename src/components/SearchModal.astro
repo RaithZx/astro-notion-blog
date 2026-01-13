@@ -412,10 +412,21 @@
 
       Array.from(xml.getElementsByTagName('item')).forEach((item) => {
         const title = item.getElementsByTagName('title')[0].textContent
-        const link = item.getElementsByTagName('link')[0].textContent
+        const rawLink = item.getElementsByTagName('link')[0].textContent
         const description =
           item.getElementsByTagName('description')[0]?.textContent
         const pubDate = item.getElementsByTagName('pubDate')[0].textContent
+
+        // Extract path from the RSS link and reconstruct with current origin
+        // This fixes localhost URLs in the RSS feed
+        let link = rawLink
+        try {
+          const linkUrl = new URL(rawLink)
+          link = window.location.origin + linkUrl.pathname
+        } catch (e) {
+          // If URL parsing fails, use the raw link
+          link = rawLink
+        }
 
         feedItems.push({
           title,

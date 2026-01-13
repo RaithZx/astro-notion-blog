@@ -125,7 +125,7 @@ function estimateReadingTime(excerpt: string): string {
       
       <ShareButtons 
         title={post.Title}
-        url={new URL(getPostLink(post.Slug), Astro.site).toString()}
+        path={getPostLink(post.Slug)}
         description={post.Excerpt}
       />
       
@@ -136,7 +136,7 @@ function estimateReadingTime(excerpt: string): string {
       
       <ShareButtons 
         title={post.Title}
-        url={new URL(getPostLink(post.Slug), Astro.site).toString()}
+        path={getPostLink(post.Slug)}
         description={post.Excerpt}
       />
       

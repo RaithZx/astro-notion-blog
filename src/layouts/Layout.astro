@@ -825,6 +825,54 @@ if (database.Icon && database.Icon.Type === 'file') {
       });
     </script>
     
+    <!-- 🔒 COPY PROTECTION DETERRENT -->
+    <script>
+      (function() {
+        // Block right-click context menu
+        document.addEventListener('contextmenu', function(e) {
+          // Allow on form inputs
+          if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+          e.preventDefault();
+        });
+        
+        // Block copy/cut events
+        document.addEventListener('copy', function(e) {
+          if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+          e.preventDefault();
+        });
+        
+        document.addEventListener('cut', function(e) {
+          if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+          e.preventDefault();
+        });
+        
+        // Block drag start (prevents drag-select-copy)
+        document.addEventListener('dragstart', function(e) {
+          if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+          e.preventDefault();
+        });
+        
+        // Block common keyboard shortcuts for copy
+        document.addEventListener('keydown', function(e) {
+          // Allow in form fields
+          if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+          
+          // Block Ctrl+C, Ctrl+X, Ctrl+A, Ctrl+U (view source)
+          if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'a', 'u'].includes(e.key.toLowerCase())) {
+            e.preventDefault();
+          }
+          
+          // Block F12 (dev tools) and Ctrl+Shift+I/J/C
+          if (e.key === 'F12') {
+            e.preventDefault();
+          }
+          if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'j', 'c'].includes(e.key.toLowerCase())) {
+            e.preventDefault();
+          }
+        });
+      })();
+    </script>
+    
     <!-- 📊 UMAMI ANALYTICS TRACKING -->
     <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -1500,5 +1548,26 @@ if (database.Icon && database.Icon.Type === 'file') {
   
   .animate-modal-in {
     animation: modal-in 0.2s ease-out;
+  }
+  
+  /* Copy protection - disable text selection on content */
+  article,
+  .post-content,
+  .main-content-wrapper,
+  #main-content {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Allow selection in form fields */
+  input,
+  textarea,
+  [contenteditable="true"] {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
   }
 </style>

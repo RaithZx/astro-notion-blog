@@ -216,15 +216,31 @@
   document.addEventListener('DOMContentLoaded', async () => {
     let feedItems = []
     let fetched = false
+    let debounceTimer = null
+    const DEBOUNCE_DELAY = 300 // ms to wait after typing stops
+
+    // Debounce function - waits for typing to stop before executing
+    function debounce(func, delay) {
+      return function(...args) {
+        if (debounceTimer) clearTimeout(debounceTimer)
+        debounceTimer = setTimeout(() => func.apply(this, args), delay)
+      }
+    }
+
+    // Debounced search function
+    const debouncedSearch = debounce(() => {
+      searchAndRender()
+    }, DEBOUNCE_DELAY)
 
     async function openModal() {
       document.querySelector('.search-modal-container').style.display = 'block'
-      document.querySelector('.search-prompt input').focus()
+      const input = document.querySelector('.search-prompt input')
+      input.focus()
 
       if (!fetched) {
         showLoading()
         try {
-          await fetchRSS()
+          await fetchSearchIndex()
         } catch (error) {
           showError('Erru durante karga di dados.')
         } finally {
@@ -262,11 +278,15 @@
 
     function closeModal() {
       document.querySelector('.search-modal-container').style.display = 'none'
+      // Clear any pending debounce when closing
+      if (debounceTimer) clearTimeout(debounceTimer)
     }
 
     function handleKeydown(event) {
       if (event.keyCode === 13) {
-        // Enter
+        // Enter - execute search immediately and select
+        if (debounceTimer) clearTimeout(debounceTimer)
+        searchAndRender()
         select()
       } else if (event.keyCode === 27) {
         // ESC
@@ -277,9 +297,13 @@
       } else if (event.keyCode === 40) {
         // Down
         selectDown(event)
-      } else {
-        searchAndRender()
       }
+      // Note: search is now triggered by 'input' event with debouncing, not here
+    }
+    
+    // Handle input changes with debouncing
+    function handleInput() {
+      debouncedSearch()
     }
 
     function select() {
@@ -352,8 +376,14 @@
 
     function search(query) {
       const results = []
+      const lowerQuery = query.toLowerCase()
       feedItems.forEach((item) => {
-        if (item.title.includes(query) || item?.description?.includes(query)) {
+        // Case-insensitive search across title, description/excerpt, and full content
+        const titleMatch = item.title?.toLowerCase().includes(lowerQuery)
+        const descMatch = item.description?.toLowerCase().includes(lowerQuery)
+        const contentMatch = item.content?.toLowerCase().includes(lowerQuery)
+        
+        if (titleMatch || descMatch || contentMatch) {
           results.push(item)
         }
       })
@@ -393,46 +423,31 @@
       })
     }
 
-    async function fetchRSS() {
+    async function fetchSearchIndex() {
       const url = new URL(location.href)
       const port = url.port ? `:${url.port}` : ''
 
       const res = await fetch(
-        `${url.protocol}//${url.hostname}${port}/feed`
+        `${url.protocol}//${url.hostname}${port}/search-index.json`
       )
       if (res.status !== 200) {
         console.log(res.status)
-        throw new Error('Failed to fetch RSS feed')
+        throw new Error('Failed to fetch search index')
       }
 
-      const body = await res.text()
+      const data = await res.json()
 
-      const parser = new DOMParser()
-      const xml = parser.parseFromString(body, 'text/xml')
-
-      Array.from(xml.getElementsByTagName('item')).forEach((item) => {
-        const title = item.getElementsByTagName('title')[0].textContent
-        const rawLink = item.getElementsByTagName('link')[0].textContent
-        const description =
-          item.getElementsByTagName('description')[0]?.textContent
-        const pubDate = item.getElementsByTagName('pubDate')[0].textContent
-
-        // Extract path from the RSS link and reconstruct with current origin
-        // This fixes localhost URLs in the RSS feed
-        let link = rawLink
-        try {
-          const linkUrl = new URL(rawLink)
-          link = window.location.origin + linkUrl.pathname
-        } catch (e) {
-          // If URL parsing fails, use the raw link
-          link = rawLink
-        }
+      data.forEach((item) => {
+        // Construct full link using current origin
+        const link = window.location.origin + item.link
 
         feedItems.push({
-          title,
-          link,
-          description,
-          pubDate,
+          title: item.title,
+          link: link,
+          description: item.excerpt,
+          content: item.content,
+          pubDate: item.pubDate,
+          tags: item.tags
         })
       })
 
@@ -447,6 +462,14 @@
     document
       .getElementsByClassName('overlay')[0]
       .addEventListener('click', closeModal)
+    
+    // Use 'input' event for debounced search (fires on any text change)
+    const searchInput = document.querySelector('.search-prompt input')
+    if (searchInput) {
+      searchInput.addEventListener('input', handleInput)
+    }
+    
+    // Keydown only handles navigation (Enter, Esc, Up, Down)
     document.addEventListener('keydown', handleKeydown)
   })
 </script>

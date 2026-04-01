@@ -1,10 +1,13 @@
 ---
-// Inline newsletter subscription banner with form logic - Compact modern design
+import uiStrings from '../locales/ui-strings.json'
+const nl = uiStrings.app.inlineNewsletterBanner
+const nls = uiStrings.app.scripts.inlineNewsletter
 // Newsletter API URL - defaults to relative path for production (Coolify proxy)
 const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
 ---
+<!-- Visibility for signed-in users: Layout.astro syncAuthPanels toggles .ligadu-auth-hide on .ligadu-auth-when-signed-out -->
 <!-- Newsletter Banner - Compact Modern Design -->
-<div id="inline-newsletter-banner" class="mt-12 mb-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg overflow-hidden">
+<div id="inline-newsletter-banner" class="ligadu-auth-when-signed-out mt-12 mb-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg overflow-hidden">
   <div class="relative px-6 py-5">
     <!-- Decorative background element -->
     <div class="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-24 -mt-24 blur-3xl"></div>
@@ -22,14 +25,14 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
           
           <!-- Text -->
           <div>
-            <h3 class="text-base font-bold text-white m-0 mb-0.5 leading-tight">Fika Ligadu</h3>
-            <p class="text-blue-50 text-xs m-0 leading-tight">Resebe kes ultimu artigu i stórias na bu email</p>
+            <h3 class="text-base font-bold text-white m-0 mb-0.5 leading-tight">{nl.title}</h3>
+            <p class="text-blue-50 text-xs m-0 leading-tight">{nl.subtitle}</p>
           </div>
         </div>
         
         <!-- Badge -->
         <span class="bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-xs font-medium text-white flex-shrink-0">
-          Di grasa
+          {nl.badge}
         </span>
       </div>
       
@@ -40,7 +43,7 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
             type="email" 
             id="inline-email"
             name="email"
-            placeholder="Bu email" 
+            placeholder={nl.emailPlaceholder} 
             required
             class="w-full px-3 py-2 border-0 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-white/50 shadow-md"
           />
@@ -64,7 +67,7 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
           </svg>
-          Inskreve
+          {nl.submit}
         </button>
       </form>
       
@@ -76,13 +79,13 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
         </svg>
-        Nunka spam
+        {nl.trustNoSpam}
       </p>
     </div>
   </div>
 </div>
 
-<script define:vars={{ newsletterApiUrl }}>
+<script define:vars={{ newsletterApiUrl, nls, nl }}>
   const inlineForm = document.getElementById('inline-newsletter-form');
   const inlineMessage = document.getElementById('inline-message');
   const inlineEmail = document.getElementById('inline-email');
@@ -146,7 +149,7 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
       const csrfToken = await getCsrfToken();
       if (!csrfToken) {
         if (inlineMessage) {
-          inlineMessage.textContent = '✕ Eru di siguransa. Pur favor, atualiza pájina i tenta otu bês.';
+          inlineMessage.textContent = nls.csrfError;
           inlineMessage.className = 'm-0 mt-2.5 text-xs font-medium text-red-100 bg-red-500/30 backdrop-blur-sm px-3 py-1.5 rounded-lg';
           inlineMessage.classList.remove('hidden');
         }
@@ -159,7 +162,7 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
           <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
           </svg>
-          <span class="text-xs">Enviadu...</span>
+          <span class="text-xs">${nls.submitLoadingLabel}</span>
         `;
       }
       
@@ -195,14 +198,14 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
           localStorage.setItem('newsletter_subscribed', 'true');
           
           if (inlineMessage) {
-            inlineMessage.textContent = '✓ ' + data.message;
+            inlineMessage.textContent = nls.successPrefix + data.message;
             inlineMessage.className = 'm-0 mt-2.5 text-xs font-medium text-white bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-lg';
             inlineMessage.classList.remove('hidden');
           }
           inlineForm.reset();
         } else {
           if (inlineMessage) {
-            inlineMessage.textContent = '✕ ' + (data.error || 'Algun eru kontise duranti bu inskrison. Pur favor, tenta otu bês.');
+            inlineMessage.textContent = nls.errorPrefix + (data.error || nls.errorGeneric);
             inlineMessage.className = 'm-0 mt-2.5 text-xs font-medium text-red-100 bg-red-500/30 backdrop-blur-sm px-3 py-1.5 rounded-lg';
             inlineMessage.classList.remove('hidden');
           }
@@ -210,7 +213,7 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
       } catch (error) {
         console.error('Subscription error:', error);
         if (inlineMessage) {
-          inlineMessage.textContent = '✕ Eru di ligason. Tenta otu bês.';
+          inlineMessage.textContent = nls.errorNetwork;
           inlineMessage.className = 'm-0 mt-2.5 text-xs font-medium text-red-100 bg-red-500/30 backdrop-blur-sm px-3 py-1.5 rounded-lg';
           inlineMessage.classList.remove('hidden');
         }
@@ -221,7 +224,7 @@ const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
             </svg>
-            Inskreve
+            ${nl.submit}
           `;
         }
       }

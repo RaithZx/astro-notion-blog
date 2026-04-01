@@ -1,4 +1,6 @@
 ---
+import uiStrings from '../locales/ui-strings.json'
+const s = uiStrings.app.search
 ---
 
 <div class="search-modal-container">
@@ -6,20 +8,20 @@
 
   <div class="search-modal">
     <div class="search-prompt">
-      <input type="text" placeholder="Piskiza..." aria-label="Piskiza" />
+      <input type="text" placeholder={s.placeholder} aria-label={s.ariaLabel} />
       <div class="search-hints">
-        <span class="hint-item"><kbd>↑↓</kbd> Naviga</span>
-        <span class="hint-item"><kbd>Enter</kbd> Abri</span>
-        <span class="hint-item"><kbd>Esc</kbd> Fitxa</span>
+        <span class="hint-item"><kbd>↑↓</kbd> {s.hintNavigate}</span>
+        <span class="hint-item"><kbd>Enter</kbd> {s.hintOpen}</span>
+        <span class="hint-item"><kbd>Esc</kbd> {s.hintClose}</span>
       </div>
     </div>
     <div class="search-result">
       <div class="search-loading" style="display: none;">
         <div class="loading-spinner"></div>
-        <span>Karrega...</span>
+        <span>{s.loading}</span>
       </div>
       <div class="search-empty" style="display: none;">
-        <p>Nunka rezultadu enkontradu.</p>
+        <p>{s.empty}</p>
       </div>
       <ul>
       </ul>
@@ -212,7 +214,7 @@
   }
 </style>
 
-<script>
+<script define:vars={{ searchLoadError: s.loadError }}>
   document.addEventListener('DOMContentLoaded', async () => {
     let feedItems = []
     let fetched = false
@@ -226,7 +228,7 @@
         try {
           await fetchRSS()
         } catch (error) {
-          showError('Erru durante karga di dados.')
+          showError(searchLoadError)
         } finally {
           hideLoading()
         }

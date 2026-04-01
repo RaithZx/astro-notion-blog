@@ -1,4 +1,6 @@
 ---
+export const prerender = true
+
 import Layout from '../layouts/Layout.astro'
 import { getDatabase } from '../lib/notion/client.ts'
 
@@ -33,6 +35,7 @@ const database = await getDatabase()
           <h3 class="text-xl font-semibold text-slate-600 mb-3">1.1 Informason ki Bu ta Da-nu</h3>
           <ul class="list-disc pl-6 space-y-2 text-slate-600">
             <li><strong><em>Newsletter</em>:</strong> Email i nomi (opsional) óras ki bu ta inskreve na <em>newsletter</em></li>
+            <li><strong>Entrada na site:</strong> Óras ki bu ta uza <em>Entra</em> (Google ó redes soshal), nu uza email di bu konta (i nom si disponivel) pa rejistra bu na <em>newsletter</em> otomatikamenti, na kunfurmansa ku es régras li.</li>
             <li><strong>Kontaktu:</strong> Nomi, email, asuntu i mensajen óras ki bu ta uza formulariu di kontaktu</li>
             <li><strong>Comentários:</strong> Nomi i email óras ki bu ta dexa komentárius (si sta disponivel)</li>
           </ul>

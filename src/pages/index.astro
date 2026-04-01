@@ -1,4 +1,6 @@
 ---
+export const prerender = true
+
 import { Image } from 'astro:assets'
 import { NUMBER_OF_POSTS_PER_PAGE } from '../server-constants.ts'
 import ImageWithBlur from '../components/ImageWithBlur.astro'
@@ -21,10 +23,9 @@ import BlogPostsLink from '../components/BlogPostsLink.astro'
 import BlogTagsLink from '../components/BlogTagsLink.astro'
 import { getPostLink } from '../lib/blog-helpers.ts'
 import { getImageFromNotionUrl } from '../lib/image-helpers.ts'
+import uiStrings from '../locales/ui-strings.json'
 
-const labels = {
-  categories: 'Kategorias',
-}
+const home = uiStrings.app.home
 const [posts, rankedPosts, tags, featuredPost, topPosts] = await Promise.all([
   getPosts(NUMBER_OF_POSTS_PER_PAGE),
   getRankedPosts(),
@@ -58,11 +59,16 @@ function formatDateShort(date: string): string {
 function estimateReadingTime(excerpt: string): string {
   const words = excerpt.split(/\s+/).length
   const minutes = Math.max(1, Math.ceil(words / 200))
-  return `${minutes} min`
+  return home.readingTimeMinutes.replace('{{minutes}}', String(minutes))
 }
 ---
 
-<Layout title="Ligadu" description="Artigus di siensia i saudi" path="/" ogImage="">
+<Layout
+  title={uiStrings.app.site.defaultTitle}
+  description={uiStrings.app.site.homeDescription}
+  path="/"
+  ogImage=""
+>
   <!-- Featured Section - Above main and aside -->
   {
     (featuredPost || topPosts.length > 0) && (
@@ -98,7 +104,7 @@ function estimateReadingTime(excerpt: string): string {
                   </div>
                   <div class="space-y-3">
                     <div class="flex items-center gap-2 text-xs text-slate-500 uppercase tracking-wide">
-                      <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded font-semibold">Sta Ligadu</span>
+                      <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded font-semibold">{home.featuredBadge}</span>
                     </div>
                     <h2 class="text-3xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-tight">
                       {featuredPost.Title}
@@ -137,7 +143,7 @@ function estimateReadingTime(excerpt: string): string {
           {
             topPosts.length > 0 && (
               <div class="space-y-4">
-                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Artigus distakadu</h3>
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">{home.topStoriesHeading}</h3>
                 {
                   topPosts.map((post) => (
                     <a href={getPostLink(post.Slug)} class="block group">
@@ -178,7 +184,7 @@ function estimateReadingTime(excerpt: string): string {
         {
           posts.length > 0 && (
             <div class="mt-12">
-              <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6">Kes últimu artigu i stória</h3>
+              <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6">{home.latestHeading}</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {posts.map((post) => (
                   <article class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group">

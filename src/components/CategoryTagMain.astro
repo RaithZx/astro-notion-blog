@@ -1,0 +1,446 @@
+---
+/**
+ * Category / tag archive — Stitch “Teknolodjia” layout: editorial hero, tag pills,
+ * featured + grid feed, 4-col sidebar (popular, deep dive, newsletter).
+ */
+import { Image } from 'astro:assets'
+import type { Post, SelectProperty } from '../lib/interfaces.ts'
+import {
+  getNavLink,
+  getPostLink,
+  getTagLink,
+  getPageLink,
+} from '../lib/blog-helpers.ts'
+import { getImageFromNotionUrl } from '../lib/image-helpers.ts'
+import ImageWithBlur from './ImageWithBlur.astro'
+import Pagination from './Pagination.astro'
+import uiStrings from '../locales/ui-strings.json'
+
+export interface Props {
+  /** Tag name when viewing a category; use '' when `allPostsArchive` is true */
+  tag: string
+  posts: Post[]
+  currentPage: number
+  numberOfPages: number
+  /** Total posts in scope (in-tag count or site-wide count for all archive) */
+  totalInTag: number
+  allTags: SelectProperty[]
+  rankedPosts: Post[]
+  databaseDescription: string
+  /** Full post list at `/posts/page/N` — same chrome as tag archives, "Tudu" pill active */
+  allPostsArchive?: boolean
+}
+
+const {
+  tag,
+  posts,
+  currentPage,
+  numberOfPages,
+  totalInTag,
+  allTags,
+  rankedPosts,
+  databaseDescription,
+  allPostsArchive = false,
+} = Astro.props
+
+const paginationTag = allPostsArchive ? '' : tag
+const headerLabel = allPostsArchive ? 'Tudu' : tag
+
+const app = uiStrings.app
+
+function estimateReadingTime(excerpt: string): string {
+  const words = (excerpt || '').split(/\s+/).filter(Boolean).length
+  const minutes = Math.max(1, Math.ceil(words / 200))
+  return `${minutes} min`
+}
+
+function formatDateLong(date: string): string {
+  const dt = new Date(date)
+  const months = [
+    'Janeru',
+    'Febreru',
+    'Marsu',
+    'Abril',
+    'Maiu',
+    'Junhu',
+    'Julhu',
+    'Agostu',
+    'Setembru',
+    'Otubru',
+    'Nuvembru',
+    'Dizembru',
+  ]
+  return `${months[dt.getMonth()]} ${dt.getFullYear()}`
+}
+
+const loadPostImage = (post: Post) => {
+  if (!post.FeaturedImage?.Url) return null
+  if (import.meta.env.DEV) return post.FeaturedImage.Url
+  const imported = getImageFromNotionUrl(new URL(post.FeaturedImage.Url))
+  return imported || post.FeaturedImage.Url
+}
+
+const postImages = posts.map(loadPostImage)
+
+const artiguWord = totalInTag === 1 ? 'artigu' : 'artigus'
+const countLine =
+  totalInTag === 0
+    ? allPostsArchive
+      ? 'Ka tene artigu publicadu inda.'
+      : 'Ka tene artigu nesta kategoria inda.'
+    : numberOfPages > 1
+      ? `Págin ${currentPage} di ${numberOfPages} · ${totalInTag} ${artiguWord}`
+      : `${totalInTag} ${artiguWord}`
+
+const heroLead = allPostsArchive
+  ? databaseDescription?.trim() ||
+    `Tudu artigus publicadu na Ligadu — ${countLine}.`
+  : databaseDescription?.trim() ||
+    `Artigus i análizi sobri ${tag} — ${countLine} na Ligadu.`
+
+const featuredPost = currentPage === 1 && posts.length > 0 ? posts[0] : null
+const featuredImage = featuredPost ? postImages[0] : null
+const gridPosts =
+  currentPage === 1 && posts.length > 1 ? posts.slice(1) : currentPage > 1 ? posts : []
+
+const isFeaturedAdmin = (post: Post) =>
+  post.AdminTags.some((t) => t.name.toLowerCase() === 'featured')
+
+const cardKicker = (post: Post) => {
+  if (isFeaturedAdmin(post)) return 'ESPESIAL'
+  if (allPostsArchive) {
+    return (post.Tags[0]?.name ?? 'ARTIGU').toUpperCase()
+  }
+  const other = post.Tags.find((t) => t.name !== tag)
+  return (other?.name ?? post.Tags[0]?.name ?? tag).toUpperCase()
+}
+
+const popularRanked = rankedPosts.slice(0, 3)
+const allPostsIndexPath = getNavLink('/posts/page/1')
+
+const pillBase =
+  'inline-flex items-center justify-center px-6 py-2 rounded-full font-medium transition-all text-sm no-underline border-0 cursor-pointer'
+---
+
+<div class="w-full pb-24">
+  <nav class="mb-10 text-sm text-on-surface-variant font-medium" aria-label="Breadcrumb">
+    <ol class="flex flex-wrap items-center gap-2 list-none m-0 p-0">
+      <li>
+        <a
+          href={getNavLink('/')}
+          class="text-primary no-underline hover:underline underline-offset-4 decoration-2"
+        >
+          Inisiu
+        </a>
+      </li>
+      <li aria-hidden="true" class="text-on-surface-variant/50">/</li>
+      <li>
+        <span class="text-on-surface" aria-current="page">{headerLabel}</span>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Editorial header (Stitch) — horizontal padding from Layout main px-8 + max-w-7xl -->
+  <section class="mb-20">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-8">
+      <div class="max-w-2xl">
+        <span
+          class="inline-block bg-secondary-fixed text-on-secondary-fixed px-3 py-1 rounded-lg text-sm font-bold mb-4 uppercase tracking-widest"
+        >
+          Laboratòriu Digital
+        </span>
+        <h1
+          class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-headline tracking-tighter text-primary leading-none mb-6"
+        >
+          {headerLabel}.
+        </h1>
+        <p class="text-lg sm:text-xl text-on-surface-variant font-body leading-relaxed max-w-xl m-0">
+          {heroLead}
+        </p>
+        <p class="text-sm text-on-surface-variant/80 mt-3 m-0">{countLine}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tag pills + search (Stitch filters) -->
+  <section class="mb-12" aria-label="Kategorias">
+    <div class="flex flex-wrap gap-3 items-center">
+      <a
+        href={allPostsIndexPath}
+        class:list={[
+          pillBase,
+          allPostsArchive
+            ? 'bg-primary text-on-primary font-bold shadow-lg shadow-primary/20'
+            : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high',
+        ]}
+      >
+        Tudu
+      </a>
+      {
+        allTags.map((t) => {
+          const active = !allPostsArchive && t.name === tag
+          return (
+            <a
+              href={getTagLink(t.name)}
+              class:list={[
+                pillBase,
+                active
+                  ? 'bg-primary text-on-primary font-bold shadow-lg shadow-primary/20'
+                  : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high',
+              ]}
+            >
+              {t.name}
+            </a>
+          )
+        })
+      }
+      <button
+        type="button"
+        class="open-search-modal ml-auto md:ml-auto flex items-center gap-2 text-primary font-bold cursor-pointer hover:underline underline-offset-4 decoration-2 bg-transparent border-0 p-0 font-body text-sm"
+      >
+        <span>Filtru avansadu</span>
+        <span class="material-symbols-outlined text-lg !text-[1.125rem] w-5 h-5 flex items-center justify-center" aria-hidden="true">tune</span>
+      </button>
+    </div>
+  </section>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 w-full">
+    <!-- Main feed -->
+    <div class="lg:col-span-8 space-y-16">
+      {
+        totalInTag === 0 ? (
+          <p class="text-on-surface-variant text-lg m-0">
+            {allPostsArchive
+              ? 'Ka tene artigu publicadu inda.'
+              : 'Ka tene artigu nesta kategoria inda.'}
+          </p>
+        ) : (
+          <>
+            {featuredPost && (
+              <article class="group">
+                <a href={getPostLink(featuredPost.Slug)} class="block no-underline text-inherit">
+                  <div class="relative overflow-hidden rounded-[2rem] bg-surface-container-low aspect-[16/9] mb-8">
+                    {featuredImage ? (
+                      <div class="absolute inset-0">
+                        {typeof featuredImage === 'string' ? (
+                          <img
+                            src={featuredImage}
+                            alt={featuredPost.Title}
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            loading="eager"
+                          />
+                        ) : (
+                          <Image
+                            src={featuredImage}
+                            alt={featuredPost.Title}
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            loading="eager"
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      <div class="absolute inset-0 bg-surface-container" aria-hidden="true" />
+                    )}
+                    <div
+                      class="absolute inset-0 bg-gradient-to-t from-on-background/60 to-transparent pointer-events-none"
+                      aria-hidden="true"
+                    />
+                    <div class="absolute bottom-8 left-8 right-8 z-[1]">
+                      <span class="bg-tertiary text-on-tertiary px-3 py-1 rounded-md text-xs font-bold mb-3 inline-block">
+                        {cardKicker(featuredPost)}
+                      </span>
+                      <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold font-headline text-white leading-tight m-0">
+                        {featuredPost.Title}
+                      </h2>
+                    </div>
+                  </div>
+                  <div class="px-1 sm:px-4">
+                    {featuredPost.Excerpt && (
+                      <p class="text-lg text-on-surface-variant leading-relaxed mb-6 font-body m-0">
+                        {featuredPost.Excerpt}
+                      </p>
+                    )}
+                    <div class="flex items-center gap-4">
+                      <div
+                        class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden shrink-0 flex items-center justify-center text-on-surface-variant text-xs font-bold font-headline"
+                        aria-hidden="true"
+                      >
+                        L
+                      </div>
+                      <div>
+                        <p class="text-sm font-bold text-on-surface m-0">Ligadu</p>
+                        <p class="text-xs text-on-surface-variant m-0">
+                          {featuredPost.Excerpt
+                            ? `${estimateReadingTime(featuredPost.Excerpt)} di leitura`
+                            : ''}
+                          {featuredPost.Date && featuredPost.Excerpt ? ' • ' : ''}
+                          {featuredPost.Date ? formatDateLong(featuredPost.Date) : ''}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </article>
+            )}
+
+            {featuredPost && gridPosts.length > 0 && (
+              <div class="h-0.5 bg-primary-fixed w-full" aria-hidden="true" />
+            )}
+
+            {gridPosts.length > 0 && (
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12">
+                {gridPosts.map((post, i) => {
+                  const idx = currentPage === 1 ? i + 1 : i
+                  const image = postImages[idx]
+                  return (
+                    <article class="group">
+                      <a href={getPostLink(post.Slug)} class="block no-underline text-inherit">
+                        <div class="bg-surface-container-lowest rounded-2xl overflow-hidden mb-0 transition-all group-hover:shadow-ambient-lg">
+                          <div class="aspect-video overflow-hidden bg-surface-container-low">
+                            {image ? (
+                              <ImageWithBlur
+                                src={image}
+                                alt={post.Title}
+                                width={typeof image === 'string' ? undefined : image.width}
+                                height={typeof image === 'string' ? undefined : image.height}
+                                loading="lazy"
+                                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                            ) : (
+                              <div class="w-full h-full min-h-[12rem] bg-surface-container" />
+                            )}
+                          </div>
+                          <div class="p-6">
+                            <span class="text-tertiary font-bold text-xs mb-2 block uppercase tracking-wider">
+                              {cardKicker(post)}
+                            </span>
+                            <h3 class="text-xl font-bold font-headline leading-snug mb-4 text-on-surface group-hover:text-primary transition-colors m-0">
+                              {post.Title}
+                            </h3>
+                            {post.Excerpt && (
+                              <p class="text-sm text-on-surface-variant line-clamp-3 font-body m-0">
+                                {post.Excerpt}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </a>
+                    </article>
+                  )
+                })}
+              </div>
+            )}
+
+            {currentPage < numberOfPages && (
+              <div class="flex justify-center pt-4">
+                <a
+                  href={getPageLink(currentPage + 1, paginationTag)}
+                  class="flex items-center gap-3 px-8 py-4 border-2 border-primary text-primary font-bold rounded-full hover:bg-primary hover:text-on-primary transition-all no-underline"
+                >
+                  <span>Le más artigus</span>
+                  <span class="material-symbols-outlined !text-xl" aria-hidden="true">expand_more</span>
+                </a>
+              </div>
+            )}
+
+            {numberOfPages > 1 && (
+              <div class="pt-4">
+                <Pagination
+                  tag={paginationTag}
+                  currentPage={currentPage}
+                  numberOfPages={numberOfPages}
+                />
+              </div>
+            )}
+          </>
+        )
+      }
+    </div>
+
+    <!-- Sidebar (Stitch) -->
+    <aside class="lg:col-span-4 space-y-12">
+      <div class="bg-surface-container-low p-6 sm:p-8 rounded-[2rem]">
+        <h3 class="text-xl sm:text-2xl font-bold font-headline mb-8 flex items-center gap-3 m-0 text-on-surface">
+          <span class="material-symbols-outlined text-tertiary !text-3xl" aria-hidden="true">trending_up</span>
+          Mais popular
+        </h3>
+        {
+          popularRanked.length === 0 ? (
+            <p class="text-sm text-on-surface-variant m-0">Ka tene ninhun sujeston inda</p>
+          ) : (
+            <div class="space-y-8">
+              {popularRanked.map((rp, index) => {
+                const label = cardKicker(rp)
+                const mins = rp.Excerpt ? estimateReadingTime(rp.Excerpt).replace(' min', '') : '—'
+                return (
+                  <a
+                    href={getPostLink(rp.Slug)}
+                    class:list={[
+                      'flex gap-4 group cursor-pointer no-underline',
+                      index > 0 ? 'border-t border-primary-fixed pt-8' : '',
+                    ]}
+                  >
+                    <span class="text-3xl sm:text-4xl font-black font-headline text-primary/20 group-hover:text-primary transition-colors tabular-nums shrink-0">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <div class="min-w-0">
+                      <h4 class="font-bold text-on-surface leading-tight mb-2 m-0 group-hover:text-primary transition-colors">
+                        {rp.Title}
+                      </h4>
+                      <p class="text-xs text-on-surface-variant font-medium m-0 uppercase tracking-wide">
+                        {label} • {mins} MIN
+                      </p>
+                    </div>
+                  </a>
+                )
+              })}
+            </div>
+          )
+        }
+      </div>
+
+      <div class="relative bg-tertiary-container p-6 sm:p-8 rounded-[2rem] overflow-hidden text-on-tertiary-container group">
+        <div
+          class="absolute -top-12 -right-12 w-32 h-32 bg-tertiary-fixed/20 rounded-full blur-3xl pointer-events-none"
+          aria-hidden="true"
+        />
+        <div class="relative z-10">
+          <span class="material-symbols-outlined text-4xl mb-4 block" aria-hidden="true">biotech</span>
+          <h3 class="text-xl sm:text-2xl font-bold font-headline mb-4 m-0">Deep dive</h3>
+          <p class="text-sm opacity-90 mb-6 leading-relaxed m-0">
+            Explora artigus di siénsia, teknolojia i saúdi — kontenúdu kuradu pa Laboratòriu Digital di Kabu Verdi.
+          </p>
+          <a
+            href={getNavLink('/')}
+            class="inline-flex items-center gap-2 font-bold text-on-tertiary-container hover:underline decoration-2 underline-offset-4 no-underline"
+          >
+            Explora agora
+            <span class="material-symbols-outlined !text-lg" aria-hidden="true">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="bg-surface-container-high p-6 sm:p-8 rounded-[2rem]">
+        <h3 class="text-xl font-bold font-headline mb-4 m-0 text-on-surface">
+          {app.layout.footerNewsletterHeading}
+        </h3>
+        <p class="text-sm text-on-surface-variant mb-6 leading-relaxed m-0">
+          {app.layout.footerNewsletterBlurb}
+        </p>
+        <button
+          type="button"
+          class="newsletter-btn w-full bg-primary text-on-primary py-4 rounded-full font-bold shadow-lg shadow-primary/25 active:scale-95 transition-all border-0 cursor-pointer"
+        >
+          {app.inlineNewsletterBanner.submit}
+        </button>
+        <p class="text-[10px] text-on-surface-variant mt-4 text-center m-0 leading-relaxed">
+          Konkorda ku{' '}
+          <a href={getNavLink('/privasidadi')} class="text-primary hover:underline">
+            {app.layout.newsletterPrivacyLink}
+          </a>{' '}
+          pa inskreve.
+        </p>
+      </div>
+    </aside>
+  </div>
+</div>

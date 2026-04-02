@@ -248,6 +248,13 @@ export async function getNumberOfPagesByTag(tagName: string): Promise<number> {
   )
 }
 
+export async function getPostCountByTag(tagName: string): Promise<number> {
+  const allPosts = await getAllPosts()
+  return allPosts.filter((post) =>
+    post.Tags.some((t) => t.name === tagName)
+  ).length
+}
+
 export async function getAllBlocksByBlockId(blockId: string): Promise<Block[]> {
   let results: responses.BlockObject[] = []
 

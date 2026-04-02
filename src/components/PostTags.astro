@@ -5,28 +5,25 @@ import '../styles/notion-color.css'
 
 export interface Props {
   post: Post
-  enableLink: boolean
+  enableLink?: boolean
 }
 
 const { post, enableLink = true } = Astro.props
 ---
 
-<div class="text-sm flex flex-wrap gap-1.5">
+<div class="text-sm flex flex-wrap gap-2">
   {
     post.Tags &&
       post.Tags.length > 0 &&
       post.Tags.map((tag: SelectProperty) => {
         if (enableLink) {
           return (
-            // <a href={getTagLink(tag.name)} class={`flex items-center flex-shrink min-w-0 rounded-sm px-1.5 py-0.5 leading-tight text-slate-700 bg-slate-200/50 hover:bg-slate-300/50 transition-colors ${tag.color}`}>
-            //   {tag.name}
-            // </a>
-			<span class="px-1.5 py-0.5 bg-black text-white uppercase font-bold text-xs">
-				{tag.name}
-			</span>
+            <a href={getTagLink(tag.name)} class="ds-chip hover:bg-primary-fixed transition-colors">
+              {tag.name}
+            </a>
           )
         }
-        return <span class={`flex items-center flex-shrink min-w-0 rounded-sm px-1.5 py-0.5 leading-tight text-slate-700 bg-slate-200/50 ${tag.color}`}>{tag.name}</span>
+        return <span class="ds-chip">{tag.name}</span>
       })
   }
 </div>

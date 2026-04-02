@@ -98,7 +98,7 @@ for (let i = startPage; i <= endPage; i++) {
   }
 
   .pagination-text {
-    color: #64748b;
+    color: #424754;
     font-size: 0.875rem;
     font-weight: 500;
   }
@@ -123,26 +123,26 @@ for (let i = startPage; i <= endPage; i++) {
     gap: 0.5rem;
     padding: 0.625rem 1rem;
     min-height: 2.75rem;
-    border-radius: 0.5rem;
-    background-color: white;
-    color: #334155;
+    border-radius: 0.75rem;
+    background-color: #ffffff;
+    color: #0b1c30;
     font-size: 0.875rem;
     font-weight: 500;
     text-decoration: none;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(194, 198, 214, 0.35);
     transition: all 0.2s ease;
     cursor: pointer;
   }
 
   .pagination-btn:hover:not(.disabled) {
-    background-color: #f1f5f9;
-    border-color: #cbd5e1;
-    color: #1e293b;
+    background-color: #eff4ff;
+    border-color: rgba(0, 88, 190, 0.25);
+    color: #0058be;
     transform: translateY(-1px);
   }
 
   .pagination-btn:focus-visible {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid #0058be;
     outline-offset: 2px;
   }
 
@@ -173,36 +173,36 @@ for (let i = startPage; i <= endPage; i++) {
     min-width: 2.75rem;
     height: 2.75rem;
     padding: 0 0.75rem;
-    border-radius: 0.5rem;
-    background-color: white;
-    color: #334155;
+    border-radius: 0.75rem;
+    background-color: #ffffff;
+    color: #0b1c30;
     font-size: 0.875rem;
     font-weight: 500;
     text-decoration: none;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(194, 198, 214, 0.35);
     transition: all 0.2s ease;
   }
 
   .pagination-number:hover {
-    background-color: #f1f5f9;
-    border-color: #cbd5e1;
-    color: #1e293b;
+    background-color: #eff4ff;
+    border-color: rgba(0, 88, 190, 0.25);
+    color: #0058be;
   }
 
   .pagination-number.active {
-    background-color: #3b82f6;
-    border-color: #3b82f6;
-    color: white;
+    background: linear-gradient(to right, #0058be, #2170e4);
+    border-color: transparent;
+    color: #ffffff;
     font-weight: 600;
   }
 
   .pagination-number.active:hover {
-    background-color: #2563eb;
-    border-color: #2563eb;
+    filter: brightness(1.05);
+    color: #ffffff;
   }
 
   .pagination-number:focus-visible {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid #0058be;
     outline-offset: 2px;
   }
 
@@ -212,8 +212,9 @@ for (let i = startPage; i <= endPage; i++) {
     justify-content: center;
     min-width: 2.75rem;
     height: 2.75rem;
-    color: #94a3b8;
+    color: #424754;
     font-size: 0.875rem;
+    opacity: 0.7;
   }
 
   @media (max-width: 640px) {

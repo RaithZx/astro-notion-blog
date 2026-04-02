@@ -3,14 +3,16 @@ export interface Props {
   title: string
   path: string
   description?: string
+  variant?: 'inline' | 'compact'
 }
 
-const { title, path, description = '' } = Astro.props
+const { title, path, description = '', variant = 'inline' } = Astro.props
+const isCompact = variant === 'compact'
 ---
 
-<div class="share-buttons" data-title={title} data-path={path} data-description={description}>
-  <span class="share-label">Partilha:</span>
-  <div class="share-icons">
+<div class:list={["share-buttons", { "share-compact": isCompact }]} data-title={title} data-path={path} data-description={description}>
+  {!isCompact && <span class="share-label">Partilha:</span>}
+  <div class:list={["share-icons", { "share-icons-compact": isCompact }]}>
     <a
       href="#"
       target="_blank"
@@ -33,20 +35,6 @@ const { title, path, description = '' } = Astro.props
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-      </svg>
-    </a>
-    <a
-      href="#"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="share-icon share-linkedin"
-      aria-label="Partilha na LinkedIn"
-      title="LinkedIn"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-        <rect x="2" y="9" width="4" height="12"></rect>
-        <circle cx="4" cy="4" r="2"></circle>
       </svg>
     </a>
     <a
@@ -81,15 +69,17 @@ const { title, path, description = '' } = Astro.props
     align-items: center;
     gap: 1rem;
     padding: 1rem 0;
-    border-top: 1px solid #e2e8f0;
-    border-bottom: 1px solid #e2e8f0;
-    margin: 1.5rem 0;
+  }
+
+  .share-compact {
+    padding: 0;
+    gap: 0.5rem;
   }
 
   .share-label {
     font-size: 0.875rem;
     font-weight: 500;
-    color: #64748b;
+    color: #424754;
     white-space: nowrap;
   }
 
@@ -99,47 +89,42 @@ const { title, path, description = '' } = Astro.props
     align-items: center;
   }
 
+  .share-icons-compact {
+    gap: 0.5rem;
+  }
+
   .share-icon {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 2.5rem;
     height: 2.5rem;
-    color: #64748b;
-    background-color: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.5rem;
-    transition: all 0.2s ease;
+    color: #0058be;
+    background-color: #eff4ff;
+    border: none;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
     cursor: pointer;
     text-decoration: none;
   }
 
   .share-icon:hover {
-    color: white;
-    background-color: #3b82f6;
-    border-color: #3b82f6;
+    color: #ffffff;
+    background-color: #0058be;
     transform: translateY(-2px);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
 
   .share-icon:focus-visible {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid #0058be;
     outline-offset: 2px;
   }
 
-  .share-icon.share-copy {
-    background: none;
-    border: none;
-    padding: 0;
+  .share-compact .share-icon {
+    width: 2.5rem;
+    height: 2.5rem;
   }
 
   @media (max-width: 640px) {
-    .share-buttons {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.75rem;
-    }
-
     .share-icon {
       width: 2.25rem;
       height: 2.25rem;
@@ -148,56 +133,48 @@ const { title, path, description = '' } = Astro.props
 </style>
 
 <script>
-  // Initialize share buttons with dynamic URLs
   document.querySelectorAll('.share-buttons').forEach((container) => {
     const title = container.getAttribute('data-title') || ''
     const path = container.getAttribute('data-path') || ''
     
-    // Construct full URL using current origin
     const fullUrl = window.location.origin + path
     const encodedTitle = encodeURIComponent(title)
     const encodedUrl = encodeURIComponent(fullUrl)
     
-    // Update share links
-    const twitterLink = container.querySelector('.share-twitter')
+    const twitterLink = container.querySelector('.share-twitter') as HTMLAnchorElement | null
     if (twitterLink) {
       twitterLink.href = `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`
     }
     
-    const facebookLink = container.querySelector('.share-facebook')
+    const facebookLink = container.querySelector('.share-facebook') as HTMLAnchorElement | null
     if (facebookLink) {
       facebookLink.href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`
     }
     
-    const linkedinLink = container.querySelector('.share-linkedin')
-    if (linkedinLink) {
-      linkedinLink.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`
-    }
-    
-    const whatsappLink = container.querySelector('.share-whatsapp')
+    const whatsappLink = container.querySelector('.share-whatsapp') as HTMLAnchorElement | null
     if (whatsappLink) {
       whatsappLink.href = `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`
     }
     
-    // Copy button handler
-    const copyButton = container.querySelector('.share-copy')
+    const copyButton = container.querySelector('.share-copy') as HTMLButtonElement | null
     if (copyButton) {
-      copyButton.addEventListener('click', async function() {
+      copyButton.addEventListener('click', async () => {
         try {
           await navigator.clipboard.writeText(fullUrl)
           
-          // Visual feedback
-          const originalHTML = this.innerHTML
-          this.innerHTML = `
+          const originalHTML = copyButton.innerHTML
+          copyButton.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
           `
-          this.style.color = '#10b981'
+          copyButton.style.color = '#006577'
+          copyButton.style.backgroundColor = '#acedff'
           
           setTimeout(() => {
-            this.innerHTML = originalHTML
-            this.style.color = ''
+            copyButton.innerHTML = originalHTML
+            copyButton.style.color = ''
+            copyButton.style.backgroundColor = ''
           }, 2000)
         } catch (err) {
           console.error('Failed to copy:', err)

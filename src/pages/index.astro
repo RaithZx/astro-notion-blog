@@ -1,9 +1,10 @@
 ---
 export const prerender = true
 
-import { Image } from 'astro:assets'
 import { NUMBER_OF_POSTS_PER_PAGE } from '../server-constants.ts'
 import ImageWithBlur from '../components/ImageWithBlur.astro'
+import CategoryExplorerIcon from '../components/CategoryExplorerIcon.astro'
+import { getCategoryExplorerIconKind } from '../lib/home-category-icons.ts'
 import {
   getPosts,
   getRankedPosts,
@@ -13,54 +14,85 @@ import {
 } from '../lib/notion/client.ts'
 import Layout from '../layouts/Layout.astro'
 import NoContents from '../components/NoContents.astro'
-import PostDate from '../components/PostDate.astro'
-import PostTags from '../components/PostTags.astro'
-import PostTitle from '../components/PostTitle.astro'
 import PostFeaturedImage from '../components/PostFeaturedImage.astro'
-import PostExcerpt from '../components/PostExcerpt.astro'
-import ReadMoreLink from '../components/ReadMoreLink.astro'
-import BlogPostsLink from '../components/BlogPostsLink.astro'
-import BlogTagsLink from '../components/BlogTagsLink.astro'
-import { getPostLink } from '../lib/blog-helpers.ts'
+import { getPostLink, getTagLink, getNavLink } from '../lib/blog-helpers.ts'
 import { getImageFromNotionUrl } from '../lib/image-helpers.ts'
+import type { Post } from '../lib/interfaces.ts'
 import uiStrings from '../locales/ui-strings.json'
 
 const home = uiStrings.app.home
-const [posts, rankedPosts, tags, featuredPost, topPosts] = await Promise.all([
-  getPosts(NUMBER_OF_POSTS_PER_PAGE),
-  getRankedPosts(),
+
+const [allPostsSlice, rankedPosts, tags, featuredPost, topPosts] = await Promise.all([
+  getPosts(Math.max(NUMBER_OF_POSTS_PER_PAGE, 16)),
+  getRankedPosts(12),
   getAllTags(),
   getFeaturedPost(),
-  getTopPosts(4),
+  getTopPosts(8),
 ])
 
-// Load featured post image if available
-let featuredPostImage = null
-if (featuredPost?.FeaturedImage?.Url) {
+const heroPost = featuredPost ?? allPostsSlice[0] ?? null
+
+function resolveHeroImage(post: Post | null): string | import('astro').ImageMetadata | null {
+  if (!post?.FeaturedImage?.Url) return null
+  if (import.meta.env.DEV) return post.FeaturedImage.Url
+  return getImageFromNotionUrl(new URL(post.FeaturedImage.Url)) || post.FeaturedImage.Url
+}
+
+const heroImage = resolveHeroImage(heroPost)
+
+const popularPool =
+  rankedPosts.length > 0
+    ? rankedPosts
+    : topPosts.length > 0
+      ? topPosts
+      : allPostsSlice
+const popularPosts = popularPool
+  .filter((p) => !heroPost || p.PageId !== heroPost.PageId)
+  .slice(0, 4)
+
+const latestPosts = allPostsSlice
+  .filter((p) => !heroPost || p.PageId !== heroPost.PageId)
+  .slice(0, 4)
+
+const spotlightPost =
+  allPostsSlice.find(
+    (p) => p.FeaturedImage?.Url && (!heroPost || p.PageId !== heroPost.PageId)
+  ) ?? heroPost
+
+let spotlightImage: string | import('astro').ImageMetadata | null = null
+if (spotlightPost?.FeaturedImage?.Url) {
   if (import.meta.env.DEV) {
-    featuredPostImage = featuredPost.FeaturedImage.Url
+    spotlightImage = spotlightPost.FeaturedImage.Url
   } else {
-    const imported = getImageFromNotionUrl(new URL(featuredPost.FeaturedImage.Url))
-    featuredPostImage = imported || featuredPost.FeaturedImage.Url
+    spotlightImage =
+      getImageFromNotionUrl(new URL(spotlightPost.FeaturedImage.Url)) ||
+      spotlightPost.FeaturedImage.Url
   }
 }
 
-// Helper function to format date as "12 Jul 2025"
-function formatDateShort(date: string): string {
-  const dt = new Date(date)
-  const months = ['Jan', 'Feb', 'Mar', 'Abr', 'Maiu', 'Jun', 'Jul', 'Ago', 'Set', 'Otu', 'Nov', 'Diz']
-  const day = dt.getDate()
-  const month = months[dt.getMonth()]
-  const year = dt.getFullYear()
-  return `${day} ${month} ${year}`
-}
-
-// Helper function to estimate reading time (words per minute = 200)
-function estimateReadingTime(excerpt: string): string {
-  const words = excerpt.split(/\s+/).length
+function estimateReadingTime(post: Post): string {
+  const text = post.Excerpt || post.Title || ''
+  const words = text.split(/\s+/).filter(Boolean).length
   const minutes = Math.max(1, Math.ceil(words / 200))
   return home.readingTimeMinutes.replace('{{minutes}}', String(minutes))
 }
+
+type TagVariant = 'default' | 'tertiary' | 'primary'
+
+function tagCardVariant(name: string): TagVariant {
+  const n = name.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '')
+  if (n.includes('inov')) return 'tertiary'
+  if (n.includes('espasu') || n.includes('space')) return 'primary'
+  return 'default'
+}
+
+const sortedTags = [...tags].sort((a, b) => a.name.localeCompare(b.name, 'kea'))
+
+const spotlightItems = [
+  { title: home.spotlightItem1Title, desc: home.spotlightItem1Desc },
+  { title: home.spotlightItem2Title, desc: home.spotlightItem2Desc },
+  { title: home.spotlightItem3Title, desc: home.spotlightItem3Desc },
+]
 ---
 
 <Layout
@@ -68,175 +100,355 @@ function estimateReadingTime(excerpt: string): string {
   description={uiStrings.app.site.homeDescription}
   path="/"
   ogImage=""
+  fullWidth={true}
 >
-  <!-- Featured Section - Above main and aside -->
-  {
-    (featuredPost || topPosts.length > 0) && (
-      <section slot="featured" class="mb-12 px-5 py-8 max-sm:px-2.5 max-sm:py-5" style="max-width: 1200px; margin: 0 auto; width: 100%;">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Main Featured Article -->
-          {
-            featuredPost && (
-              <div class="md:col-span-2 lg:col-span-2">
-                <a href={getPostLink(featuredPost.Slug)} class="block group">
-                  <div class="relative overflow-hidden rounded-lg mb-4 aspect-[16/10] bg-slate-200">
-                    {
-                      featuredPostImage ? (
-                        <div class="group-hover:scale-105 transition-transform duration-300">
-                          <ImageWithBlur
-                            src={featuredPostImage}
-                            alt={featuredPost.Title}
-                            width={typeof featuredPostImage === 'string' ? undefined : featuredPostImage.width}
-                            height={typeof featuredPostImage === 'string' ? undefined : featuredPostImage.height}
-                            loading="eager"
-                            aspectRatio="16/10"
-                            class="rounded-lg"
-                          />
-                        </div>
-                      ) : (
-                        <div class="w-full h-full flex items-center justify-center bg-slate-300">
-                          <svg class="w-16 h-16 text-slate-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
-                          </svg>
-                        </div>
-                      )
-                    }
+  <div slot="main" class="w-full pb-16">
+    {
+      !heroPost && allPostsSlice.length === 0 ? (
+        <NoContents />
+      ) : heroPost ? (
+        <>
+          <!-- Hero + Mais popular -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 py-4 md:py-8">
+            <div class="lg:col-span-8">
+              <a
+                href={getPostLink(heroPost.Slug)}
+                class="block group overflow-hidden rounded-3xl hover:shadow-2xl transition-all duration-500 border border-outline-variant/20 shadow-sm bg-surface-container-lowest h-full"
+              >
+                <div class="flex flex-col h-full">
+                  <div class="h-[300px] md:h-[400px] relative overflow-hidden bg-surface-container-high">
+                    {heroImage ? (
+                      <div class="absolute inset-0 group-hover:scale-105 transition-transform duration-700">
+                        <ImageWithBlur
+                          src={heroImage}
+                          alt={heroPost.Title}
+                          width={typeof heroImage === 'string' ? undefined : heroImage.width}
+                          height={typeof heroImage === 'string' ? undefined : heroImage.height}
+                          loading="eager"
+                          class="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div class="w-full h-full flex items-center justify-center bg-surface-container-high text-on-surface-variant">
+                        <span class="material-symbols-outlined text-5xl opacity-40">image</span>
+                      </div>
+                    )}
+                    <div class="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent pointer-events-none" />
                   </div>
-                  <div class="space-y-3">
-                    <div class="flex items-center gap-2 text-xs text-slate-500 uppercase tracking-wide">
-                      <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded font-semibold">{home.featuredBadge}</span>
+                  <div class="p-8 md:p-12">
+                    <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-md text-xs font-bold mb-6 w-fit">
+                      <span
+                        class="material-symbols-outlined text-sm"
+                        style="font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
+                      >
+                        star
+                      </span>
+                      {home.featuredBadge}
                     </div>
-                    <h2 class="text-3xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-tight">
-                      {featuredPost.Title}
-                    </h2>
-                    <div class="flex items-center gap-1.5 text-sm text-slate-400">
-                      {featuredPost.Date && (
-                        <span>{formatDateShort(featuredPost.Date)}</span>
-                      )}
-                      {featuredPost.Tags && featuredPost.Tags.length > 0 && (
-                        <>
-                          <span>·</span>
-                          <span>{featuredPost.Tags[0].name}</span>
-                        </>
-                      )}
-                      {featuredPost.Excerpt && (
-                        <>
-                          <span>·</span>
-                          <span>{estimateReadingTime(featuredPost.Excerpt)}</span>
-                        </>
-                      )}
+                    <h1 class="font-headline text-3xl md:text-5xl font-bold leading-tight mb-6 text-on-surface group-hover:text-primary transition-colors">
+                      {heroPost.Title}
+                    </h1>
+                    {heroPost.Excerpt && (
+                      <p class="text-base md:text-lg text-on-surface-variant mb-8 max-w-2xl leading-relaxed">
+                        {heroPost.Excerpt}
+                      </p>
+                    )}
+                    <div class="flex flex-wrap items-center gap-4 md:gap-6">
+                      <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center font-bold text-primary text-sm shrink-0">
+                          {home.heroAttribution
+                            .split(/\s+/)
+                            .map((w) => w[0])
+                            .join('')
+                            .slice(0, 2)
+                            .toUpperCase()}
+                        </div>
+                        <span class="text-sm font-bold text-on-surface">{home.heroAttribution}</span>
+                      </div>
+                      <span class="text-xs text-on-surface-variant font-medium">
+                        • {estimateReadingTime(heroPost)}
+                      </span>
                     </div>
-                    {
-                      featuredPost.Excerpt && (
-                        <p class="text-slate-600 text-base leading-relaxed line-clamp-3">
-                          {featuredPost.Excerpt}
-                        </p>
-                      )
-                    }
                   </div>
-                </a>
-              </div>
-            )
-          }
+                </div>
+              </a>
+            </div>
 
-          <!-- Top Stories -->
-          {
-            topPosts.length > 0 && (
-              <div class="space-y-4">
-                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">{home.topStoriesHeading}</h3>
-                {
-                  topPosts.map((post) => (
-                    <a href={getPostLink(post.Slug)} class="block group">
-                      <div class="flex gap-3">
-                        {post.FeaturedImage && post.FeaturedImage.Url && (
-                          <div class="w-24 h-16 flex-shrink-0 rounded-md overflow-hidden">
-                            <div class="w-full h-full group-hover:scale-105 transition-transform duration-300">
-                              <PostFeaturedImage post={post} />
-                            </div>
-                          </div>
-                        )}
-                        <div class="flex-1 min-w-0">
-                          <h4 class="text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug line-clamp-2 mb-1">
-                            {post.Title}
-                          </h4>
-                          <div class="flex items-center gap-1.5 text-xs text-slate-500">
-                            {post.Date && (
-                              <span>{formatDateShort(post.Date)}</span>
-                            )}
-                            {post.Tags && post.Tags.length > 0 && (
-                              <>
-                                <span>·</span>
-                                <span>{post.Tags[0].name}</span>
-                              </>
-                            )}
-                          </div>
-                        </div>
+            <aside class="lg:col-span-4 h-full">
+              <div class="bg-surface-container-low p-8 rounded-[2rem] h-full flex flex-col">
+                <h3 class="text-2xl font-bold font-headline mb-8 flex items-center gap-3 text-on-surface">
+                  <span class="material-symbols-outlined text-tertiary">trending_up</span>
+                  {home.popularHeading}
+                </h3>
+                <div class="space-y-8 flex-grow">
+                  {popularPosts.map((post, i) => (
+                    <a
+                      href={getPostLink(post.Slug)}
+                      class:list={[
+                        'flex gap-4 group cursor-pointer no-underline',
+                        i > 0 && 'border-t border-outline-variant/10 pt-8',
+                      ]}
+                    >
+                      <span class="text-4xl font-black font-headline text-primary/20 group-hover:text-primary transition-colors shrink-0">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <div class="min-w-0">
+                        <h4 class="font-bold text-on-surface leading-tight mb-2 group-hover:text-primary transition-colors">
+                          {post.Title}
+                        </h4>
+                        <p class="text-xs text-on-surface-variant font-medium uppercase tracking-wider">
+                          {post.Tags?.[0]?.name ?? '—'} • {estimateReadingTime(post)}
+                        </p>
                       </div>
                     </a>
-                  ))
-                }
+                  ))}
+                </div>
+                <div class="mt-8 pt-8 border-t border-outline-variant/20">
+                  <h4 class="font-bold mb-3 text-on-surface">{home.newsletterMiniHeading}</h4>
+                  <p class="text-sm text-on-surface-variant mb-5 leading-relaxed">
+                    {home.newsletterMiniBlurb}
+                  </p>
+                  <div class="space-y-3">
+                    <input
+                      type="email"
+                      class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-full px-5 py-3 text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:ring-2 focus:ring-primary outline-none"
+                      placeholder={home.newsletterMiniPlaceholder}
+                      aria-label={home.newsletterMiniPlaceholder}
+                      readonly
+                      tabindex={-1}
+                    />
+                    <button
+                      type="button"
+                      class="newsletter-btn w-full bg-primary text-on-primary py-3 rounded-full font-bold shadow-lg shadow-primary/10 active:scale-95 transition-all text-sm border-0 cursor-pointer"
+                    >
+                      {home.newsletterMiniCta}
+                    </button>
+                  </div>
+                </div>
               </div>
-            )
-          }
-        </div>
+            </aside>
+          </div>
 
-        <!-- Latest Articles Section - Same width as hero -->
-        {
-          posts.length > 0 && (
-            <div class="mt-12">
-              <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6">{home.latestHeading}</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {posts.map((post) => (
-                  <article class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
-                    <a href={getPostLink(post.Slug)} class="block">
-                      {post.FeaturedImage && post.FeaturedImage.Url && (
-                        <div class="aspect-[16/10] overflow-hidden">
-                          <div class="w-full h-full group-hover:scale-105 transition-transform duration-300">
-                            <PostFeaturedImage post={post} />
+          <!-- Kes Ultimu Artigu -->
+          {latestPosts.length > 0 && (
+            <section class="py-12 border-t border-outline-variant/10">
+              <div class="flex flex-wrap justify-between items-end gap-4 mb-10">
+                <h2 class="font-headline text-3xl font-bold text-on-surface m-0">
+                  {home.latestHeading}
+                </h2>
+                <a
+                  href={getNavLink('/posts/page/1')}
+                  class="text-primary font-bold flex items-center gap-1 hover:underline underline-offset-4 decoration-2 no-underline"
+                >
+                  {home.viewAllPosts}
+                  <span class="material-symbols-outlined text-lg">chevron_right</span>
+                </a>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {latestPosts.map((post) => (
+                  <article>
+                    <a href={getPostLink(post.Slug)} class="group cursor-pointer block no-underline">
+                      <div class="relative overflow-hidden rounded-2xl aspect-[16/10] mb-5 shadow-sm bg-surface-container-high">
+                        {post.FeaturedImage?.Url ? (
+                          <div class="w-full h-full group-hover:scale-105 transition-transform duration-500">
+                            <PostFeaturedImage post={post} loading="lazy" />
                           </div>
-                        </div>
-                      )}
-                      <div class="p-4">
-                        <h1 class="m-0 text-lg font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
-                          {post.Title}
-                        </h1>
-                        <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-2">
-                          {post.Date && (
-                            <span>{formatDateShort(post.Date)}</span>
-                          )}
-                          {post.Tags && post.Tags.length > 0 && (
-                            <>
-                              <span>·</span>
-                              <span>{post.Tags[0].name}</span>
-                            </>
-                          )}
-                          {post.Excerpt && (
-                            <>
-                              <span>·</span>
-                              <span>{estimateReadingTime(post.Excerpt)}</span>
-                            </>
-                          )}
-                        </div>
-                        <p class="m-0 mt-2 text-slate-600 text-sm leading-relaxed line-clamp-2">
-                          {post.Excerpt}
-                        </p>
-                        <div class="flex justify-start mt-3">
-                          <PostTags post={post} enableLink={true} />
-                        </div>
+                        ) : (
+                          <div class="w-full h-full flex items-center justify-center text-on-surface-variant">
+                            <span class="material-symbols-outlined text-4xl opacity-30">image</span>
+                          </div>
+                        )}
+                        {post.Tags?.[0] && (
+                          <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest text-primary">
+                            {post.Tags[0].name}
+                          </div>
+                        )}
                       </div>
+                      <h3 class="font-headline text-lg font-bold group-hover:text-primary transition-colors leading-snug mb-3 text-on-surface m-0">
+                        {post.Title}
+                      </h3>
+                      {post.Excerpt && (
+                        <p class="text-on-surface-variant text-sm line-clamp-2 m-0">{post.Excerpt}</p>
+                      )}
                     </a>
                   </article>
                 ))}
               </div>
+            </section>
+          )}
+
+          <!-- Explora pa Kategorias -->
+          {sortedTags.length > 0 && (
+            <section class="py-16">
+              <div class="mb-10">
+                <h2 class="font-headline text-3xl font-bold text-on-surface mb-2 m-0">
+                  {home.exploreCategoriesTitle}
+                </h2>
+                <p class="text-on-surface-variant m-0">{home.exploreCategoriesSubtitle}</p>
+              </div>
+              <div class="relative">
+                <div class="flex gap-6 overflow-x-auto no-scrollbar pb-6 snap-x snap-mandatory">
+                  {sortedTags.map((tag) => {
+                    const variant = tagCardVariant(tag.name)
+                    const iconKind = getCategoryExplorerIconKind(tag.name)
+                    return (
+                      <a
+                        href={getTagLink(tag.name)}
+                        class:list={[
+                          'min-w-[280px] md:min-w-[320px] snap-start p-8 rounded-2xl flex flex-col justify-between min-h-[220px] transition-all duration-300 cursor-pointer group border no-underline',
+                          variant === 'default' &&
+                            'hover:bg-surface-container border-outline-variant/10 bg-surface-container-lowest shadow-sm',
+                          variant === 'tertiary' &&
+                            'bg-tertiary-container text-on-tertiary-container hover:brightness-110 border-white/10',
+                          variant === 'primary' &&
+                            'bg-primary-container text-on-primary-container hover:brightness-110 border-white/10',
+                        ]}
+                      >
+                        <div
+                          class:list={[
+                            'w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300',
+                            variant === 'default' &&
+                              'bg-gradient-to-br from-primary/[0.12] via-surface-container-low to-tertiary/[0.14] shadow-sm ring-1 ring-primary/15 group-hover:scale-105 group-hover:ring-primary/30 group-hover:shadow-md',
+                            (variant === 'tertiary' || variant === 'primary') &&
+                              'bg-white/25 backdrop-blur-sm ring-1 ring-white/35 group-hover:scale-105 group-hover:bg-white/35',
+                          ]}
+                        >
+                          <span
+                            class:list={[
+                              variant === 'default' && 'text-primary',
+                              variant === 'tertiary' && 'text-white',
+                              variant === 'primary' && 'text-white',
+                            ]}
+                          >
+                            <CategoryExplorerIcon kind={iconKind} />
+                          </span>
+                        </div>
+                        <div>
+                          <h3
+                            class:list={[
+                              'font-headline text-2xl font-bold mb-1 m-0',
+                              variant === 'default' && 'text-on-surface',
+                            ]}
+                          >
+                            {tag.name}
+                          </h3>
+                          <p
+                            class:list={[
+                              'text-sm m-0',
+                              variant === 'default' && 'text-on-surface-variant',
+                              variant !== 'default' && 'text-white/80',
+                            ]}
+                          >
+                            {home.categoriesLabel}
+                          </p>
+                        </div>
+                      </a>
+                    )
+                  })}
+                </div>
+                <div class="absolute -right-4 top-1/2 -translate-y-1/2 bg-gradient-to-l from-surface to-transparent h-full w-20 pointer-events-none hidden md:block" />
+              </div>
+            </section>
+          )}
+
+          <!-- Kabu Verdi Tech Spotlight -->
+          <section class="py-16 bg-surface-container-low px-4 md:px-12 rounded-[2rem] overflow-hidden">
+            <div class="max-w-7xl mx-auto">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                <div>
+                  <span class="text-tertiary font-bold tracking-[0.2em] text-xs uppercase mb-4 block">
+                    {home.spotlightKicker}
+                  </span>
+                  <h2 class="font-headline text-4xl font-bold mb-8 text-on-surface m-0">
+                    {home.spotlightTitle}
+                  </h2>
+                  <div class="space-y-8">
+                    {spotlightItems.map((item, idx) => (
+                      <div class="flex gap-6 group">
+                        <div class="flex-shrink-0 w-16 h-16 rounded-xl bg-surface-container-lowest flex items-center justify-center border border-outline-variant/20 shadow-soft">
+                          <span class="text-primary font-headline text-2xl font-bold">
+                            {String(idx + 1).padStart(2, '0')}
+                          </span>
+                        </div>
+                        <div>
+                          <h4 class="font-bold text-xl mb-1 text-on-surface group-hover:text-primary transition-colors m-0">
+                            {item.title}
+                          </h4>
+                          <p class="text-on-surface-variant text-sm m-0">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div class="relative">
+                  <div class="absolute -inset-4 bg-primary/5 rounded-[2.5rem] blur-2xl" />
+                  <div class="relative rounded-[2rem] overflow-hidden shadow-2xl p-2 bg-white/20 backdrop-blur-sm">
+                    {spotlightImage ? (
+                      <ImageWithBlur
+                        src={spotlightImage}
+                        alt={spotlightPost?.Title ?? ''}
+                        width={typeof spotlightImage === 'string' ? undefined : spotlightImage.width}
+                        height={typeof spotlightImage === 'string' ? undefined : spotlightImage.height}
+                        loading="lazy"
+                        class="rounded-[1.8rem] w-full h-[350px] md:h-[500px] object-cover"
+                      />
+                    ) : (
+                      <div class="rounded-[1.8rem] w-full h-[350px] md:h-[500px] bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+                        <span class="material-symbols-outlined text-6xl opacity-30">photo_library</span>
+                      </div>
+                    )}
+                    <div class="absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10 md:right-10 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-white/50 bg-white/60">
+                      <p class="font-bold text-lg mb-2 text-on-surface">{home.spotlightVisitTitle}</p>
+                      <p class="text-sm text-on-surface-variant mb-4">{home.spotlightVisitBlurb}</p>
+                      <a
+                        href={getNavLink('/kontaktu')}
+                        class="block w-full py-3 bg-on-surface text-white rounded-full font-bold hover:bg-primary transition-all text-center no-underline"
+                      >
+                        {home.spotlightCta}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          )
-        }
-      </section>
-    )
-  }
+          </section>
 
-  <!-- Empty main slot since content is in featured section -->
-  <div slot="main" class="hidden"></div>
+          <!-- Newsletter band -->
+          <section class="mt-20 mb-4">
+            <div class="bg-primary-container rounded-[2rem] p-6 md:p-12 text-center relative overflow-hidden">
+              <div class="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
+              <div class="absolute bottom-0 right-0 w-96 h-96 bg-tertiary-fixed/10 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl" />
+              <div class="relative z-10 max-w-2xl mx-auto">
+                <h2 class="font-headline text-3xl md:text-4xl font-bold text-white mb-4 m-0">
+                  {home.newsletterBandTitle}
+                </h2>
+                <p class="text-white/80 mb-8 m-0">{home.newsletterBandBlurb}</p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                  <input
+                    type="email"
+                    class="flex-grow px-6 py-4 rounded-full bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:bg-white/20 transition-all"
+                    placeholder={home.newsletterBandPlaceholder}
+                    aria-label={home.newsletterBandPlaceholder}
+                    readonly
+                    tabindex={-1}
+                  />
+                  <button
+                    type="button"
+                    class="newsletter-btn bg-white text-primary px-10 py-4 rounded-full font-bold hover:shadow-lg transition-all active:scale-95 border-0 cursor-pointer shrink-0"
+                  >
+                    {home.newsletterBandSubmit}
+                  </button>
+                </div>
+                <p class="text-white/40 text-[10px] mt-4 uppercase tracking-widest m-0">
+                  {home.newsletterBandDisclaimer}
+                </p>
+              </div>
+            </div>
+          </section>
+        </>
+      ) : (
+        <NoContents />
+      )
+    }
+  </div>
 </Layout>
-
-

@@ -1,5 +1,5 @@
 ---
-import { Post } from '../lib/interfaces.ts'
+import type { Post } from '../lib/interfaces.ts'
 import { getDateStr } from '../lib/blog-helpers.ts'
 
 export interface Props {
@@ -9,6 +9,6 @@ export interface Props {
 const { post } = Astro.props
 ---
 
-<div class="pb-1.5 text-sm">
+<div class="text-sm text-on-surface-variant font-medium">
   {post.Date ? getDateStr(post.Date) : ''}
 </div>

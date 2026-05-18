@@ -396,45 +396,19 @@ const s = uiStrings.app.search
     }
 
     async function fetchRSS() {
-      const url = new URL(location.href)
-      const port = url.port ? `:${url.port}` : ''
-
-      const res = await fetch(
-        `${url.protocol}//${url.hostname}${port}/feed`
-      )
+      const res = await fetch('/search-index.json')
       if (res.status !== 200) {
-        console.log(res.status)
-        throw new Error('Failed to fetch RSS feed')
+        throw new Error('Failed to fetch search index')
       }
 
-      const body = await res.text()
+      const items = await res.json()
 
-      const parser = new DOMParser()
-      const xml = parser.parseFromString(body, 'text/xml')
-
-      Array.from(xml.getElementsByTagName('item')).forEach((item) => {
-        const title = item.getElementsByTagName('title')[0].textContent
-        const rawLink = item.getElementsByTagName('link')[0].textContent
-        const description =
-          item.getElementsByTagName('description')[0]?.textContent
-        const pubDate = item.getElementsByTagName('pubDate')[0].textContent
-
-        // Extract path from the RSS link and reconstruct with current origin
-        // This fixes localhost URLs in the RSS feed
-        let link = rawLink
-        try {
-          const linkUrl = new URL(rawLink)
-          link = window.location.origin + linkUrl.pathname
-        } catch (e) {
-          // If URL parsing fails, use the raw link
-          link = rawLink
-        }
-
+      items.forEach((item) => {
         feedItems.push({
-          title,
-          link,
-          description,
-          pubDate,
+          title: item.title,
+          link: window.location.origin + item.link,
+          description: item.description,
+          pubDate: item.pubDate,
         })
       })
 

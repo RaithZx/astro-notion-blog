@@ -10,30 +10,38 @@ export interface Props {
   class?: string
   loading?: 'lazy' | 'eager'
   aspectRatio?: string
+  /** 'natural' renders the image at its own intrinsic ratio — no crop, no box. */
+  fit?: 'cover' | 'contain' | 'natural'
 }
 
-const { 
-  src, 
-  alt, 
-  width, 
-  height, 
+const {
+  src,
+  alt,
+  width,
+  height,
   class: className = '',
   loading = 'lazy',
-  aspectRatio
+  aspectRatio,
+  fit = 'cover'
 } = Astro.props
 
+const isNatural = fit === 'natural'
 const imageId = `img-${Math.random().toString(36).substr(2, 9)}`
 const isString = typeof src === 'string'
+
+const wrapperStyle = isNatural
+  ? ''
+  : `aspect-ratio: ${aspectRatio || '16 / 9'};`
 ---
 
-<div class={`image-blur-wrapper ${className}`} style={aspectRatio ? `aspect-ratio: ${aspectRatio};` : ''}>
+<div class:list={['image-blur-wrapper', className, { 'image-blur-wrapper-natural': isNatural }]} style={wrapperStyle}>
   <!-- Blur placeholder/skeleton -->
   <div class="image-blur-placeholder" data-placeholder-id={imageId}>
     <div class="skeleton-shimmer"></div>
   </div>
-  
+
   <!-- Actual image -->
-  <div class="image-container" data-container-id={imageId}>
+  <div class:list={['image-container', { 'image-container-natural': isNatural }]} data-container-id={imageId}>
     {isString ? (
       <img
         src={src}
@@ -41,7 +49,8 @@ const isString = typeof src === 'string'
         width={width}
         height={height}
         loading={loading}
-        class="image-content"
+        class:list={['image-content', { 'image-content-natural': isNatural }]}
+        style={isNatural ? '' : `object-fit: ${fit};`}
         data-image-id={imageId}
       />
     ) : (
@@ -51,7 +60,8 @@ const isString = typeof src === 'string'
         width={width || src.width}
         height={height || src.height}
         loading={loading}
-        class="image-content"
+        class:list={['image-content', { 'image-content-natural': isNatural }]}
+        style={isNatural ? '' : `object-fit: ${fit};`}
         data-image-id={imageId}
       />
     )}
@@ -65,6 +75,12 @@ const isString = typeof src === 'string'
     height: 100%;
     overflow: hidden;
     background-color: #e2e8f0;
+  }
+
+  .image-blur-wrapper-natural {
+    height: auto;
+    overflow: visible;
+    background-color: transparent;
   }
 
   .image-blur-placeholder {
@@ -98,6 +114,13 @@ const isString = typeof src === 'string'
     transition: opacity 0.5s ease-in;
   }
 
+  .image-container-natural {
+    position: static;
+    inset: auto;
+    width: 100%;
+    height: auto;
+  }
+
   .image-container.loaded {
     opacity: 1;
   }
@@ -107,6 +130,10 @@ const isString = typeof src === 'string'
     height: 100%;
     object-fit: cover;
     display: block;
+  }
+
+  .image-content-natural {
+    height: auto;
   }
 
   @keyframes shimmer {

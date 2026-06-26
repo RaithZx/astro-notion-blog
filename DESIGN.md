@@ -1,7 +1,7 @@
 # Design System Strategy: High-End Editorial
 
 ## 1. Overview & Creative North Star
-The Creative North Star for this design system is **"The Digital Laboratory."** It bridges the gap between cold, technical precision and the warm, human pursuit of knowledge. Unlike standard tech blogs that rely on heavy borders and rigid grids, this system prioritizes a fluid, "connected" experience inspired by the network nodes of the logo.
+The Creative North Star for this design system bridges the gap between cold, technical precision and the warm, human pursuit of knowledge. Unlike standard tech blogs that rely on heavy borders and rigid grids, this system prioritizes a fluid, "connected" experience inspired by the network nodes of the logo.
 
 We break the "template" look by utilizing **intentional asymmetry**—large typographic headlines paired with generous whitespace—and **layered surfaces** that suggest depth and discovery. The goal is to make the reader feel they are looking through a high-tech lens at complex scientific truths, presented with clarity and editorial elegance.
 
@@ -27,11 +27,12 @@ Typography is our primary tool for authority. We pair the technical, wide-set **
 *   **Display & Headline (Space Grotesk):** These should feel massive and architectural. `display-lg` (3.5rem) should be used for lead features. The "tech-forward" feel comes from the geometric nature of this typeface.
 *   **Title & Body (Inter):** For long-form science reading, `body-lg` (1rem) provides the necessary comfort. The high x-height of Inter ensures legibility in Kabuverdianu, which often features unique character combinations.
 *   **The Hierarchy Goal:** Use dramatic scale shifts. A `display-md` headline should sit next to a `label-md` category tag to create an "Editorial Boutique" feel rather than a generic news feed.
+*   **Body measure:** Article body copy targets a `44rem` (~70ch at 1.125rem) max-width, centered within its column. This is the single source of truth for reading-column width — implemented on `.article-body` in `PostBody.astro`.
 
 ---
 
 ## 4. Elevation & Depth
-In "The Digital Laboratory," depth is atmospheric, not structural.
+Depth here is atmospheric, not structural.
 
 *   **The Layering Principle:** Avoid shadows for standard cards. Instead, place a `surface_container_lowest` (#ffffff) card atop a `surface_container_low` (#eff4ff) background. This creates "Soft Lift."
 *   **Ambient Shadows:** For floating elements (Modals, Hovered Cards), use a shadow with a 24px blur, 0px offset-y, and 6% opacity using a tint of `on_surface` (#0b1c30). This mimics natural laboratory lighting.

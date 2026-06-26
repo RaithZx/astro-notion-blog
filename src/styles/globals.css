@@ -108,6 +108,21 @@
     @apply rounded-3xl bg-tertiary-container/90 text-on-tertiary-container backdrop-blur-sm;
   }
 
+  /* Newspaper-style thin horizontal rule — replaces colour-block dividers */
+  .ds-section-rule {
+    border: none;
+    border-top: 1px solid currentColor;
+    opacity: 0.15;
+    margin: 0;
+  }
+
+  /* Kicker label — uppercase tight tracking, sits above headline */
+  .ds-kicker {
+    @apply uppercase text-xs font-bold tracking-widest text-primary/70;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.15em;
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }

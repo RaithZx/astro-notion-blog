@@ -3,10 +3,8 @@ export const prerender = true
 
 import {
   getPostsByPage,
-  getRankedPosts,
   getAllTags,
   getNumberOfPages,
-  getDatabase,
   getAllPosts,
 } from '../../../lib/notion/client.ts'
 import Layout from '../../../layouts/Layout.astro'
@@ -26,12 +24,10 @@ export async function getStaticPaths() {
 const { page } = Astro.params
 const currentPage = parseInt(page ?? '1', 10)
 
-const [posts, rankedPosts, tags, numberOfPages, database, allPostsList] = await Promise.all([
+const [posts, tags, numberOfPages, allPostsList] = await Promise.all([
   getPostsByPage(currentPage),
-  getRankedPosts(),
   getAllTags(),
   getNumberOfPages(),
-  getDatabase(),
   getAllPosts(),
 ])
 
@@ -45,10 +41,11 @@ const pageTitle =
 
 <Layout
   title={pageTitle}
-  description={database.Description || app.site.homeDescription}
+  description={app.site.homeDescription}
   path={`/posts/page/${page}`}
   ogImage=""
   fullWidth={true}
+  showCategoryNav={false}
 >
   <div slot="main" class="w-full min-w-0">
     <CategoryTagMain
@@ -58,8 +55,6 @@ const pageTitle =
       numberOfPages={pageCount}
       totalInTag={totalAllPosts}
       allTags={tags}
-      rankedPosts={rankedPosts}
-      databaseDescription={database.Description}
       allPostsArchive={true}
     />
   </div>

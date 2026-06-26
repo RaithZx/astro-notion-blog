@@ -1,12 +1,12 @@
 ---
 export const prerender = true
 
-import { NUMBER_OF_POSTS_PER_PAGE } from '../server-constants.ts'
 import ImageWithBlur from '../components/ImageWithBlur.astro'
+import PostCard from '../components/PostCard.astro'
 import CategoryExplorerIcon from '../components/CategoryExplorerIcon.astro'
 import { getCategoryExplorerIconKind } from '../lib/home-category-icons.ts'
 import {
-  getPosts,
+  getAllPosts,
   getRankedPosts,
   getAllTags,
   getFeaturedPost,
@@ -23,7 +23,7 @@ import uiStrings from '../locales/ui-strings.json'
 const home = uiStrings.app.home
 
 const [allPostsSlice, rankedPosts, tags, featuredPost, topPosts] = await Promise.all([
-  getPosts(Math.max(NUMBER_OF_POSTS_PER_PAGE, 16)),
+  getAllPosts(),
   getRankedPosts(12),
   getAllTags(),
   getFeaturedPost(),
@@ -50,26 +50,10 @@ const popularPosts = popularPool
   .filter((p) => !heroPost || p.PageId !== heroPost.PageId)
   .slice(0, 4)
 
+const LATEST_INITIAL = 8
+
 const latestPosts = allPostsSlice
   .filter((p) => !heroPost || p.PageId !== heroPost.PageId)
-  .slice(0, 4)
-
-const spotlightPost =
-  allPostsSlice.find(
-    (p) => p.FeaturedImage?.Url && (!heroPost || p.PageId !== heroPost.PageId)
-  ) ?? heroPost
-
-let spotlightImage: string | import('astro').ImageMetadata | null = null
-if (spotlightPost?.FeaturedImage?.Url) {
-  if (import.meta.env.DEV) {
-    spotlightImage = spotlightPost.FeaturedImage.Url
-  } else {
-    spotlightImage =
-      getImageFromNotionUrl(new URL(spotlightPost.FeaturedImage.Url)) ||
-      spotlightPost.FeaturedImage.Url
-  }
-}
-
 
 type TagVariant = 'default' | 'tertiary' | 'primary'
 
@@ -81,12 +65,6 @@ function tagCardVariant(name: string): TagVariant {
 }
 
 const sortedTags = [...tags].sort((a, b) => a.name.localeCompare(b.name, 'kea'))
-
-const spotlightItems = [
-  { title: home.spotlightItem1Title, desc: home.spotlightItem1Desc },
-  { title: home.spotlightItem2Title, desc: home.spotlightItem2Desc },
-  { title: home.spotlightItem3Title, desc: home.spotlightItem3Desc },
-]
 ---
 
 <Layout
@@ -102,111 +80,157 @@ const spotlightItems = [
         <NoContents />
       ) : heroPost ? (
         <>
-          <!-- Hero + Mais popular -->
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 py-4 md:py-8">
-            <div class="lg:col-span-8">
-              <a
-                href={getPostLink(heroPost.Slug)}
-                class="block group no-underline"
-              >
-                <div class="flex flex-col">
-                  <div class="h-[300px] md:h-[400px] relative overflow-hidden rounded-2xl bg-surface-container-high">
-                    {heroImage ? (
-                      <div class="absolute inset-0 group-hover:scale-105 transition-transform duration-700">
-                        <ImageWithBlur
-                          src={heroImage}
-                          alt={heroPost.Title}
-                          width={typeof heroImage === 'string' ? undefined : heroImage.width}
-                          height={typeof heroImage === 'string' ? undefined : heroImage.height}
-                          loading="eager"
-                          class="w-full h-full object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div class="w-full h-full bg-gradient-to-br from-primary/20 via-surface-container to-tertiary/15 flex items-center justify-center text-on-surface-variant">
-                        <span class="material-symbols-outlined text-5xl opacity-20">article</span>
-                      </div>
-                    )}
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
+          <!-- Hero -->
+          <div class="py-4 md:py-8">
+            <a href={getPostLink(heroPost.Slug)} class="block group no-underline">
+              <div class="rounded-xl overflow-hidden relative h-[420px] md:h-[560px] bg-surface-container-high transition-shadow duration-300 group-hover:shadow-ambient">
+                {heroImage ? (
+                  <div class="absolute inset-0 group-hover:scale-105 transition-transform duration-700">
+                    <ImageWithBlur
+                      src={heroImage}
+                      alt={heroPost.Title}
+                      width={typeof heroImage === 'string' ? undefined : heroImage.width}
+                      height={typeof heroImage === 'string' ? undefined : heroImage.height}
+                      loading="eager"
+                      class="w-full h-full object-cover"
+                    />
                   </div>
-                  <div class="pt-6 pb-2 px-0">
-                    <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-md text-xs font-bold mb-6 w-fit">
-                      <span
-                        class="material-symbols-outlined text-sm"
-                        style="font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
-                      >
-                        star
-                      </span>
-                      {home.featuredBadge}
+                ) : (
+                  <div class="absolute inset-0 bg-gradient-to-br from-primary/20 via-surface-container to-tertiary/15 flex items-center justify-center text-on-surface-variant">
+                    <span class="material-symbols-outlined text-5xl opacity-20">article</span>
+                  </div>
+                )}
+                {/* Gradient overlay — strong at bottom for text legibility */}
+                <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none" />
+                {/* Text anchored to bottom */}
+                <div class="absolute bottom-0 left-0 right-0 px-6 pb-7 pt-16 md:px-10 md:pb-9">
+                  {heroPost.Tags && heroPost.Tags.length > 0 && (
+                    <div class="flex flex-wrap gap-3 mb-3">
+                      {heroPost.Tags.slice(0, 3).map((tag) => (
+                        <span class="text-tertiary-fixed font-bold text-[10px] uppercase tracking-widest">
+                          {tag.name}
+                        </span>
+                      ))}
                     </div>
-                    <h1 class="font-headline text-3xl md:text-5xl font-bold leading-tight mb-6 text-on-surface group-hover:text-primary transition-colors">
-                      {heroPost.Title}
-                    </h1>
-                    {heroPost.Excerpt && (
-                      <p class="text-base md:text-lg text-on-surface-variant mb-8 max-w-2xl leading-relaxed">
-                        {heroPost.Excerpt}
-                      </p>
-                    )}
-                    {heroPost.Tags && heroPost.Tags.length > 0 && (
-                      <div class="flex flex-wrap gap-2">
-                        {heroPost.Tags.slice(0, 3).map((tag) => (
-                          <span class="text-xs font-bold uppercase tracking-wider text-primary/70">
-                            {tag.name}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  )}
+                  <h1 class="font-headline text-2xl md:text-4xl lg:text-5xl font-bold leading-tight mb-3 text-white drop-shadow-sm">
+                    {heroPost.Title}
+                  </h1>
+                  {heroPost.Excerpt && (
+                    <p class="text-sm md:text-base text-white/75 max-w-2xl leading-relaxed m-0 line-clamp-2">
+                      {heroPost.Excerpt}
+                    </p>
+                  )}
                 </div>
-              </a>
-            </div>
+              </div>
+            </a>
+          </div>
 
-            <aside class="lg:col-span-4 h-full">
-              <div class="bg-surface-container-low p-8 rounded-[2rem] h-full flex flex-col">
-                <h3 class="text-2xl font-bold font-headline mb-8 flex items-center gap-3 text-on-surface">
-                  <span class="material-symbols-outlined text-tertiary">trending_up</span>
-                  {home.popularHeading}
-                </h3>
-                <div class="space-y-5 flex-grow">
-                  {popularPosts.map((post, i) => (
-                    <a
-                      href={getPostLink(post.Slug)}
-                      class:list={[
-                        'flex gap-4 group cursor-pointer no-underline items-start',
-                        i > 0 && 'border-t border-outline-variant/10 pt-5',
-                      ]}
-                    >
-                      <div class="relative shrink-0 w-20 h-16 rounded-xl overflow-hidden bg-surface-container-high">
-                        {post.FeaturedImage?.Url ? (
-                          <PostFeaturedImage post={post} loading="lazy" />
-                        ) : (
-                          <div class="w-full h-full flex items-center justify-center text-on-surface-variant">
-                            <span class="material-symbols-outlined text-2xl opacity-30">image</span>
+          <!-- Explora pa Kategorias -->
+          {sortedTags.length > 0 && (
+            <div class="flex gap-2 overflow-x-auto py-3 mb-2" style="scrollbar-width: none; -ms-overflow-style: none;">
+              {sortedTags.map((tag) => {
+                const variant = tagCardVariant(tag.name)
+                const iconKind = getCategoryExplorerIconKind(tag.name)
+                return (
+                  <a
+                    href={getTagLink(tag.name)}
+                    class:list={[
+                      'shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium no-underline transition-all duration-200 border',
+                      variant === 'default' &&
+                        'bg-surface-container-lowest border-outline-variant/20 text-on-surface hover:bg-surface-container hover:border-primary/30 hover:text-primary',
+                      variant === 'tertiary' &&
+                        'bg-tertiary-container text-on-tertiary-container border-white/10 hover:brightness-110',
+                      variant === 'primary' &&
+                        'bg-primary-container text-on-primary-container border-white/10 hover:brightness-110',
+                    ]}
+                  >
+                    <span class:list={[
+                      'shrink-0',
+                      variant === 'default' && 'text-primary',
+                      variant !== 'default' && 'text-white',
+                    ]}>
+                      <CategoryExplorerIcon kind={iconKind} size={16} />
+                    </span>
+                    {tag.name}
+                  </a>
+                )
+              })}
+            </div>
+          )}
+
+          <!-- Mais popular -->
+          {popularPosts.length > 0 && (
+            <section class="pb-4">
+              <div class="flex items-center gap-3 mb-6">
+                <span class="material-symbols-outlined text-tertiary">trending_up</span>
+                <h2 class="font-headline text-xl font-bold text-outline m-0">{home.popularHeading}</h2>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* #1 — featured large card */}
+                {popularPosts[0] && (() => {
+                  const post = popularPosts[0]
+                  return (
+                    <a href={getPostLink(post.Slug)} class="group no-underline text-inherit">
+                      <div class="rounded-xl overflow-hidden relative aspect-[4/3] bg-surface-container-high">
+                        {post.FeaturedImage?.Url && (
+                          <div class="absolute inset-0">
+                            <PostFeaturedImage post={post} loading="lazy" />
                           </div>
                         )}
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                        <span class="absolute top-4 left-4 font-black font-headline text-5xl leading-none text-white/20 tabular-nums select-none">01</span>
+                        <div class="absolute bottom-0 left-0 right-0 p-5">
+                          {post.Tags?.[0] && (
+                            <span class="text-tertiary font-bold text-[10px] uppercase tracking-widest block mb-2">
+                              {post.Tags[0].name}
+                            </span>
+                          )}
+                          <h4 class="font-bold text-lg md:text-xl font-headline text-white leading-snug line-clamp-3 group-hover:text-tertiary transition-colors m-0">
+                            {post.Title}
+                          </h4>
+                        </div>
                       </div>
-                      <div class="min-w-0">
-                        <h4 class="font-bold text-sm text-on-surface leading-tight mb-1 group-hover:text-primary transition-colors">
-                          {post.Title}
-                        </h4>
-                        {post.Tags?.[0] && (
-                          <p class="text-xs text-on-surface-variant font-medium uppercase tracking-wider">
-                            {post.Tags[0].name}
-                          </p>
-                        )}
+                    </a>
+                  )
+                })()}
+
+                {/* #2–4 — stacked list */}
+                <div class="flex flex-col justify-between gap-3">
+                  {popularPosts.slice(1).map((post, i) => (
+                    <a href={getPostLink(post.Slug)} class="group no-underline text-inherit flex-1">
+                      <div class="flex gap-4 items-center h-full rounded-xl bg-surface-container-lowest hover:bg-surface-container ring-1 ring-outline-variant/15 transition-colors p-3 pr-4">
+                        <span class="font-black font-headline text-3xl leading-none text-on-surface/10 tabular-nums select-none w-10 shrink-0 text-right">
+                          {String(i + 2).padStart(2, '0')}
+                        </span>
+                        <div class="relative w-20 h-16 shrink-0 rounded-lg overflow-hidden bg-surface-container-high">
+                          {post.FeaturedImage?.Url && (
+                            <PostFeaturedImage post={post} loading="lazy" />
+                          )}
+                        </div>
+                        <div class="min-w-0 flex-1">
+                          {post.Tags?.[0] && (
+                            <span class="text-tertiary font-bold text-[10px] uppercase tracking-widest block mb-1">
+                              {post.Tags[0].name}
+                            </span>
+                          )}
+                          <h4 class="font-bold text-sm font-headline text-on-surface leading-snug line-clamp-2 group-hover:text-primary transition-colors m-0">
+                            {post.Title}
+                          </h4>
+                        </div>
                       </div>
                     </a>
                   ))}
                 </div>
               </div>
-            </aside>
-          </div>
+            </section>
+          )}
 
           <!-- Kes Ultimu Artigu -->
           {latestPosts.length > 0 && (
-            <section class="py-12 border-t border-outline-variant/10">
-              <div class="flex flex-wrap justify-between items-end gap-4 mb-10">
-                <h2 class="font-headline text-3xl font-bold text-on-surface m-0">
+            <section class="pt-8 pb-12">
+              <div class="flex flex-wrap justify-between items-end gap-4 mb-6">
+                <h2 class="font-headline text-xl font-bold text-outline m-0">
                   {home.latestHeading}
                 </h2>
                 <a
@@ -217,178 +241,33 @@ const spotlightItems = [
                   <span class="material-symbols-outlined text-lg">chevron_right</span>
                 </a>
               </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {latestPosts.map((post) => (
-                  <article>
-                    <a href={getPostLink(post.Slug)} class="group cursor-pointer block no-underline">
-                      <div class="relative overflow-hidden rounded-2xl aspect-[16/10] mb-5 shadow-sm bg-surface-container-high">
-                        {post.FeaturedImage?.Url ? (
-                          <div class="w-full h-full group-hover:scale-105 transition-transform duration-500">
-                            <PostFeaturedImage post={post} loading="lazy" />
-                          </div>
-                        ) : (
-                          <div class="w-full h-full flex items-center justify-center text-on-surface-variant">
-                            <span class="material-symbols-outlined text-4xl opacity-30">image</span>
-                          </div>
-                        )}
-                        {post.Tags?.[0] && (
-                          <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest text-primary">
-                            {post.Tags[0].name}
-                          </div>
-                        )}
-                      </div>
-                      <h3 class="font-headline text-lg font-bold group-hover:text-primary transition-colors leading-snug mb-3 text-on-surface m-0">
-                        {post.Title}
-                      </h3>
-                      {post.Excerpt && (
-                        <p class="text-on-surface-variant text-sm line-clamp-2 m-0">{post.Excerpt}</p>
-                      )}
-                    </a>
-                  </article>
+              <div class="flex flex-col gap-4" id="latest-posts-list">
+                {latestPosts.map((post, i) => (
+                  <div class:list={[i >= LATEST_INITIAL && 'latest-extra hidden']}>
+                    <PostCard post={post} variant="list" loading="lazy" />
+                  </div>
                 ))}
               </div>
+              {latestPosts.length > LATEST_INITIAL && (
+                <div class="flex justify-center mt-8">
+                  <button
+                    id="load-more-btn"
+                    type="button"
+                    class="flex items-center gap-2 px-8 py-3 rounded-full border-2 border-outline-variant text-on-surface font-bold hover:border-primary hover:text-primary transition-colors"
+                    data-label-more={home.loadMorePosts}
+                    data-label-less={home.showLessPosts}
+                  >
+                    {home.loadMorePosts}
+                    <span class="material-symbols-outlined text-lg" id="load-more-icon">expand_more</span>
+                  </button>
+                </div>
+              )}
             </section>
           )}
-
-          <!-- Explora pa Kategorias -->
-          {sortedTags.length > 0 && (
-            <section class="py-16">
-              <div class="mb-10">
-                <h2 class="font-headline text-3xl font-bold text-on-surface mb-2 m-0">
-                  {home.exploreCategoriesTitle}
-                </h2>
-                <p class="text-on-surface-variant m-0">{home.exploreCategoriesSubtitle}</p>
-              </div>
-              <div class="relative">
-                <div class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory">
-                  {sortedTags.map((tag) => {
-                    const variant = tagCardVariant(tag.name)
-                    const iconKind = getCategoryExplorerIconKind(tag.name)
-                    return (
-                      <a
-                        href={getTagLink(tag.name)}
-                        class:list={[
-                          'min-w-[280px] md:min-w-[320px] snap-start p-8 rounded-2xl flex flex-col justify-between min-h-[220px] transition-all duration-300 cursor-pointer group border no-underline',
-                          variant === 'default' &&
-                            'hover:bg-surface-container border-outline-variant/10 bg-surface-container-lowest shadow-sm',
-                          variant === 'tertiary' &&
-                            'bg-tertiary-container text-on-tertiary-container hover:brightness-110 border-white/10',
-                          variant === 'primary' &&
-                            'bg-primary-container text-on-primary-container hover:brightness-110 border-white/10',
-                        ]}
-                      >
-                        <div
-                          class:list={[
-                            'w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300',
-                            variant === 'default' &&
-                              'bg-gradient-to-br from-primary/[0.12] via-surface-container-low to-tertiary/[0.14] shadow-sm ring-1 ring-primary/15 group-hover:scale-105 group-hover:ring-primary/30 group-hover:shadow-md',
-                            (variant === 'tertiary' || variant === 'primary') &&
-                              'bg-white/25 backdrop-blur-sm ring-1 ring-white/35 group-hover:scale-105 group-hover:bg-white/35',
-                          ]}
-                        >
-                          <span
-                            class:list={[
-                              variant === 'default' && 'text-primary',
-                              variant === 'tertiary' && 'text-white',
-                              variant === 'primary' && 'text-white',
-                            ]}
-                          >
-                            <CategoryExplorerIcon kind={iconKind} />
-                          </span>
-                        </div>
-                        <div>
-                          <h3
-                            class:list={[
-                              'font-headline text-2xl font-bold mb-1 m-0',
-                              variant === 'default' && 'text-on-surface',
-                            ]}
-                          >
-                            {tag.name}
-                          </h3>
-                          <p
-                            class:list={[
-                              'text-sm m-0',
-                              variant === 'default' && 'text-on-surface-variant',
-                              variant !== 'default' && 'text-white/80',
-                            ]}
-                          >
-                            {home.categoriesLabel}
-                          </p>
-                        </div>
-                      </a>
-                    )
-                  })}
-                </div>
-                <div class="absolute right-0 top-0 bottom-0 bg-gradient-to-l from-surface to-transparent w-16 pointer-events-none hidden md:block" />
-              </div>
-            </section>
-          )}
-
-          <!-- Kabu Verdi Tech Spotlight -->
-          <section class="py-16">
-            <div class="max-w-7xl mx-auto">
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-                <div>
-                  <span class="text-tertiary font-bold tracking-[0.2em] text-xs uppercase mb-4 block">
-                    {home.spotlightKicker}
-                  </span>
-                  <h2 class="font-headline text-4xl font-bold mb-8 text-on-surface m-0">
-                    {home.spotlightTitle}
-                  </h2>
-                  <div class="space-y-8">
-                    {spotlightItems.map((item, idx) => (
-                      <div class="flex gap-6 group">
-                        <div class="flex-shrink-0 w-16 h-16 rounded-xl bg-surface-container-lowest flex items-center justify-center border border-outline-variant/20 shadow-soft">
-                          <span class="text-primary font-headline text-2xl font-bold">
-                            {String(idx + 1).padStart(2, '0')}
-                          </span>
-                        </div>
-                        <div>
-                          <h4 class="font-bold text-xl mb-1 text-on-surface group-hover:text-primary transition-colors m-0">
-                            {item.title}
-                          </h4>
-                          <p class="text-on-surface-variant text-sm m-0">{item.desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div class="relative">
-                  <div class="absolute -inset-4 bg-primary/5 rounded-[2.5rem] blur-2xl" />
-                  <div class="relative rounded-[2rem] overflow-hidden shadow-2xl p-2 bg-white/20 backdrop-blur-sm">
-                    {spotlightImage ? (
-                      <ImageWithBlur
-                        src={spotlightImage}
-                        alt={spotlightPost?.Title ?? ''}
-                        width={typeof spotlightImage === 'string' ? undefined : spotlightImage.width}
-                        height={typeof spotlightImage === 'string' ? undefined : spotlightImage.height}
-                        loading="lazy"
-                        class="rounded-[1.8rem] w-full h-[350px] md:h-[500px] object-cover"
-                      />
-                    ) : (
-                      <div class="rounded-[1.8rem] w-full h-[350px] md:h-[500px] bg-surface-container-high flex items-center justify-center text-on-surface-variant">
-                        <span class="material-symbols-outlined text-6xl opacity-30">photo_library</span>
-                      </div>
-                    )}
-                    <div class="absolute bottom-6 left-6 right-6 md:bottom-10 md:left-10 md:right-10 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-white/50 bg-white/60">
-                      <p class="font-bold text-lg mb-2 text-on-surface">{home.spotlightVisitTitle}</p>
-                      <p class="text-sm text-on-surface-variant mb-4">{home.spotlightVisitBlurb}</p>
-                      <a
-                        href={getNavLink('/kontaktu')}
-                        class="block w-full py-3 bg-on-surface text-white rounded-full font-bold hover:bg-primary transition-all text-center no-underline"
-                      >
-                        {home.spotlightCta}
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
 
           <!-- Newsletter band -->
           <section class="mt-20 mb-4">
-            <div class="bg-primary-container rounded-[2rem] p-6 md:p-12 text-center relative overflow-hidden">
+            <div class="bg-primary-container rounded p-6 md:p-12 text-center relative overflow-hidden">
               <div class="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
               <div class="absolute bottom-0 right-0 w-96 h-96 bg-tertiary-fixed/10 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl" />
               <div class="relative z-10 max-w-2xl mx-auto">
@@ -425,3 +304,23 @@ const spotlightItems = [
     }
   </div>
 </Layout>
+
+<script>
+  const btn = document.getElementById('load-more-btn') as HTMLButtonElement | null
+  const icon = document.getElementById('load-more-icon')
+  const extras = document.querySelectorAll<HTMLElement>('.latest-extra')
+
+  if (btn && extras.length > 0) {
+    let expanded = false
+    const labelMore = btn.dataset.labelMore ?? ''
+    const labelLess = btn.dataset.labelLess ?? ''
+
+    btn.addEventListener('click', () => {
+      expanded = !expanded
+      extras.forEach((el) => el.classList.toggle('hidden', !expanded))
+      const textNode = btn.firstChild as Text
+      if (textNode?.nodeType === Node.TEXT_NODE) textNode.data = expanded ? labelLess : labelMore
+      if (icon) icon.textContent = expanded ? 'expand_less' : 'expand_more'
+    })
+  }
+</script>

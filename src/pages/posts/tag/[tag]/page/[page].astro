@@ -4,11 +4,9 @@ export const prerender = true
 import type { SelectProperty } from '../../../../../lib/interfaces.ts'
 import {
   getPostsByTagAndPage,
-  getRankedPosts,
   getAllTags,
   getNumberOfPagesByTag,
   getPostCountByTag,
-  getDatabase,
 } from '../../../../../lib/notion/client.ts'
 import Layout from '../../../../../layouts/Layout.astro'
 import CategoryTagMain from '../../../../../components/CategoryTagMain.astro'
@@ -35,22 +33,21 @@ const { tag, page } = Astro.params
 
 const currentPage = parseInt(page, 10)
 
-const [posts, rankedPosts, tags, numberOfPages, totalInTag, database] = await Promise.all([
+const [posts, tags, numberOfPages, totalInTag] = await Promise.all([
   getPostsByTagAndPage(tag, currentPage),
-  getRankedPosts(),
   getAllTags(),
   getNumberOfPagesByTag(tag),
   getPostCountByTag(tag),
-  getDatabase(),
 ])
 ---
 
 <Layout
   title={`${tag} | págin ${currentPage} | Ligadu`}
-  description={database.Description || `Artigus di ${tag}`}
+  description={`Artigus di ${tag}`}
   path={`/posts/tag/${tag}/page/${page}`}
   ogImage=""
   fullWidth={true}
+  showCategoryNav={false}
 >
   <div slot="main" class="w-full min-w-0">
     <CategoryTagMain
@@ -60,8 +57,6 @@ const [posts, rankedPosts, tags, numberOfPages, totalInTag, database] = await Pr
       numberOfPages={numberOfPages}
       totalInTag={totalInTag}
       allTags={tags}
-      rankedPosts={rankedPosts}
-      databaseDescription={database.Description}
     />
   </div>
 </Layout>

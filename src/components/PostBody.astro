@@ -9,71 +9,83 @@ export interface Props {
 const { blocks } = Astro.props
 ---
 
-<div class="article-body" style="max-width: 100%; overflow-x: hidden; word-wrap: break-word; overflow-wrap: break-word;">
+<div class="article-body">
   <NotionBlocks blocks={blocks} isRoot={true} level={1} headings={[]} />
 </div>
 
 <style is:global>
+  /* Editorial measure target: ~70ch at body-lg (1.125rem) — see DESIGN.md §3 */
+  .article-body {
+    max-width: 44rem;
+    margin-inline: auto;
+    overflow-x: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
   .article-body p {
     font-size: 1.125rem;
-    line-height: 1.8;
+    line-height: 1.85;
     color: #424754;
+    font-family: 'Lora', Georgia, 'Times New Roman', serif;
+  }
+  /* Drop cap on opening paragraph — classic newspaper editorial */
+  .article-body > :first-child p::first-letter {
+    float: left;
+    font-size: 3.75rem;
+    line-height: 0.85;
+    margin-right: 0.1em;
+    margin-top: 0.05em;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 800;
+    color: #0058be;
   }
   .article-body > :first-child p {
-    font-size: 1.5rem;
-    line-height: 1.6;
+    font-size: 1.2rem;
+    line-height: 1.75;
     color: #0b1c30;
+    font-family: 'Lora', Georgia, 'Times New Roman', serif;
   }
-  .article-body h2 {
-    font-size: 1.875rem;
-    font-weight: 700;
-    padding-top: 2rem;
-    color: #0b1c30;
-  }
-  .article-body h3 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    padding-top: 1.5rem;
-    color: #006577;
-  }
-  /* Deep dive callout — tertiary + glass, no 1px rule (DESIGN.md §5) */
+  /* Newspaper pull-quote — classic left border, not glass blob */
   .article-body blockquote {
-    background-color: rgba(0, 128, 150, 0.12);
-    backdrop-filter: blur(8px);
-    padding: 2.5rem;
-    border-radius: 1.5rem;
-    margin: 3rem 0;
+    background: transparent;
+    backdrop-filter: none;
+    padding: 1rem 1.75rem;
+    border-radius: 0;
+    margin: 2.5rem 0;
     border: none;
-    box-shadow: inset 0 0 0 1px rgba(194, 198, 214, 0.15);
+    border-left: 3px solid #0058be;
+    box-shadow: none;
   }
   .article-body blockquote p {
-    font-size: 1.5rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.35rem;
+    font-family: 'Lora', Georgia, serif;
     font-style: italic;
-    color: #004e5c;
-    line-height: 1.4;
+    color: #424754;
+    line-height: 1.5;
+    font-weight: 500;
   }
   .article-body a {
     color: #0058be;
     text-decoration: underline;
     text-underline-offset: 3px;
-    text-decoration-color: #d8e2ff;
+    text-decoration-color: rgba(0, 88, 190, 0.3);
     transition: text-decoration-color 0.2s;
   }
   .article-body a:hover {
     text-decoration-color: #0058be;
   }
-  .article-body img {
-    border-radius: 1.5rem;
+  .article-body .image-blur-wrapper {
+    border-radius: 0.25rem;
     margin: 2rem 0;
   }
   .article-body pre {
-    border-radius: 1rem;
+    border-radius: 0.375rem;
     margin: 2rem 0;
   }
   .article-body ul, .article-body ol {
     color: #424754;
-    font-size: 1.125rem;
-    line-height: 1.8;
+    font-size: 1.1rem;
+    line-height: 1.85;
+    font-family: 'Lora', Georgia, serif;
   }
 </style>

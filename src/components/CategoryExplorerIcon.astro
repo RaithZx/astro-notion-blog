@@ -6,15 +6,16 @@ import type { CategoryExplorerIconKind } from '../lib/home-category-icons.ts'
 
 export interface Props {
   kind: CategoryExplorerIconKind
+  size?: number
 }
 
-const { kind } = Astro.props
+const { kind, size = 44 } = Astro.props
 ---
 
 <span class="category-explorer-icon inline-flex items-center justify-center" aria-hidden="true">
   <svg
-    width="44"
-    height="44"
+    width={size}
+    height={size}
     viewBox="0 0 48 48"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

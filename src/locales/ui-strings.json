@@ -258,7 +258,7 @@
       "readingTimeMinutes": "{{minutes}} min",
       "heroAttribution": "Ligadu",
       "popularHeading": "Más Populár",
-      "viewAllPosts": "Ver tudo",
+      "viewAllPosts": "Odja tudu artigu",
       "newsletterMiniHeading": "Fica ligadu",
       "newsletterMiniBlurb": "Resebe kes últimu notísia diretamenti na tua kaixa.",
       "newsletterMiniPlaceholder": "teu@email.com",
@@ -280,7 +280,9 @@
       "newsletterBandBlurb": "Resebe kes mior artigus diretamenti na tua kaixa di entrada.",
       "newsletterBandPlaceholder": "teu@email.com",
       "newsletterBandSubmit": "Skrevê grátis",
-      "newsletterBandDisclaimer": "Sem spam. Podi kansela kualkir altira."
+      "newsletterBandDisclaimer": "Sem spam. Podi kansela kualkir altira.",
+      "loadMorePosts": "Odja más artigu",
+      "showLessPosts": "Ver menus"
     }
   }
 }

@@ -1,0 +1,109 @@
+---
+import type { Post } from '../lib/interfaces.ts'
+import { getPostLink, getDateStr } from '../lib/blog-helpers.ts'
+import { getImageFromNotionUrl } from '../lib/image-helpers.ts'
+import ImageWithBlur from './ImageWithBlur.astro'
+
+export interface Props {
+  post: Post
+  /** Overrides the default first-tag kicker label */
+  kicker?: string
+  loading?: 'eager' | 'lazy'
+  /**
+   * 'grid' (default) — vertical card, image on top
+   * 'list' — horizontal row, image on left, used for latest-posts feeds
+   */
+  variant?: 'grid' | 'list'
+}
+
+const { post, kicker, loading = 'lazy', variant = 'grid' } = Astro.props
+
+const image = (() => {
+  if (!post.FeaturedImage?.Url) return null
+  if (import.meta.env.DEV) return post.FeaturedImage.Url
+  return getImageFromNotionUrl(new URL(post.FeaturedImage.Url)) || post.FeaturedImage.Url
+})()
+
+const label = kicker ?? (post.Tags?.[0]?.name ?? '').toUpperCase()
+---
+
+{variant === 'grid' ? (
+  <article class="group">
+    <a href={getPostLink(post.Slug)} class="block no-underline text-inherit">
+      <div class="bg-surface-container-lowest rounded-lg ring-1 ring-outline-variant/15 overflow-hidden transition-all duration-300 group-hover:shadow-ambient-lg group-hover:-translate-y-1">
+        <div class="aspect-video overflow-hidden bg-surface-container-low">
+          {image ? (
+            <ImageWithBlur
+              src={image}
+              alt={post.Title}
+              width={typeof image === 'string' ? undefined : image.width}
+              height={typeof image === 'string' ? undefined : image.height}
+              loading={loading}
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div class="w-full h-full min-h-[12rem] bg-surface-container" />
+          )}
+        </div>
+        <div class="px-6 pb-6 pt-5">
+          {label && (
+            <span class="text-tertiary font-bold text-xs uppercase tracking-widest block mb-2">
+              {label}
+            </span>
+          )}
+          <h3 class="text-xl font-bold font-headline leading-snug mb-3 text-on-surface group-hover:text-primary transition-colors line-clamp-2 min-h-[3.25rem] m-0">
+            {post.Title}
+          </h3>
+          {post.Excerpt && (
+            <p class="text-sm text-on-surface-variant line-clamp-3 font-body m-0 mb-3">
+              {post.Excerpt}
+            </p>
+          )}
+          {post.Date && (
+            <p class="text-xs text-on-surface-variant/70 m-0">{getDateStr(post.Date)}</p>
+          )}
+        </div>
+      </div>
+    </a>
+  </article>
+) : (
+  <article class="group">
+    <a
+      href={getPostLink(post.Slug)}
+      class="group flex flex-col sm:flex-row gap-5 bg-surface-container-lowest hover:bg-surface-container rounded-lg p-4 sm:p-5 no-underline text-inherit transition-colors ring-1 ring-outline-variant/15"
+    >
+      <div class="relative w-full sm:w-52 shrink-0 aspect-video rounded overflow-hidden bg-surface-container-high">
+        {image ? (
+          <ImageWithBlur
+            src={image}
+            alt={post.Title}
+            width={typeof image === 'string' ? undefined : image.width}
+            height={typeof image === 'string' ? undefined : image.height}
+            loading={loading}
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div class="w-full h-full flex items-center justify-center text-on-surface-variant">
+            <span class="material-symbols-outlined text-3xl opacity-30">article</span>
+          </div>
+        )}
+      </div>
+      <div class="flex-1 min-w-0 flex flex-col justify-center gap-2">
+        {label && (
+          <span class="text-tertiary font-bold text-xs uppercase tracking-widest">{label}</span>
+        )}
+        <h3 class="text-lg md:text-xl font-bold font-headline leading-snug text-on-surface group-hover:text-primary transition-colors line-clamp-2 m-0">
+          {post.Title}
+        </h3>
+        {post.Excerpt && (
+          <p class="text-sm text-on-surface-variant line-clamp-2 font-body m-0">
+            {post.Excerpt}
+          </p>
+        )}
+        {post.Date && (
+          <p class="text-xs text-on-surface-variant/70 m-0">{getDateStr(post.Date)}</p>
+        )}
+      </div>
+    </a>
+  </article>
+)}

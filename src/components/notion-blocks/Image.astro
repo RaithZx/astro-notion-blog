@@ -53,6 +53,11 @@ if (block.Image.External) {
 
 const imageSrc = imageModule || imageUrl
 const lightboxHref = imageModule ? (imageModule as any).src : imageUrl
+
+const imageWidth = imageModule ? imageModule.width : block.Image.Width
+const imageHeight = imageModule ? imageModule.height : block.Image.Height
+const imageAspectRatio =
+  imageWidth && imageHeight ? `${imageWidth} / ${imageHeight}` : undefined
 ---
 
 <figure class="image">
@@ -70,20 +75,24 @@ const lightboxHref = imageModule ? (imageModule as any).src : imageUrl
               <ImageWithBlur
                 src={imageSrc}
                 alt={altText}
-                width={imageModule ? imageModule.width : block.Image.Width}
-                height={imageModule ? imageModule.height : block.Image.Height}
+                width={imageWidth}
+                height={imageHeight}
                 loading="lazy"
                 class="notion-image"
+                aspectRatio={imageAspectRatio}
+                fit="natural"
               />
             </a>
           ) : (
             <ImageWithBlur
               src={imageSrc}
               alt={altText}
-              width={imageModule ? imageModule.width : block.Image.Width}
-              height={imageModule ? imageModule.height : block.Image.Height}
+              width={imageWidth}
+              height={imageHeight}
               loading="lazy"
               class="notion-image"
+              aspectRatio={imageAspectRatio}
+              fit="natural"
             />
           )}
         </div>

@@ -1,7 +1,10 @@
 import { defineConfig } from 'astro/config';
+import node from '@astrojs/node';
 import icon from 'astro-icon';
 import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
+import clerk from '@clerk/astro';
+import { clerkLocalization } from './src/lib/clerk-localization.mjs';
 import { CUSTOM_DOMAIN, BASE_PATH } from './src/server-constants';
 import CoverImageDownloader from './src/integrations/cover-image-downloader';
 import CustomIconDownloader from './src/integrations/custom-icon-downloader';
@@ -10,6 +13,7 @@ import PostContentImageDownloader from './src/integrations/post-content-image-do
 // PublicNotionCopier no longer needed - images are now in src/assets/ and handled by Astro
 // import PublicNotionCopier from './src/integrations/public-notion-copier';
 
+// Canonical site URL: prefer CUSTOM_DOMAIN (e.g. Coolify production). Vercel / CF_PAGES are optional fallbacks.
 const getSite = function () {
   if (CUSTOM_DOMAIN) {
     return new URL(BASE_PATH, `https://${CUSTOM_DOMAIN}`).toString();
@@ -40,6 +44,8 @@ const getSite = function () {
 export default defineConfig({
   site: getSite(),
   base: BASE_PATH,
+  output: 'server',
+  adapter: node({ mode: 'standalone' }),
   image: {
     // Enable responsive images globally
     layout: 'constrained', // Constrained layout for most images
@@ -49,6 +55,7 @@ export default defineConfig({
     // remotePatterns: [{ protocol: 'https' }],
   },
   integrations: [
+    clerk({ localization: clerkLocalization }),
     icon(),
     tailwind(),
     react(),

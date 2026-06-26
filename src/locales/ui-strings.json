@@ -1,0 +1,288 @@
+{
+  "_translatorReadme": "Ligadu UI copy — single source of truth. Translators: edit string values only; keep keys and {{placeholders}} exactly as-is. Sections: clerk (Clerk auth/profile; {{applicationName}} and other tokens per Clerk docs), app (layout shell, newsletter modal/banner scripts, search modal, coming soon, back-to-top, home page headings). Wired in Layout.astro, SearchModal, subscribeBanner, ComingSoon, BackToTop, index.astro, and src/lib/clerk-localization.mjs. Other pages (e.g. kontaktu, posts, legal) may still have copy only in their .astro files — add keys under app and import ui-strings.json there to include them in this handoff.",
+  "clerk": {
+    "formFieldLabel__emailAddress": "Email",
+    "formFieldLabel__password": "Senha",
+    "formFieldInputPlaceholder__emailAddress": "Poi bu email",
+    "formFieldInputPlaceholder__password": "Poi bu senha",
+    "formFieldLabel__emailAddress_username": "Email ô nómi di utilizadôr",
+    "formFieldInputPlaceholder__emailAddress_username": "Poi bu email ô nómi di utilizadôr",
+    "formFieldAction__forgotPassword": "Skese senha?",
+    "formFieldLabel__confirmPassword": "Konfirma senha",
+    "formFieldLabel__currentPassword": "Senha atual",
+    "formFieldLabel__newPassword": "Novu senha",
+    "signInEnterPasswordTitle": "Poi bu senha",
+    "backButton": "Volta",
+    "socialButtonsBlockButton": "Kontinua ku {{provider|titleize}}",
+    "userButton": {
+      "action__addAccount": "Djunta konta",
+      "action__closeUserMenu": "Fitxa menu",
+      "action__manageAccount": "Kria konta",
+      "action__openUserMenu": "Abri menu",
+      "action__signOut": "Sai",
+      "action__signOutAll": "Sai di tudu kontas"
+    },
+    "signIn": {
+      "start": {
+        "title": "Entra",
+        "subtitle": "Pa kontinua na {{applicationName}}",
+        "actionText": "Bu ka ten konta?",
+        "actionLink": "Rejista"
+      },
+      "password": {
+        "title": "Poi bu senha",
+        "subtitle": "Pa kontinua na {{applicationName}}"
+      }
+    },
+    "signUp": {
+      "start": {
+        "title": "Kria bu konta",
+        "subtitle": "Pa kontinua na {{applicationName}}",
+        "actionText": "Dja bu ten konta?",
+        "actionLink": "Entra"
+      },
+      "continue": {
+        "subtitle": "Pa kontinua na {{applicationName}}",
+        "title": "Prenxe kel ki falta",
+        "actionText": "Dja bu ten konta?",
+        "actionLink": "Entra"
+      }
+    },
+    "userProfile": {
+      "navbar": {
+        "title": "Konta",
+        "description": "Djobe informason di bu konta.",
+        "account": "Perfil",
+        "security": "Suguransa"
+      },
+      "formButtonPrimary__continue": "Kontinua",
+      "formButtonPrimary__finish": "Finaliza",
+      "formButtonPrimary__save": "Guarda",
+      "formButtonPrimary__add": "Djunta",
+      "formButtonPrimary__remove": "Tra",
+      "formButtonReset": "Kansela",
+      "start": {
+        "headerTitle__account": "Informason di perfil",
+        "headerTitle__security": "Suguransa",
+        "profileSection": {
+          "title": "Perfil",
+          "primaryButton": "Atualiza perfil"
+        },
+        "passwordSection": {
+          "title": "Senha",
+          "primaryButton__setPassword": "Skodje senha",
+          "primaryButton__updatePassword": "Muda senha"
+        },
+        "emailAddressesSection": {
+          "title": "Inderésus di email",
+          "primaryButton": "Djunta email",
+          "destructiveAction": "Tra email",
+          "detailsAction__nonPrimary": "Skodje kómu prinsipal",
+          "detailsAction__primary": "Konpleta verifikason",
+          "detailsAction__unverified": "Verifika"
+        },
+        "phoneNumbersSection": {
+          "title": "Nunbrus di tilifóni",
+          "primaryButton": "Djunta nunbru di tilifóni",
+          "destructiveAction": "Tra nunbru di tilifóni",
+          "detailsAction__nonPrimary": "Skodje kómu prinsipal",
+          "detailsAction__primary": "Konpleta verifikason",
+          "detailsAction__unverified": "Verifika nunbru di tilifóni"
+        },
+        "mfaSection": {
+          "title": "Verifikason di dôs pasu",
+          "primaryButton": "Djunta verifikason",
+          "phoneCode": {
+            "actionLabel__setDefault": "Skodje kómu prinsipal",
+            "destructiveActionLabel": "Tra"
+          },
+          "totp": {
+            "destructiveActionTitle": "Tra",
+            "headerTitle": "Aplikativu di verifikason"
+          },
+          "backupCodes": {
+            "headerTitle": "Kódigu di rekuperason",
+            "actionLabel__regenerate": "Jera otu bês",
+            "title__regenerate": "Jera kódigus di rekuperason otu bês",
+            "subtitle__regenerate": "Jera kódigus novu. Kes antigu ka ta funsiona más."
+          }
+        },
+        "connectedAccountsSection": {
+          "title": "Kontas ligadu",
+          "primaryButton": "Liga konta",
+          "destructiveActionTitle": "Tra",
+          "actionLabel__connectionFailed": "Tenta otu bês",
+          "actionLabel__reauthorize": "Autoriza agora"
+        },
+        "activeDevicesSection": {
+          "title": "Dispozitivus ativu",
+          "destructiveAction": "Sai na es dispozitivu"
+        },
+        "passkeysSection": {
+          "title": "Txabis di asésu",
+          "menuAction__destructive": "Tra",
+          "menuAction__rename": "Muda nómi",
+          "primaryButton": "Djunta txabi di asésu"
+        },
+        "dangerSection": {
+          "title": "Atenson",
+          "deleteAccountButton": "Tra konta"
+        },
+        "enterpriseAccountsSection": {
+          "title": "Kontas di inpréza",
+          "primaryButton": "Liga konta"
+        },
+        "usernameSection": {
+          "title": "Nómi di utilizadôr",
+          "primaryButton__setUsername": "Skodje nómi",
+          "primaryButton__updateUsername": "Muda nómi"
+        }
+      },
+      "profilePage": {
+        "title": "Atualiza perfil",
+        "imageFormTitle": "Imajen di perfil",
+        "imageFormSubtitle": "Karega imajen",
+        "imageFormDestructiveActionSubtitle": "Tra imajen"
+      },
+      "passwordPage": {
+        "title__set": "Skodje senha",
+        "title__update": "Muda senha"
+      }
+    }
+  },
+  "app": {
+    "site": {
+      "defaultTitle": "Ligadu",
+      "defaultDescription": "Artigus di siênsia, tekinolojia i saúdi",
+      "homeDescription": "Artigus di siênsia i saúdi"
+    },
+    "layout": {
+      "skipToContent": "Bai pa konteúdu prinsipal",
+      "brandName": "Ligadu",
+      "ariaOpenMobileMenu": "Abri menu mobil",
+      "ariaCloseMobileMenu": "Fitxa menu mobil",
+      "ariaOpenSearch": "Abri piskiza",
+      "ariaCloseNewsletterModal": "Fitxa kaxa di newsletter",
+      "navHome": "Inisiu",
+      "navHealth": "Saúdi",
+      "navScience": "Siênsia",
+      "navTech": "Tekinolojia",
+      "navContact": "Kontaktu",
+      "searchShort": "Piskiza...",
+      "authSignIn": "Entra",
+      "authSignUp": "Rejista",
+      "newsletterSubscribeShort": "Inskreve",
+      "footerBrandLogoAlt": "Ligadu Logo",
+      "footerBrandBlurb": "Artigus di siênsia, tekinolojia i saúdi.",
+      "footerLinksHeadingHtml": "<em>Links</em> pa kada asuntu",
+      "footerLegalHeading": "Legal",
+      "footerPrivacy": "Régras di Privasidadi",
+      "footerTermsInnerHtml": "Régras di uzu i Lisénsa di uzu di <em>site</em>",
+      "footerContact": "Kontaktu",
+      "footerCookiesInnerHtml": "<em>Cookies</em>",
+      "footerNewsletterHeading": "Fika ligadu",
+      "footerNewsletterBlurb": "Resebe kes ultimu artigus i notísias sobri siênsia, tekinolojia i saúdi.",
+      "footerNewsletterCta": "Inskreve i fika ligadu",
+      "footerCopyright": "Tudu direitu rezervadu.",
+      "footerCaboVerdeLabel": "Cabo Verde",
+      "newsletterModalTitle": "Fika Ligadu",
+      "newsletterModalSubtitle": "Resebe artigus sobri siênsia, tekinolojia i saúdi diretamenti na bu email",
+      "newsletterEmailLabel": "Email",
+      "newsletterEmailPlaceholder": "nomi di konta@email.com",
+      "newsletterNameLabel": "Nómi",
+      "newsletterNamePlaceholder": "Bu nómi",
+      "newsletterPrivacyPrefix": "Konkorda ku ",
+      "newsletterPrivacyLink": "régras di privasidadi",
+      "newsletterPrivacyMid": " i ",
+      "newsletterTermsLink": "régras di uzu i lisénsa di uzu di site",
+      "newsletterSubmit": "Inskreve i fika ligadu",
+      "newsletterFooterNote": "Pode kansela na kalker momentu. Nunka nu ka ta manda spam, sô konteúdu di kualidadi."
+    },
+    "search": {
+      "placeholder": "Piskiza...",
+      "ariaLabel": "Piskiza",
+      "hintNavigate": "Naviga",
+      "hintOpen": "Abri",
+      "hintClose": "Fitxa",
+      "loading": "Ta karega...",
+      "empty": "Nenhun rezultadu inkontradu.",
+      "loadError": "Éru timenti dadus staba ta karega."
+    },
+    "inlineNewsletterBanner": {
+      "title": "Fika Ligadu",
+      "subtitle": "Resebe kes ultimu artigu i stórias na bu email",
+      "badge": "Di grasa",
+      "emailPlaceholder": "Bu email",
+      "submit": "Inskreve",
+      "trustNoSpam": "Nunka spam"
+    },
+    "scripts": {
+      "newsletterModal": {
+        "privacyRequired": "Pur favor, konkorda ku régras di privasidadi i régras di uzu i lisénsa di uzu di site.",
+        "csrfError": "Éru di suguransa. Pur favor, atualiza pájina i tenta otu bês.",
+        "submitLoadingHtml": "<span class=\"loading-spinner\"></span> Enviadu...",
+        "successAlreadySubscribed": "Bu email sta konfirmadu i rejistadu. Obrigadu pa kontinua ligadu.",
+        "successNew": "Obrigadu! Dja bu inskreve i bu sta ligadu! Djobe bu email pa konfirma.",
+        "errorGeneric": "Algun éru kontise duranti bu inskrison. Pur favor, tenta otu bês.",
+        "errorNetwork": "Éru di ligason. Tenta otu bês.",
+        "submitButtonResetHtml": "<span class=\"text-lg\">✉</span> Inskreve i fika ligadu"
+      },
+      "inlineNewsletter": {
+        "csrfError": "✕ Éru di suguransa. Pur favor, atualiza pájina i tenta otu bês.",
+        "submitLoadingLabel": "Enviadu...",
+        "errorGeneric": "Algun éru kontise duranti bu inskrison. Pur favor, tenta otu bês.",
+        "errorNetwork": "✕ Éru di ligason. Tenta otu bês.",
+        "successPrefix": "✓ ",
+        "errorPrefix": "✕ "
+      }
+    },
+    "comingSoon": {
+      "logoAlt": "Ligadu Logo",
+      "heading": "Artigus di siênsia, tekinolojia i saúdi",
+      "subheading": "Ta sai dja!...",
+      "signupDescription": "Inskreve i resebe nobidadis!",
+      "emailPlaceholder": "nomi di konta@email.com",
+      "emailAriaLabel": "Email address",
+      "submit": "Inskreve",
+      "successMessage": "✓ Obrigadu! Bu sta na lista di nobidadis."
+    },
+    "backToTop": {
+      "ariaLabel": "Volta pa sima",
+      "title": "Volta pa sima"
+    },
+    "home": {
+      "categoriesLabel": "Kategorias",
+      "featuredBadge": "Sta Ligadu",
+      "topStoriesHeading": "Artigus distakadu",
+      "latestHeading": "Kes últimu artigu i stória",
+      "readingTimeMinutes": "{{minutes}} min",
+      "heroAttribution": "Ligadu",
+      "popularHeading": "Más Populár",
+      "viewAllPosts": "Odja tudu artigu",
+      "newsletterMiniHeading": "Fica ligadu",
+      "newsletterMiniBlurb": "Resebe kes últimu notísia diretamenti na tua kaixa.",
+      "newsletterMiniPlaceholder": "teu@email.com",
+      "newsletterMiniCta": "Skrevê",
+      "exploreCategoriesTitle": "Explora pa Kategorias",
+      "exploreCategoriesSubtitle": "Skobre tópiku ki ta interesa-bu",
+      "spotlightKicker": "Destaki",
+      "spotlightTitle": "Kabuvérdi na Vanguarda di Inovasaun",
+      "spotlightItem1Title": "Siénsia i Teknolojiia",
+      "spotlightItem1Desc": "Kes últimu diskobertas ki ta mudá nos mundu.",
+      "spotlightItem2Title": "Inovasaun Lokal",
+      "spotlightItem2Desc": "Proyetus kabuverdianus ki ta krià futuru.",
+      "spotlightItem3Title": "Espasu i Fronteiras",
+      "spotlightItem3Desc": "Esplorasaun alím di nos planeta.",
+      "spotlightVisitTitle": "Quer saber mais?",
+      "spotlightVisitBlurb": "Fala konos i diskobrê manera di kolaborá.",
+      "spotlightCta": "Kontaktu",
+      "newsletterBandTitle": "Fica Sempri Informadu",
+      "newsletterBandBlurb": "Resebe kes mior artigus diretamenti na tua kaixa di entrada.",
+      "newsletterBandPlaceholder": "teu@email.com",
+      "newsletterBandSubmit": "Skrevê grátis",
+      "newsletterBandDisclaimer": "Sem spam. Podi kansela kualkir altira.",
+      "loadMorePosts": "Odja más artigu",
+      "showLessPosts": "Ver menus"
+    }
+  }
+}

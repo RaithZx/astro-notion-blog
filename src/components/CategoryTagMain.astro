@@ -1,0 +1,205 @@
+---
+/**
+ * Category / tag archive — Stitch “Teknolodjia” layout: editorial hero, tag pills,
+ * featured + grid feed, newsletter sidebar.
+ */
+import { Image } from 'astro:assets'
+import type { Post, SelectProperty } from '../lib/interfaces.ts'
+import { getNavLink, getPostLink, getTagLink } from '../lib/blog-helpers.ts'
+import { getImageFromNotionUrl } from '../lib/image-helpers.ts'
+import { getCategoryExplorerIconKind } from '../lib/home-category-icons.ts'
+import CategoryExplorerIcon from './CategoryExplorerIcon.astro'
+import Pagination from './Pagination.astro'
+import PostCard from './PostCard.astro'
+
+export interface Props {
+  /** Tag name when viewing a category; use '' when `allPostsArchive` is true */
+  tag: string
+  posts: Post[]
+  currentPage: number
+  numberOfPages: number
+  /** Total posts in scope (in-tag count or site-wide count for all archive) */
+  totalInTag: number
+  allTags: SelectProperty[]
+  /** Full post list at `/posts/page/N` — same chrome as tag archives, "Tudu" pill active */
+  allPostsArchive?: boolean
+}
+
+const {
+  tag,
+  posts,
+  currentPage,
+  numberOfPages,
+  totalInTag,
+  allTags,
+  allPostsArchive = false,
+} = Astro.props
+
+const paginationTag = allPostsArchive ? '' : tag
+const headerLabel = allPostsArchive ? 'Tudu' : tag
+
+
+
+const loadPostImage = (post: Post) => {
+  if (!post.FeaturedImage?.Url) return null
+  if (import.meta.env.DEV) return post.FeaturedImage.Url
+  const imported = getImageFromNotionUrl(new URL(post.FeaturedImage.Url))
+  return imported || post.FeaturedImage.Url
+}
+
+const featuredPost = currentPage === 1 && posts.length > 0 ? posts[0] : null
+const featuredImage = featuredPost ? loadPostImage(featuredPost) : null
+const gridPosts =
+  currentPage === 1 && posts.length > 1 ? posts.slice(1) : currentPage > 1 ? posts : []
+
+const isFeaturedAdmin = (post: Post) =>
+  post.AdminTags.some((t) => t.name.toLowerCase() === 'featured')
+
+const cardKicker = (post: Post) => {
+  if (isFeaturedAdmin(post)) return 'ESPESIAL'
+  if (allPostsArchive) {
+    return (post.Tags[0]?.name ?? 'ARTIGU').toUpperCase()
+  }
+  const other = post.Tags.find((t) => t.name !== tag)
+  return (other?.name ?? post.Tags[0]?.name ?? tag).toUpperCase()
+}
+
+const allPostsIndexPath = getNavLink('/posts/page/1')
+---
+
+<div class="w-full pb-24">
+  <!-- Editorial header -->
+  <section class="mb-6">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-8">
+      <div class="max-w-2xl">
+        <h1
+          class="text-5xl sm:text-6xl md:text-7xl font-black font-headline tracking-tighter text-on-surface leading-none m-0"
+        >
+          {headerLabel}.
+        </h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tag pills -->
+  <div class="flex gap-2 overflow-x-auto py-3 mb-6" style="scrollbar-width: none; -ms-overflow-style: none;">
+    <a
+      href={allPostsIndexPath}
+      class:list={[
+        'shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm no-underline transition-all duration-200 border',
+        allPostsArchive
+          ? 'bg-primary/10 text-primary border-primary/40 font-semibold'
+          : 'font-medium bg-surface-container-lowest border-outline-variant/20 text-on-surface-variant hover:bg-surface-container hover:text-on-surface',
+      ]}
+    >
+      Tudu
+    </a>
+    {allTags.map((t) => {
+      const active = !allPostsArchive && t.name === tag
+      const iconKind = getCategoryExplorerIconKind(t.name)
+      return (
+        <a
+          href={getTagLink(t.name)}
+          class:list={[
+            'shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm no-underline transition-all duration-200 border',
+            active
+              ? 'bg-primary/10 text-primary border-primary/40 font-semibold'
+              : 'font-medium bg-surface-container-lowest border-outline-variant/20 text-on-surface-variant hover:bg-surface-container hover:text-on-surface',
+          ]}
+        >
+          <span class="text-primary">
+            <CategoryExplorerIcon kind={iconKind} size={16} />
+          </span>
+          {t.name}
+        </a>
+      )
+    })}
+  </div>
+
+  <div class="w-full space-y-16">
+    {
+      totalInTag === 0 ? (
+        <div class="bg-surface-container-low rounded-lg p-12 text-center">
+          <p class="text-on-surface-variant text-lg m-0 mb-6">
+            {allPostsArchive
+              ? 'Ka tene artigu publicadu inda.'
+              : 'Ka tene artigu nesta kategoria inda.'}
+          </p>
+          {!allPostsArchive && (
+            <a
+              href={allPostsIndexPath}
+              class="inline-flex items-center gap-2 text-primary font-bold no-underline hover:underline underline-offset-4 decoration-2"
+            >
+              Odja tudu artigus
+              <span class="material-symbols-outlined !text-lg" aria-hidden="true">arrow_forward</span>
+            </a>
+          )}
+        </div>
+      ) : (
+        <>
+          {featuredPost && (
+            <article class="group mb-12">
+              <a href={getPostLink(featuredPost.Slug)} class="block no-underline">
+                <div class="rounded-xl overflow-hidden relative h-[380px] md:h-[500px] bg-surface-container-high transition-shadow duration-300 group-hover:shadow-ambient">
+                  {featuredImage ? (
+                    <div class="absolute inset-0 group-hover:scale-105 transition-transform duration-700">
+                      {typeof featuredImage === 'string' ? (
+                        <img
+                          src={featuredImage}
+                          alt={featuredPost.Title}
+                          class="w-full h-full object-cover"
+                          loading="eager"
+                        />
+                      ) : (
+                        <Image
+                          src={featuredImage}
+                          alt={featuredPost.Title}
+                          class="w-full h-full object-cover"
+                          loading="eager"
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <div class="absolute inset-0 bg-gradient-to-br from-primary/20 via-surface-container to-tertiary/15" />
+                  )}
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none" />
+                  <div class="absolute bottom-0 left-0 right-0 px-6 pb-7 pt-16 md:px-10 md:pb-9">
+                    <span class="text-tertiary-fixed font-bold text-[10px] uppercase tracking-widest block mb-3">
+                      {cardKicker(featuredPost)}
+                    </span>
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold font-headline text-white leading-tight mb-3 m-0">
+                      {featuredPost.Title}
+                    </h2>
+                    {featuredPost.Excerpt && (
+                      <p class="text-sm md:text-base text-white/75 max-w-2xl leading-relaxed m-0 line-clamp-2">
+                        {featuredPost.Excerpt}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </a>
+            </article>
+          )}
+
+          {gridPosts.length > 0 && (
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
+              {gridPosts.map((post) => (
+                <PostCard post={post} kicker={cardKicker(post)} />
+              ))}
+            </div>
+          )}
+
+          {numberOfPages > 1 && (
+            <div class="pt-4">
+              <Pagination
+                tag={paginationTag}
+                currentPage={currentPage}
+                numberOfPages={numberOfPages}
+              />
+            </div>
+          )}
+        </>
+      )
+    }
+  </div>
+</div>

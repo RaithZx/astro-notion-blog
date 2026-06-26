@@ -1,5 +1,6 @@
 ---
-import { Image } from 'astro:assets'
+export const prerender = true
+
 import * as interfaces from '../../lib/interfaces.ts'
 import ImageWithBlur from '../../components/ImageWithBlur.astro'
 import {
@@ -7,7 +8,6 @@ import {
   getAllPosts,
   getRankedPosts,
   getPostBySlug,
-  getPostsByTag,
   getBlock,
   getAllTags,
   getAllBlocksByBlockId,
@@ -24,14 +24,9 @@ import { getImageFromNotionUrl } from '../../lib/image-helpers.ts'
 import Layout from '../../layouts/Layout.astro'
 import PostDate from '../../components/PostDate.astro'
 import PostTags from '../../components/PostTags.astro'
-import PostTitle from '../../components/PostTitle.astro'
 import PostBody from '../../components/PostBody.astro'
-import PostRelativeLink from '../../components/PostRelativeLink.astro'
-import BlogPostsLink from '../../components/BlogPostsLink.astro'
-import BlogTagsLink from '../../components/BlogTagsLink.astro'
+import PostFeaturedImage from '../../components/PostFeaturedImage.astro'
 import NoContents from '../../components/NoContents.astro'
-import Breadcrumbs from '../../components/Breadcrumbs.astro'
-import ShareButtons from '../../components/ShareButtons.astro'
 import RelatedArticles from '../../components/RelatedArticles.astro'
 import SubscribeBanner from '../../components/subscribeBanner.astro'
 
@@ -47,43 +42,32 @@ if (!post) {
   throw new Error(`Post not found. slug: ${slug}`)
 }
 
-const [blocks, allPosts, rankedPosts, recentPosts, tags, postsHavingSameTag] =
-  await Promise.all([
-    getAllBlocksByBlockId(post.PageId),
-    getAllPosts(),
-    getRankedPosts(),
-    getPosts(5),
-    getAllTags(),
-    getPostsByTag(post.Tags[0]?.name, 6),
-  ])
+const [blocks, allPosts, rankedPosts, recentPosts, tags] = await Promise.all([
+  getAllBlocksByBlockId(post.PageId),
+  getAllPosts(),
+  getRankedPosts(),
+  getPosts(5),
+  getAllTags(),
+])
 
-// Images are now downloaded during build via PostContentImageDownloader integration
-// No need to download here - they're already in src/assets/notion/ when pages render
-
-const currentPostIndex = allPosts.findIndex((post) => post.Slug === slug)
-const prevPost = allPosts[currentPostIndex + 1]
-const nextPost = allPosts[currentPostIndex - 1]
+// Related posts scored by tag overlap across all of the post's tags, not just the first one
+const postTagNames = new Set(post.Tags.map((tag) => tag.name))
+const relatedPosts = allPosts
+  .filter((p) => p.Slug !== post.Slug)
+  .map((p) => ({
+    post: p,
+    overlap: p.Tags.filter((tag) => postTagNames.has(tag.name)).length,
+  }))
+  .filter((entry) => entry.overlap > 0)
+  .sort((a, b) => b.overlap - a.overlap)
+  .slice(0, 6)
+  .map((entry) => entry.post)
 
 let ogImage = ''
 if (post.FeaturedImage && post.FeaturedImage.Url) {
-  ogImage = new URL(filePath(new URL(post.FeaturedImage.Url)), Astro.site)
+  ogImage = new URL(filePath(new URL(post.FeaturedImage.Url)), Astro.site).toString()
 }
 
-// Load images for related posts
-const loadPostImage = (post: interfaces.Post) => {
-  if (!post.FeaturedImage?.Url) return null
-  if (import.meta.env.DEV) {
-    return post.FeaturedImage.Url
-  }
-  const imported = getImageFromNotionUrl(new URL(post.FeaturedImage.Url))
-  return imported || post.FeaturedImage.Url
-}
-
-const postsHavingSameTagImages = postsHavingSameTag.filter((p: interfaces.Post) => p.Slug !== post.Slug).slice(0, 5).map(loadPostImage)
-const rankedPostsImages = rankedPosts.slice(0, 5).map(loadPostImage)
-const recentPostsImages = recentPosts.slice(0, 5).map(loadPostImage)
-
-// Helper function to format date as "12 Jul 2025"
 function formatDateShort(date: string): string {
   const dt = new Date(date)
   const months = ['Jan', 'Feb', 'Mar', 'Abr', 'Maiu', 'Jun', 'Jul', 'Ago', 'Set', 'Otu', 'Nov', 'Diz']
@@ -93,212 +77,204 @@ function formatDateShort(date: string): string {
   return `${day} ${month} ${year}`
 }
 
-// Helper function to estimate reading time (words per minute = 200)
-function estimateReadingTime(excerpt: string): string {
-  const words = excerpt.split(/\s+/).length
-  const minutes = Math.max(1, Math.ceil(words / 200))
-  return `${minutes} min`
+function estimateReadTime(blockCount: number): number {
+  return Math.max(1, Math.ceil((blockCount * 30) / 220))
 }
+const readTime = estimateReadTime(blocks.length)
+
 ---
 
 <Layout
-  title={}
+  title={post.Title}
   description={post.Excerpt}
   path={getPostLink(post.Slug)}
   ogImage={ogImage}
+  fullWidth={true}
 >
-  <div slot="main" class="p-0">
-    <div class="mx-auto mb-10">
-      <Breadcrumbs 
-        items={[
-          { label: 'Inisiu', href: getNavLink('/') },
-          { label: 'Artigus', href: getNavLink('/') },
-          { label: post.Title }
-        ]}
-      />
-      
-      <header class="pb-5">
-        <PostDate post={post} />
+  <div slot="main">
+    <!-- Reading progress bar -->
+    <div
+      id="reading-progress"
+      class="fixed top-0 left-0 h-1 bg-primary z-[100] motion-reduce:transition-none"
+      style="width: 0%;"
+    ></div>
+
+    <!-- Article Header: tag → title → excerpt → metadata row -->
+    <article id="article-start" class="max-w-[44rem] mx-auto mb-10">
+      <div class="flex flex-wrap gap-2 mb-5">
         <PostTags post={post} />
-        <PostTitle post={post} enableLink={false} />
-      </header>
-      
-      <ShareButtons 
-        title={post.Title}
-        path={getPostLink(post.Slug)}
-        description={post.Excerpt}
-      />
-      
-      <PostBody blocks={blocks} />
-      
-      <!-- Article end marker for scroll tracking -->
-      <div id="article-content-end" style="height: 1px;"></div>
-      
-      <ShareButtons 
-        title={post.Title}
-        path={getPostLink(post.Slug)}
-        description={post.Excerpt}
-      />
-      
+      </div>
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.1] tracking-tight text-on-background font-headline mb-5">
+        {post.Icon && post.Icon.Type === 'emoji' && 'Emoji' in post.Icon && (
+          <span class="inline-block mr-2 text-[0.85em]">{post.Icon.Emoji}</span>
+        )}
+        {post.Title}
+      </h1>
+      {post.Excerpt && (
+        <p class="text-lg md:text-xl text-on-surface-variant font-light leading-relaxed mb-6">
+          {post.Excerpt}
+        </p>
+      )}
+      <div class="flex items-center gap-3 text-sm text-on-surface-variant border-t border-outline-variant/20 pt-5">
+        {post.Date && (
+          <time datetime={post.Date} class="font-medium">{formatDateShort(post.Date)}</time>
+        )}
+        {post.Date && <span aria-hidden="true">·</span>}
+        <span>{readTime} min de leitura</span>
+      </div>
+    </article>
+
+    <!-- Hero Image - Full bleed on mobile, constrained on desktop -->
+    {post.FeaturedImage?.Url && (
+      <div class="w-full md:max-w-7xl md:mx-auto h-[300px] sm:h-[400px] md:h-[614px] md:rounded-[2rem] overflow-hidden mb-12 md:mb-20 shadow-ambient">
+        <PostFeaturedImage post={post} loading="eager" />
+      </div>
+    )}
+
+    <!-- Body Content with social sidebar -->
+    <article class="px-0">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
+        <!-- Social Side Bar (desktop only) -->
+        <aside class="md:col-span-1 hidden md:flex flex-col gap-8 sticky top-32 h-fit">
+          <div class="w-px h-24 bg-primary-fixed mx-auto"></div>
+          <a
+            href="#"
+            class="share-sidebar-twitter text-on-surface-variant hover:text-primary transition-colors flex justify-center"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Partilha na Twitter"
+            data-path={getPostLink(post.Slug)}
+            data-title={post.Title}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
+            </svg>
+          </a>
+          <a
+            href="#"
+            class="share-sidebar-facebook text-on-surface-variant hover:text-primary transition-colors flex justify-center"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Partilha na Facebook"
+            data-path={getPostLink(post.Slug)}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+            </svg>
+          </a>
+          <a
+            href="#"
+            class="share-sidebar-whatsapp text-on-surface-variant hover:text-primary transition-colors flex justify-center"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Partilha na WhatsApp"
+            data-path={getPostLink(post.Slug)}
+            data-title={post.Title}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"></path>
+              <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"></path>
+            </svg>
+          </a>
+          <button
+            class="share-sidebar-copy text-on-surface-variant hover:text-primary transition-colors flex justify-center bg-transparent border-0 cursor-pointer p-0"
+            aria-label="Kopia link"
+            data-path={getPostLink(post.Slug)}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+        </aside>
+        
+        <!-- Article Text -->
+        <div class="md:col-span-8 md:col-start-3">
+          {blocks && blocks.length > 0 ? (
+            <PostBody blocks={blocks} />
+          ) : (
+            <NoContents contents={[]} />
+          )}
+        </div>
+      </div>
+    </article>
+    
+    <!-- Article end marker for scroll tracking -->
+    <div id="article-content-end" style="height: 1px;"></div>
+    
+    <!-- Tags + separator -->
+    <div class="max-w-3xl mx-auto mt-10 pt-8 border-t border-outline-variant/25">
       <PostTags post={post} />
+    </div>
 
-      <!-- Newsletter Subscription Banner - At the end of page -->
+    <!-- Newsletter Subscription Banner -->
+    <div class="px-0 max-w-3xl mx-auto mt-8">
       <SubscribeBanner />
+    </div>
 
-      <RelatedArticles 
-        posts={postsHavingSameTag.length > 0 ? postsHavingSameTag : rankedPosts}
-        currentPostSlug={post.Slug}
-        title="Bu ta gosta di lê otu artigu"
-      />
-    </div>
-  </div>
-
-  <div slot="aside" class="flex flex-col gap-3">
-    <div class="rounded-lg p-5">
-      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Artigus di mesmu tipu</h3>
-      {
-        postsHavingSameTag.filter((p: interfaces.Post) => p.Slug !== post.Slug).length === 0 ? (
-          <NoContents contents={[]} />
-        ) : (
-          <div class="space-y-4">
-            {postsHavingSameTag
-              .filter((p: interfaces.Post) => p.Slug !== post.Slug)
-              .slice(0, 5)
-              .map((relatedPost: interfaces.Post) => (
-                <a 
-                  href={getPostLink(relatedPost.Slug)} 
-                  class="block group bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md hover:border-blue-300 hover:-translate-y-1 transition-all duration-200"
-                >
-                  <div class="space-y-2">
-                    {(() => {
-                      const imageIndex = postsHavingSameTag
-                        .filter((p: interfaces.Post) => p.Slug !== post.Slug)
-                        .slice(0, 5)
-                        .findIndex((p: interfaces.Post) => p.Slug === relatedPost.Slug)
-                      const image = imageIndex >= 0 ? postsHavingSameTagImages[imageIndex] : null
-                      return image && (
-                        <ImageWithBlur
-                          src={image}
-                          alt={relatedPost.Title}
-                          width={typeof image === 'string' ? undefined : image.width}
-                          height={typeof image === 'string' ? undefined : image.height}
-                          loading="lazy"
-                          aspectRatio="16/9"
-                          class="rounded-md"
-                        />
-                      )
-                    })()}
-                    <h4 class="m-0 text-sm font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
-                      {relatedPost.Title}
-                    </h4>
-                    {relatedPost.Excerpt && (
-                      <p class="m-0 text-xs text-slate-600 leading-relaxed line-clamp-2">
-                        {relatedPost.Excerpt}
-                      </p>
-                    )}
-                  </div>
-                </a>
-              ))}
-          </div>
-        )
-      }
-    </div>
-    
-    <div class="rounded-lg p-5">
-      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Otus artigu pa lê</h3>
-      {
-        rankedPosts.length === 0 ? (
-          <NoContents contents={[]} />
-        ) : (
-          <div class="space-y-4">
-            {rankedPosts
-              .slice(0, 5)
-              .map((rankedPost: interfaces.Post) => (
-                <a 
-                  href={getPostLink(rankedPost.Slug)} 
-                  class="block group bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md hover:border-blue-300 hover:-translate-y-1 transition-all duration-200"
-                >
-                  <div class="space-y-2">
-                    {(() => {
-                      const imageIndex = rankedPosts.slice(0, 5).findIndex((p: interfaces.Post) => p.Slug === rankedPost.Slug)
-                      const image = imageIndex >= 0 ? rankedPostsImages[imageIndex] : null
-                      return image && (
-                        <ImageWithBlur
-                          src={image}
-                          alt={rankedPost.Title}
-                          width={typeof image === 'string' ? undefined : image.width}
-                          height={typeof image === 'string' ? undefined : image.height}
-                          loading="lazy"
-                          aspectRatio="16/9"
-                          class="rounded-md"
-                        />
-                      )
-                    })()}
-                    <h4 class="m-0 text-sm font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
-                      {rankedPost.Title}
-                    </h4>
-                    {rankedPost.Excerpt && (
-                      <p class="m-0 text-xs text-slate-600 leading-relaxed line-clamp-2">
-                        {rankedPost.Excerpt}
-                      </p>
-                    )}
-                  </div>
-                </a>
-              ))}
-          </div>
-        )
-      }
-    </div>
-    
-    <div class="rounded-lg p-5">
-      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Kes últimu artigu i stória</h3>
-      {
-        recentPosts.length === 0 ? (
-          <NoContents contents={[]} />
-        ) : (
-          <div class="space-y-4">
-            {recentPosts
-              .slice(0, 5)
-              .map((recentPost: interfaces.Post) => (
-                <a 
-                  href={getPostLink(recentPost.Slug)} 
-                  class="block group bg-white border border-slate-200 rounded-lg p-3 hover:shadow-md hover:border-blue-300 hover:-translate-y-1 transition-all duration-200"
-                >
-                  <div class="space-y-2">
-                    {(() => {
-                      const imageIndex = recentPosts.slice(0, 5).findIndex((p: interfaces.Post) => p.Slug === recentPost.Slug)
-                      const image = imageIndex >= 0 ? recentPostsImages[imageIndex] : null
-                      return image && (
-                        <ImageWithBlur
-                          src={image}
-                          alt={recentPost.Title}
-                          width={typeof image === 'string' ? undefined : image.width}
-                          height={typeof image === 'string' ? undefined : image.height}
-                          loading="lazy"
-                          aspectRatio="16/9"
-                          class="rounded-md"
-                        />
-                      )
-                    })()}
-                    <h4 class="m-0 text-sm font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
-                      {recentPost.Title}
-                    </h4>
-                    {recentPost.Excerpt && (
-                      <p class="m-0 text-xs text-slate-600 leading-relaxed line-clamp-2">
-                        {recentPost.Excerpt}
-                      </p>
-                    )}
-                  </div>
-                </a>
-              ))}
-          </div>
-        )
-      }
-    </div>
-    
-    <div class="rounded-lg p-5">
-      <h3 class="m-0 mb-4 text-lg font-semibold text-slate-800 border-b-2 border-blue-600 pb-2">Tipus di artigu</h3>
-      <BlogTagsLink heading="" tags={tags} />
-    </div>
+    <!-- Read Next Section -->
+    <RelatedArticles
+      posts={relatedPosts.length > 0 ? relatedPosts : rankedPosts}
+      currentPostSlug={post.Slug}
+      title="Artigus di Mesmu Tipu"
+    />
   </div>
 </Layout>
+
+<script>
+  document.querySelectorAll('.share-sidebar-twitter').forEach((el) => {
+    const path = el.getAttribute('data-path') || ''
+    const title = el.getAttribute('data-title') || ''
+    const fullUrl = window.location.origin + path
+    el.setAttribute('href', `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(fullUrl)}`)
+  })
+  document.querySelectorAll('.share-sidebar-facebook').forEach((el) => {
+    const path = el.getAttribute('data-path') || ''
+    const fullUrl = window.location.origin + path
+    el.setAttribute('href', `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}`)
+  })
+  document.querySelectorAll('.share-sidebar-whatsapp').forEach((el) => {
+    const path = el.getAttribute('data-path') || ''
+    const title = el.getAttribute('data-title') || ''
+    const fullUrl = window.location.origin + path
+    el.setAttribute('href', `https://wa.me/?text=${encodeURIComponent(title)}%20${encodeURIComponent(fullUrl)}`)
+  })
+  document.querySelectorAll('.share-sidebar-copy').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const path = btn.getAttribute('data-path') || ''
+      const fullUrl = window.location.origin + path
+      try {
+        await navigator.clipboard.writeText(fullUrl)
+        ;(btn as HTMLElement).style.color = '#006577'
+        setTimeout(() => { (btn as HTMLElement).style.color = '' }, 2000)
+      } catch (err) {
+        console.error('Failed to copy:', err)
+      }
+    })
+  })
+
+  // Reading progress bar — fills as the reader scrolls from the article start to its end marker
+  const progressBar = document.getElementById('reading-progress')
+  const startEl = document.getElementById('article-start')
+  const endEl = document.getElementById('article-content-end')
+  if (progressBar && startEl && endEl) {
+    let ticking = false
+    const updateProgress = () => {
+      const startY = startEl.getBoundingClientRect().top + window.scrollY
+      const endY = endEl.getBoundingClientRect().top + window.scrollY
+      const total = endY - startY
+      const scrolled = window.scrollY - startY
+      const pct = total > 0 ? Math.min(100, Math.max(0, (scrolled / total) * 100)) : 0
+      progressBar.style.width = `${pct}%`
+      ticking = false
+    }
+    updateProgress()
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(updateProgress)
+        ticking = true
+      }
+    }, { passive: true })
+    window.addEventListener('resize', updateProgress)
+  }
+</script>

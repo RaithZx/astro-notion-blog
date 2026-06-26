@@ -1,9 +1,12 @@
 ---
-import { Image } from 'astro:assets'
-import { NUMBER_OF_POSTS_PER_PAGE } from '../server-constants.ts'
+export const prerender = true
+
 import ImageWithBlur from '../components/ImageWithBlur.astro'
+import PostCard from '../components/PostCard.astro'
+import CategoryExplorerIcon from '../components/CategoryExplorerIcon.astro'
+import { getCategoryExplorerIconKind } from '../lib/home-category-icons.ts'
 import {
-  getPosts,
+  getAllPosts,
   getRankedPosts,
   getAllTags,
   getFeaturedPost,
@@ -11,226 +14,313 @@ import {
 } from '../lib/notion/client.ts'
 import Layout from '../layouts/Layout.astro'
 import NoContents from '../components/NoContents.astro'
-import PostDate from '../components/PostDate.astro'
-import PostTags from '../components/PostTags.astro'
-import PostTitle from '../components/PostTitle.astro'
 import PostFeaturedImage from '../components/PostFeaturedImage.astro'
-import PostExcerpt from '../components/PostExcerpt.astro'
-import ReadMoreLink from '../components/ReadMoreLink.astro'
-import BlogPostsLink from '../components/BlogPostsLink.astro'
-import BlogTagsLink from '../components/BlogTagsLink.astro'
-import { getPostLink } from '../lib/blog-helpers.ts'
+import { getPostLink, getTagLink, getNavLink } from '../lib/blog-helpers.ts'
 import { getImageFromNotionUrl } from '../lib/image-helpers.ts'
+import type { Post } from '../lib/interfaces.ts'
+import uiStrings from '../locales/ui-strings.json'
 
-const labels = {
-  categories: 'Kategorias',
-}
-const [posts, rankedPosts, tags, featuredPost, topPosts] = await Promise.all([
-  getPosts(NUMBER_OF_POSTS_PER_PAGE),
-  getRankedPosts(),
+const home = uiStrings.app.home
+
+const [allPostsSlice, rankedPosts, tags, featuredPost, topPosts] = await Promise.all([
+  getAllPosts(),
+  getRankedPosts(12),
   getAllTags(),
   getFeaturedPost(),
-  getTopPosts(4),
+  getTopPosts(8),
 ])
 
-// Load featured post image if available
-let featuredPostImage = null
-if (featuredPost?.FeaturedImage?.Url) {
-  if (import.meta.env.DEV) {
-    featuredPostImage = featuredPost.FeaturedImage.Url
-  } else {
-    const imported = getImageFromNotionUrl(new URL(featuredPost.FeaturedImage.Url))
-    featuredPostImage = imported || featuredPost.FeaturedImage.Url
-  }
+const heroPost = featuredPost ?? allPostsSlice[0] ?? null
+
+function resolveHeroImage(post: Post | null): string | import('astro').ImageMetadata | null {
+  if (!post?.FeaturedImage?.Url) return null
+  if (import.meta.env.DEV) return post.FeaturedImage.Url
+  return getImageFromNotionUrl(new URL(post.FeaturedImage.Url)) || post.FeaturedImage.Url
 }
 
-// Helper function to format date as "12 Jul 2025"
-function formatDateShort(date: string): string {
-  const dt = new Date(date)
-  const months = ['Jan', 'Feb', 'Mar', 'Abr', 'Maiu', 'Jun', 'Jul', 'Ago', 'Set', 'Otu', 'Nov', 'Diz']
-  const day = dt.getDate()
-  const month = months[dt.getMonth()]
-  const year = dt.getFullYear()
-  return `${day} ${month} ${year}`
+const heroImage = resolveHeroImage(heroPost)
+
+const popularPool =
+  rankedPosts.length > 0
+    ? rankedPosts
+    : topPosts.length > 0
+      ? topPosts
+      : allPostsSlice
+const popularPosts = popularPool
+  .filter((p) => !heroPost || p.PageId !== heroPost.PageId)
+  .slice(0, 4)
+
+const LATEST_INITIAL = 8
+
+const latestPosts = allPostsSlice
+  .filter((p) => !heroPost || p.PageId !== heroPost.PageId)
+
+type TagVariant = 'default' | 'tertiary' | 'primary'
+
+function tagCardVariant(name: string): TagVariant {
+  const n = name.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '')
+  if (n.includes('inov')) return 'tertiary'
+  if (n.includes('espasu') || n.includes('space')) return 'primary'
+  return 'default'
 }
 
-// Helper function to estimate reading time (words per minute = 200)
-function estimateReadingTime(excerpt: string): string {
-  const words = excerpt.split(/\s+/).length
-  const minutes = Math.max(1, Math.ceil(words / 200))
-  return `${minutes} min`
-}
+const sortedTags = [...tags].sort((a, b) => a.name.localeCompare(b.name, 'kea'))
 ---
 
-<Layout title="Ligadu" description="Artigus di siensia i saudi" path="/" ogImage="">
-  <!-- Featured Section - Above main and aside -->
-  {
-    (featuredPost || topPosts.length > 0) && (
-      <section slot="featured" class="mb-12 px-5 py-8 max-sm:px-2.5 max-sm:py-5" style="max-width: 1200px; margin: 0 auto; width: 100%;">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Main Featured Article -->
-          {
-            featuredPost && (
-              <div class="md:col-span-2 lg:col-span-2">
-                <a href={getPostLink(featuredPost.Slug)} class="block group">
-                  <div class="relative overflow-hidden rounded-lg mb-4 aspect-[16/10] bg-slate-200">
-                    {
-                      featuredPostImage ? (
-                        <div class="group-hover:scale-105 transition-transform duration-300">
-                          <ImageWithBlur
-                            src={featuredPostImage}
-                            alt={featuredPost.Title}
-                            width={typeof featuredPostImage === 'string' ? undefined : featuredPostImage.width}
-                            height={typeof featuredPostImage === 'string' ? undefined : featuredPostImage.height}
-                            loading="eager"
-                            aspectRatio="16/10"
-                            class="rounded-lg"
-                          />
-                        </div>
-                      ) : (
-                        <div class="w-full h-full flex items-center justify-center bg-slate-300">
-                          <svg class="w-16 h-16 text-slate-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
-                          </svg>
-                        </div>
-                      )
-                    }
+<Layout
+  title={uiStrings.app.site.defaultTitle}
+  description={uiStrings.app.site.homeDescription}
+  path="/"
+  ogImage=""
+  fullWidth={true}
+>
+  <div slot="main" class="w-full pb-16">
+    {
+      !heroPost && allPostsSlice.length === 0 ? (
+        <NoContents />
+      ) : heroPost ? (
+        <>
+          <!-- Hero -->
+          <div class="py-4 md:py-8">
+            <a href={getPostLink(heroPost.Slug)} class="block group no-underline">
+              <div class="rounded-xl overflow-hidden relative h-[420px] md:h-[560px] bg-surface-container-high transition-shadow duration-300 group-hover:shadow-ambient">
+                {heroImage ? (
+                  <div class="absolute inset-0 group-hover:scale-105 transition-transform duration-700">
+                    <ImageWithBlur
+                      src={heroImage}
+                      alt={heroPost.Title}
+                      width={typeof heroImage === 'string' ? undefined : heroImage.width}
+                      height={typeof heroImage === 'string' ? undefined : heroImage.height}
+                      loading="eager"
+                      class="w-full h-full object-cover"
+                    />
                   </div>
-                  <div class="space-y-3">
-                    <div class="flex items-center gap-2 text-xs text-slate-500 uppercase tracking-wide">
-                      <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded font-semibold">Sta Ligadu</span>
-                    </div>
-                    <h2 class="text-3xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-tight">
-                      {featuredPost.Title}
-                    </h2>
-                    <div class="flex items-center gap-1.5 text-sm text-slate-400">
-                      {featuredPost.Date && (
-                        <span>{formatDateShort(featuredPost.Date)}</span>
-                      )}
-                      {featuredPost.Tags && featuredPost.Tags.length > 0 && (
-                        <>
-                          <span>·</span>
-                          <span>{featuredPost.Tags[0].name}</span>
-                        </>
-                      )}
-                      {featuredPost.Excerpt && (
-                        <>
-                          <span>·</span>
-                          <span>{estimateReadingTime(featuredPost.Excerpt)}</span>
-                        </>
-                      )}
-                    </div>
-                    {
-                      featuredPost.Excerpt && (
-                        <p class="text-slate-600 text-base leading-relaxed line-clamp-3">
-                          {featuredPost.Excerpt}
-                        </p>
-                      )
-                    }
+                ) : (
+                  <div class="absolute inset-0 bg-gradient-to-br from-primary/20 via-surface-container to-tertiary/15 flex items-center justify-center text-on-surface-variant">
+                    <span class="material-symbols-outlined text-5xl opacity-20">article</span>
                   </div>
-                </a>
+                )}
+                {/* Gradient overlay — strong at bottom for text legibility */}
+                <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none" />
+                {/* Text anchored to bottom */}
+                <div class="absolute bottom-0 left-0 right-0 px-6 pb-7 pt-16 md:px-10 md:pb-9">
+                  {heroPost.Tags && heroPost.Tags.length > 0 && (
+                    <div class="flex flex-wrap gap-3 mb-3">
+                      {heroPost.Tags.slice(0, 3).map((tag) => (
+                        <span class="text-tertiary-fixed font-bold text-[10px] uppercase tracking-widest">
+                          {tag.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <h1 class="font-headline text-2xl md:text-4xl lg:text-5xl font-bold leading-tight mb-3 text-white drop-shadow-sm">
+                    {heroPost.Title}
+                  </h1>
+                  {heroPost.Excerpt && (
+                    <p class="text-sm md:text-base text-white/75 max-w-2xl leading-relaxed m-0 line-clamp-2">
+                      {heroPost.Excerpt}
+                    </p>
+                  )}
+                </div>
               </div>
-            )
-          }
+            </a>
+          </div>
 
-          <!-- Top Stories -->
-          {
-            topPosts.length > 0 && (
-              <div class="space-y-4">
-                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Artigus distakadu</h3>
-                {
-                  topPosts.map((post) => (
-                    <a href={getPostLink(post.Slug)} class="block group">
-                      <div class="flex gap-3">
-                        {post.FeaturedImage && post.FeaturedImage.Url && (
-                          <div class="w-24 h-16 flex-shrink-0 rounded-md overflow-hidden">
-                            <div class="w-full h-full group-hover:scale-105 transition-transform duration-300">
-                              <PostFeaturedImage post={post} />
-                            </div>
+          <!-- Explora pa Kategorias -->
+          {sortedTags.length > 0 && (
+            <div class="flex gap-2 overflow-x-auto py-3 mb-2" style="scrollbar-width: none; -ms-overflow-style: none;">
+              {sortedTags.map((tag) => {
+                const variant = tagCardVariant(tag.name)
+                const iconKind = getCategoryExplorerIconKind(tag.name)
+                return (
+                  <a
+                    href={getTagLink(tag.name)}
+                    class:list={[
+                      'shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium no-underline transition-all duration-200 border',
+                      variant === 'default' &&
+                        'bg-surface-container-lowest border-outline-variant/20 text-on-surface hover:bg-surface-container hover:border-primary/30 hover:text-primary',
+                      variant === 'tertiary' &&
+                        'bg-tertiary-container text-on-tertiary-container border-white/10 hover:brightness-110',
+                      variant === 'primary' &&
+                        'bg-primary-container text-on-primary-container border-white/10 hover:brightness-110',
+                    ]}
+                  >
+                    <span class:list={[
+                      'shrink-0',
+                      variant === 'default' && 'text-primary',
+                      variant !== 'default' && 'text-white',
+                    ]}>
+                      <CategoryExplorerIcon kind={iconKind} size={16} />
+                    </span>
+                    {tag.name}
+                  </a>
+                )
+              })}
+            </div>
+          )}
+
+          <!-- Mais popular -->
+          {popularPosts.length > 0 && (
+            <section class="pb-4">
+              <div class="flex items-center gap-3 mb-6">
+                <span class="material-symbols-outlined text-tertiary">trending_up</span>
+                <h2 class="font-headline text-xl font-bold text-outline m-0">{home.popularHeading}</h2>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* #1 — featured large card */}
+                {popularPosts[0] && (() => {
+                  const post = popularPosts[0]
+                  return (
+                    <a href={getPostLink(post.Slug)} class="group no-underline text-inherit">
+                      <div class="rounded-xl overflow-hidden relative aspect-[4/3] bg-surface-container-high">
+                        {post.FeaturedImage?.Url && (
+                          <div class="absolute inset-0">
+                            <PostFeaturedImage post={post} loading="lazy" />
                           </div>
                         )}
-                        <div class="flex-1 min-w-0">
-                          <h4 class="text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug line-clamp-2 mb-1">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                        <span class="absolute top-4 left-4 font-black font-headline text-5xl leading-none text-white/20 tabular-nums select-none">01</span>
+                        <div class="absolute bottom-0 left-0 right-0 p-5">
+                          {post.Tags?.[0] && (
+                            <span class="text-tertiary font-bold text-[10px] uppercase tracking-widest block mb-2">
+                              {post.Tags[0].name}
+                            </span>
+                          )}
+                          <h4 class="font-bold text-lg md:text-xl font-headline text-white leading-snug line-clamp-3 group-hover:text-tertiary transition-colors m-0">
                             {post.Title}
                           </h4>
-                          <div class="flex items-center gap-1.5 text-xs text-slate-500">
-                            {post.Date && (
-                              <span>{formatDateShort(post.Date)}</span>
-                            )}
-                            {post.Tags && post.Tags.length > 0 && (
-                              <>
-                                <span>·</span>
-                                <span>{post.Tags[0].name}</span>
-                              </>
-                            )}
-                          </div>
                         </div>
                       </div>
                     </a>
-                  ))
-                }
-              </div>
-            )
-          }
-        </div>
+                  )
+                })()}
 
-        <!-- Latest Articles Section - Same width as hero -->
-        {
-          posts.length > 0 && (
-            <div class="mt-12">
-              <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6">Kes últimu artigu i stória</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {posts.map((post) => (
-                  <article class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
-                    <a href={getPostLink(post.Slug)} class="block">
-                      {post.FeaturedImage && post.FeaturedImage.Url && (
-                        <div class="aspect-[16/10] overflow-hidden">
-                          <div class="w-full h-full group-hover:scale-105 transition-transform duration-300">
-                            <PostFeaturedImage post={post} />
-                          </div>
-                        </div>
-                      )}
-                      <div class="p-4">
-                        <h1 class="m-0 text-lg font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
-                          {post.Title}
-                        </h1>
-                        <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-2">
-                          {post.Date && (
-                            <span>{formatDateShort(post.Date)}</span>
-                          )}
-                          {post.Tags && post.Tags.length > 0 && (
-                            <>
-                              <span>·</span>
-                              <span>{post.Tags[0].name}</span>
-                            </>
-                          )}
-                          {post.Excerpt && (
-                            <>
-                              <span>·</span>
-                              <span>{estimateReadingTime(post.Excerpt)}</span>
-                            </>
+                {/* #2–4 — stacked list */}
+                <div class="flex flex-col justify-between gap-3">
+                  {popularPosts.slice(1).map((post, i) => (
+                    <a href={getPostLink(post.Slug)} class="group no-underline text-inherit flex-1">
+                      <div class="flex gap-4 items-center h-full rounded-xl bg-surface-container-lowest hover:bg-surface-container ring-1 ring-outline-variant/15 transition-colors p-3 pr-4">
+                        <span class="font-black font-headline text-3xl leading-none text-on-surface/10 tabular-nums select-none w-10 shrink-0 text-right">
+                          {String(i + 2).padStart(2, '0')}
+                        </span>
+                        <div class="relative w-20 h-16 shrink-0 rounded-lg overflow-hidden bg-surface-container-high">
+                          {post.FeaturedImage?.Url && (
+                            <PostFeaturedImage post={post} loading="lazy" />
                           )}
                         </div>
-                        <p class="m-0 mt-2 text-slate-600 text-sm leading-relaxed line-clamp-2">
-                          {post.Excerpt}
-                        </p>
-                        <div class="flex justify-start mt-3">
-                          <PostTags post={post} enableLink={true} />
+                        <div class="min-w-0 flex-1">
+                          {post.Tags?.[0] && (
+                            <span class="text-tertiary font-bold text-[10px] uppercase tracking-widest block mb-1">
+                              {post.Tags[0].name}
+                            </span>
+                          )}
+                          <h4 class="font-bold text-sm font-headline text-on-surface leading-snug line-clamp-2 group-hover:text-primary transition-colors m-0">
+                            {post.Title}
+                          </h4>
                         </div>
                       </div>
                     </a>
-                  </article>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          <!-- Kes Ultimu Artigu -->
+          {latestPosts.length > 0 && (
+            <section class="pt-8 pb-12">
+              <div class="flex flex-wrap justify-between items-end gap-4 mb-6">
+                <h2 class="font-headline text-xl font-bold text-outline m-0">
+                  {home.latestHeading}
+                </h2>
+                <a
+                  href={getNavLink('/posts/page/1')}
+                  class="text-primary font-bold flex items-center gap-1 hover:underline underline-offset-4 decoration-2 no-underline"
+                >
+                  {home.viewAllPosts}
+                  <span class="material-symbols-outlined text-lg">chevron_right</span>
+                </a>
+              </div>
+              <div class="flex flex-col gap-4" id="latest-posts-list">
+                {latestPosts.map((post, i) => (
+                  <div class:list={[i >= LATEST_INITIAL && 'latest-extra hidden']}>
+                    <PostCard post={post} variant="list" loading="lazy" />
+                  </div>
                 ))}
               </div>
-            </div>
-          )
-        }
-      </section>
-    )
-  }
+              {latestPosts.length > LATEST_INITIAL && (
+                <div class="flex justify-center mt-8">
+                  <button
+                    id="load-more-btn"
+                    type="button"
+                    class="flex items-center gap-2 px-8 py-3 rounded-full border-2 border-outline-variant text-on-surface font-bold hover:border-primary hover:text-primary transition-colors"
+                    data-label-more={home.loadMorePosts}
+                    data-label-less={home.showLessPosts}
+                  >
+                    {home.loadMorePosts}
+                    <span class="material-symbols-outlined text-lg" id="load-more-icon">expand_more</span>
+                  </button>
+                </div>
+              )}
+            </section>
+          )}
 
-  <!-- Empty main slot since content is in featured section -->
-  <div slot="main" class="hidden"></div>
+          <!-- Newsletter band -->
+          <section class="mt-20 mb-4">
+            <div class="bg-primary-container rounded p-6 md:p-12 text-center relative overflow-hidden">
+              <div class="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
+              <div class="absolute bottom-0 right-0 w-96 h-96 bg-tertiary-fixed/10 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl" />
+              <div class="relative z-10 max-w-2xl mx-auto">
+                <h2 class="font-headline text-3xl md:text-4xl font-bold text-white mb-4 m-0">
+                  {home.newsletterBandTitle}
+                </h2>
+                <p class="text-white/80 mb-8 m-0">{home.newsletterBandBlurb}</p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                  <input
+                    type="email"
+                    class="flex-grow px-6 py-4 rounded-full bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:bg-white/20 transition-all"
+                    placeholder={home.newsletterBandPlaceholder}
+                    aria-label={home.newsletterBandPlaceholder}
+                    readonly
+                    tabindex={-1}
+                  />
+                  <button
+                    type="button"
+                    class="newsletter-btn bg-white text-primary px-10 py-4 rounded-full font-bold hover:shadow-lg transition-all active:scale-95 border-0 cursor-pointer shrink-0"
+                  >
+                    {home.newsletterBandSubmit}
+                  </button>
+                </div>
+                <p class="text-white/70 text-[10px] mt-4 uppercase tracking-widest m-0">
+                  {home.newsletterBandDisclaimer}
+                </p>
+              </div>
+            </div>
+          </section>
+        </>
+      ) : (
+        <NoContents />
+      )
+    }
+  </div>
 </Layout>
 
+<script>
+  const btn = document.getElementById('load-more-btn') as HTMLButtonElement | null
+  const icon = document.getElementById('load-more-icon')
+  const extras = document.querySelectorAll<HTMLElement>('.latest-extra')
 
+  if (btn && extras.length > 0) {
+    let expanded = false
+    const labelMore = btn.dataset.labelMore ?? ''
+    const labelLess = btn.dataset.labelLess ?? ''
+
+    btn.addEventListener('click', () => {
+      expanded = !expanded
+      extras.forEach((el) => el.classList.toggle('hidden', !expanded))
+      const textNode = btn.firstChild as Text
+      if (textNode?.nodeType === Node.TEXT_NODE) textNode.data = expanded ? labelLess : labelMore
+      if (icon) icon.textContent = expanded ? 'expand_less' : 'expand_more'
+    })
+  }
+</script>

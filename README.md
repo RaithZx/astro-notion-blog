@@ -10,6 +10,8 @@ English | [日本語](README.ja.md)
 
 astro-notion-blog enables you to create a blog using [Notion](https://www.notion.so/) and generates it statically, resulting in lightning-fast page views.
 
+**This fork** is deployed on **[Coolify](https://coolify.io/)** using the Astro **Node** adapter (`output: 'server'`). Set `CUSTOM_DOMAIN` and run the built Node server per the [Astro Node integration](https://docs.astro.build/en/guides/integrations-guide/node/). Upstream docs below still mention Cloudflare Pages for reference.
+
 - :rocket: **Blazing fast** page views
 - :pencil: With the ability to write blog content in **Notion**
 - :hammer_and_wrench: **Customize** your site's appearance to your liking

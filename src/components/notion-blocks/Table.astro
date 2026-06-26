@@ -21,7 +21,7 @@ const { block } = Astro.props
                 (block.Table.HasColumnHeader && j === 0)
               ) {
                 return (
-                  <th>
+                  <th class="bg-surface-container-low text-on-surface">
                     {cell.RichTexts.map((richText: interfaces.RichText) => (
                       <RichText richText={richText} />
                     ))}
@@ -29,7 +29,7 @@ const { block } = Astro.props
                 )
               }
               return (
-                <td>
+                <td class="text-on-surface-variant">
                   {cell.RichTexts.map((richText: interfaces.RichText) => (
                     <RichText richText={richText} />
                   ))}
@@ -88,13 +88,12 @@ const { block } = Astro.props
     overflow-wrap: break-word;
     hyphens: auto;
     padding: 0.5rem 1rem;
-    border: 1px solid #e4e4e4;
+    border: 1px solid rgba(194, 198, 214, 0.35);
     vertical-align: top;
   }
-  
+
   .table th {
     font-weight: 600;
-    background-color: #f4f4f4;
     position: sticky;
     left: 0;
     z-index: 1;

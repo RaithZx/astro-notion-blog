@@ -31,7 +31,7 @@ const grammer =
 ---
 
 <div class="code">
-  <div>
+  <div class="bg-surface-container-low rounded-2xl">
     {
       /* prettier-ignore */
       language === 'mermaid' ? (
@@ -39,11 +39,18 @@ const grammer =
       ) : (
         <>
           <div>
-            <button class="copy" data-code={code} data-done-text="Copied!">
-              Copy
+            <button
+              class="copy flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-on-surface-variant bg-transparent border-0 cursor-pointer transition-colors hover:text-primary hover:bg-surface-container-high"
+              data-code={code}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-icon">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span class="copy-label">Copy</span>
             </button>
           </div>
-          <pre><code set:html={Prism.highlight(code, grammer, language)} /></pre>
+          <pre><code class="text-on-surface" set:html={Prism.highlight(code, grammer, language)} /></pre>
         </>
       )
     }
@@ -58,18 +65,20 @@ const grammer =
 
 <script>
   document.querySelectorAll('button.copy').forEach((button) => {
-    button.addEventListener('click', (ev) => {
-      navigator.clipboard
-        .writeText(ev.target.getAttribute('data-code'))
-        .then(() => {
-          const originalText = ev.target.innerText
+    button.addEventListener('click', () => {
+      const code = button.getAttribute('data-code') || ''
+      navigator.clipboard.writeText(code).then(() => {
+        const label = button.querySelector('.copy-label')
+        if (!label) return
+        const originalText = label.textContent
+        label.textContent = 'Copiadu!'
+        button.classList.add('text-tertiary')
 
-          ev.target.innerText = ev.target.getAttribute('data-done-text')
-
-          setTimeout(() => {
-            ev.target.innerText = originalText
-          }, 3000)
-        })
+        setTimeout(() => {
+          label.textContent = originalText
+          button.classList.remove('text-tertiary')
+        }, 2000)
+      })
     })
   })
 </script>
@@ -78,32 +87,19 @@ const grammer =
   .code {
     display: block;
     width: 100%;
-    margin-bottom: 0.6rem;
-  }
-  .code > div {
-    background: rgb(247, 246, 243);
-    border-radius: var(--radius);
+    margin: 2rem 0;
   }
   .code > div div {
     display: flex;
     justify-content: flex-end;
-  }
-  .code button.copy {
-    display: block;
-    width: 4rem;
-    border: 0;
-    border-radius: var(--radius);
-    background-color: rgba(227, 226, 224, 0.5);
-    color: var(--fg);
-    line-height: 1.2rem;
-    cursor: pointer;
+    padding: 0.4rem 0.6rem 0;
   }
   .code pre {
     display: block;
     overflow: auto;
-    padding: 0.8rem 2rem 2rem;
+    padding: 0.5rem 1.5rem 1.5rem;
     font-size: 0.9rem;
-    line-height: 1.2rem;
+    line-height: 1.5rem;
     white-space: pre;
     width: 100%;
     max-width: 100%;
@@ -112,19 +108,18 @@ const grammer =
       height: 10px;
     }
     &::-webkit-scrollbar-thumb {
-      background: rgb(211, 209, 203);
+      background: #c2c6d6;
     }
     &::-webkit-scrollbar-track {
-      background: rgb(237, 236, 233);
+      background: transparent;
     }
   }
   .code pre.mermaid {
     padding: 2rem;
   }
   .code pre code {
-    color: var(--fg);
     padding: 0;
-    background: rgb(247, 246, 243) !important;
+    background: transparent !important;
     border-radius: 0;
   }
 </style>

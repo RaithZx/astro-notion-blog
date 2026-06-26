@@ -1,32 +1,33 @@
 ---
 import type { Post, SelectProperty } from '../lib/interfaces.ts'
 import { getTagLink } from '../lib/blog-helpers.ts'
-import '../styles/notion-color.css'
+import { getCategoryExplorerIconKind } from '../lib/home-category-icons.ts'
+import CategoryExplorerIcon from './CategoryExplorerIcon.astro'
 
 export interface Props {
   post: Post
-  enableLink: boolean
+  enableLink?: boolean
 }
 
 const { post, enableLink = true } = Astro.props
+
+const pillClass =
+  'inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium no-underline transition-all duration-200 border bg-surface-container-lowest border-outline-variant/20 text-on-surface-variant hover:bg-surface-container hover:text-on-surface'
 ---
 
-<div class="text-sm flex flex-wrap gap-1.5">
-  {
-    post.Tags &&
-      post.Tags.length > 0 &&
-      post.Tags.map((tag: SelectProperty) => {
-        if (enableLink) {
-          return (
-            // <a href={getTagLink(tag.name)} class={`flex items-center flex-shrink min-w-0 rounded-sm px-1.5 py-0.5 leading-tight text-slate-700 bg-slate-200/50 hover:bg-slate-300/50 transition-colors ${tag.color}`}>
-            //   {tag.name}
-            // </a>
-			<span class="px-1.5 py-0.5 bg-black text-white uppercase font-bold text-xs">
-				{tag.name}
-			</span>
-          )
-        }
-        return <span class={`flex items-center flex-shrink min-w-0 rounded-sm px-1.5 py-0.5 leading-tight text-slate-700 bg-slate-200/50 ${tag.color}`}>{tag.name}</span>
-      })
-  }
+<div class="flex flex-wrap gap-2">
+  {post.Tags && post.Tags.length > 0 && post.Tags.map((tag: SelectProperty) => {
+    const iconKind = getCategoryExplorerIconKind(tag.name)
+    return enableLink ? (
+      <a href={getTagLink(tag.name)} class={pillClass}>
+        <span class="text-primary shrink-0"><CategoryExplorerIcon kind={iconKind} size={16} /></span>
+        {tag.name}
+      </a>
+    ) : (
+      <span class={pillClass}>
+        <span class="text-primary shrink-0"><CategoryExplorerIcon kind={iconKind} size={16} /></span>
+        {tag.name}
+      </span>
+    )
+  })}
 </div>

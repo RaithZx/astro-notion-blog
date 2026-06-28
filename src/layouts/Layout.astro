@@ -169,27 +169,12 @@ if (database.Icon && database.Icon.Type === 'file') {
             <span class="material-symbols-outlined text-2xl leading-none" aria-hidden="true">search</span>
           </button>
 
-          <div class="ligadu-auth-when-signed-out flex md:hidden items-center">
+          <div class="ligadu-auth-when-signed-out flex items-center">
             <button
               type="button"
-              class="ligadu-open-sign-up bg-primary-container text-on-primary-container px-4 py-2 rounded-full font-bold text-xs transition-transform duration-200 active:scale-95 border-0 cursor-pointer"
-            >
-              {app.layout.navSignUpCta}
-            </button>
-          </div>
-
-          <div class="ligadu-auth-when-signed-out hidden md:flex items-center gap-4">
-            <button
-              type="button"
-              class="ligadu-open-sign-in bg-transparent border-0 text-sm font-medium text-on-background/60 hover:text-tertiary transition-colors duration-300 cursor-pointer p-0"
+              class="ligadu-open-sign-in bg-primary-container text-on-primary-container px-5 py-2 rounded-full font-bold text-sm transition-transform duration-200 active:scale-95 border-0 cursor-pointer"
             >
               {app.layout.authSignIn}
-            </button>
-            <button
-              type="button"
-              class="ligadu-open-sign-up bg-primary-container text-on-primary-container px-6 py-2.5 rounded-full font-bold text-sm transition-transform duration-200 active:scale-95 border-0 cursor-pointer"
-            >
-              {app.layout.navSignUpCta}
             </button>
           </div>
 
@@ -254,12 +239,6 @@ if (database.Icon && database.Icon.Type === 'file') {
                 class="ligadu-open-sign-in w-full ds-btn-primary px-4 py-3 text-sm"
               >
                 {app.layout.authSignIn}
-              </button>
-              <button
-                type="button"
-                class="ligadu-open-sign-up w-full bg-primary-container text-on-primary-container px-4 py-3 text-sm font-bold rounded-full border-0 cursor-pointer transition-transform active:scale-95"
-              >
-                {app.layout.navSignUpCta}
               </button>
               <button
                 type="button"

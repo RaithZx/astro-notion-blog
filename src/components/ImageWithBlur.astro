@@ -12,6 +12,8 @@ export interface Props {
   aspectRatio?: string
   /** 'natural' renders the image at its own intrinsic ratio — no crop, no box. */
   fit?: 'cover' | 'contain' | 'natural'
+  /** fill: stretch to cover the nearest relative ancestor — no aspect-ratio applied. */
+  fill?: boolean
 }
 
 const {
@@ -22,19 +24,20 @@ const {
   class: className = '',
   loading = 'lazy',
   aspectRatio,
-  fit = 'cover'
+  fit = 'cover',
+  fill = false
 } = Astro.props
 
 const isNatural = fit === 'natural'
 const imageId = `img-${Math.random().toString(36).substr(2, 9)}`
 const isString = typeof src === 'string'
 
-const wrapperStyle = isNatural
+const wrapperStyle = isNatural || fill
   ? ''
   : `aspect-ratio: ${aspectRatio || '16 / 9'};`
 ---
 
-<div class:list={['image-blur-wrapper', className, { 'image-blur-wrapper-natural': isNatural }]} style={wrapperStyle}>
+<div class:list={['image-blur-wrapper', className, { 'image-blur-wrapper-natural': isNatural, 'image-blur-wrapper-fill': fill }]} style={wrapperStyle}>
   <!-- Blur placeholder/skeleton -->
   <div class="image-blur-placeholder" data-placeholder-id={imageId}>
     <div class="skeleton-shimmer"></div>
@@ -80,6 +83,21 @@ const wrapperStyle = isNatural
     height: auto;
     overflow: visible;
     background-color: transparent;
+  }
+
+  .image-blur-wrapper-fill {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+  }
+
+  .image-blur-wrapper-fill .image-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
   }
 
   .image-blur-placeholder {

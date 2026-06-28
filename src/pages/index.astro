@@ -199,16 +199,13 @@ const sortedTags = [...tags].sort((a, b) => a.name.localeCompare(b.name, 'kea'))
                 <div class="flex flex-col justify-between gap-3">
                   {popularPosts.slice(1).map((post, i) => (
                     <a href={getPostLink(post.Slug)} class="group no-underline text-inherit flex-1">
-                      <div class="flex gap-4 items-center h-full rounded-xl bg-surface-container-lowest hover:bg-surface-container ring-1 ring-outline-variant/15 transition-colors p-3 pr-4">
-                        <span class="font-black font-headline text-3xl leading-none text-on-surface/10 tabular-nums select-none w-10 shrink-0 text-right">
-                          {String(i + 2).padStart(2, '0')}
-                        </span>
-                        <div class="relative w-20 h-16 shrink-0 rounded-lg overflow-hidden bg-surface-container-high">
+                      <div class="flex items-center h-full rounded-xl bg-surface-container-lowest hover:bg-surface-container ring-1 ring-outline-variant/15 transition-colors overflow-hidden">
+                        <div class="relative w-24 h-full shrink-0 bg-surface-container-high self-stretch min-h-[4rem]">
                           {post.FeaturedImage?.Url && (
                             <PostFeaturedImage post={post} loading="lazy" />
                           )}
                         </div>
-                        <div class="min-w-0 flex-1">
+                        <div class="min-w-0 flex-1 px-3 py-2">
                           {post.Tags?.[0] && (
                             <span class="text-tertiary font-bold text-[10px] uppercase tracking-widest block mb-1">
                               {post.Tags[0].name}

@@ -6,9 +6,10 @@ import ImageWithBlur from './ImageWithBlur.astro'
 export interface Props {
   post: Post
   loading?: 'lazy' | 'eager'
+  hoverZoom?: boolean
 }
 
-const { post, loading = 'lazy' } = Astro.props
+const { post, loading = 'lazy', hoverZoom = false } = Astro.props
 
 let imageModule: any = null
 if (post.FeaturedImage && post.FeaturedImage.Url) {
@@ -38,6 +39,7 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
       loading={loading}
       class="post-featured-image"
       fill={true}
+      hoverZoom={hoverZoom}
     />
   )
 }

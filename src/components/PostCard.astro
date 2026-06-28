@@ -40,6 +40,7 @@ const label = kicker ?? (post.Tags?.[0]?.name ?? '').toUpperCase()
               height={typeof image === 'string' ? undefined : image.height}
               loading={loading}
               fill={true}
+              hoverZoom={true}
             />
           ) : (
             <div class="w-full h-full min-h-[12rem] bg-surface-container" />
@@ -81,6 +82,7 @@ const label = kicker ?? (post.Tags?.[0]?.name ?? '').toUpperCase()
             height={typeof image === 'string' ? undefined : image.height}
             loading={loading}
             fill={true}
+            hoverZoom={true}
           />
         ) : (
           <div class="w-full h-full flex items-center justify-center text-on-surface-variant">

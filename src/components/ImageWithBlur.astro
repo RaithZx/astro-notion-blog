@@ -14,6 +14,8 @@ export interface Props {
   fit?: 'cover' | 'contain' | 'natural'
   /** fill: stretch to cover the nearest relative ancestor — no aspect-ratio applied. */
   fill?: boolean
+  /** Soft zoom on parent group hover */
+  hoverZoom?: boolean
 }
 
 const {
@@ -25,7 +27,8 @@ const {
   loading = 'lazy',
   aspectRatio,
   fit = 'cover',
-  fill = false
+  fill = false,
+  hoverZoom = false,
 } = Astro.props
 
 const isNatural = fit === 'natural'
@@ -52,7 +55,7 @@ const wrapperStyle = isNatural || fill
         width={width}
         height={height}
         loading={loading}
-        class:list={['image-content', { 'image-content-natural': isNatural }]}
+        class:list={['image-content', { 'image-content-natural': isNatural, 'image-content-zoom': hoverZoom }]}
         style={isNatural ? '' : `object-fit: ${fit};`}
         data-image-id={imageId}
       />
@@ -63,7 +66,7 @@ const wrapperStyle = isNatural || fill
         width={width || src.width}
         height={height || src.height}
         loading={loading}
-        class:list={['image-content', { 'image-content-natural': isNatural }]}
+        class:list={['image-content', { 'image-content-natural': isNatural, 'image-content-zoom': hoverZoom }]}
         style={isNatural ? '' : `object-fit: ${fit};`}
         data-image-id={imageId}
       />
@@ -150,6 +153,14 @@ const wrapperStyle = isNatural || fill
 
   .image-content-natural {
     height: auto;
+  }
+
+  :global(.group:hover) .image-content-zoom {
+    transform: scale(1.07);
+  }
+
+  .image-content-zoom {
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease-in;
   }
 
   @keyframes shimmer {

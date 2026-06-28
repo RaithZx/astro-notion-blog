@@ -7,73 +7,72 @@ import { getDatabase } from '../lib/notion/client.ts'
 const database = await getDatabase()
 ---
 
-<Layout 
-  title="Kontaktu" 
-  description="Kontakta Ligadu. Faze perguntas, manda sujiston, ô partilha ku nos." 
+<Layout
+  title="Kontaktu"
+  description="Kontakta Ligadu. Faze perguntas, manda sujiston, ô partilha ku nos."
   path="/kontaktu"
   ogImage=""
 >
   <div slot="main">
     <div class="max-w-4xl mx-auto">
-      <h1 class="text-4xl font-bold text-slate-800 mb-8">Nos Kontaktu</h1>
-      
+      <h1 class="text-4xl font-bold font-headline text-on-surface mb-8">Nos Kontaktu</h1>
+
       <div class="mb-12">
         <!-- Contact Information -->
         <div class="space-y-6">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">Informason di Kontaktu</h2>
-          
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">Informason di Kontaktu</h2>
+
           <div class="space-y-4">
             <div class="flex items-start space-x-3">
               <div class="text-2xl">📧</div>
               <div>
-                <h3 class="font-semibold text-slate-700">Email</h3>
-                <p class="text-slate-600">kontaktu [at] ligadu [dot] com</p>
+                <h3 class="font-semibold text-on-surface">Email</h3>
+                <p class="text-on-surface-variant">kontaktu [at] ligadu [dot] com</p>
               </div>
             </div>
-            
+
             <div class="flex items-start space-x-3">
               <div class="text-2xl">🌐</div>
               <div>
-                <h3 class="font-semibold text-slate-700">Website</h3>
-                <p class="text-slate-600">www.ligadu.com</p>
+                <h3 class="font-semibold text-on-surface">Website</h3>
+                <p class="text-on-surface-variant">www.ligadu.com</p>
               </div>
             </div>
-            
+
             <div class="flex items-start space-x-3">
               <div class="text-2xl">💼</div>
               <div>
-                <h3 class="font-semibold text-slate-700">LinkedIn</h3>
-                <a href="#" class="text-slate-600 hover:text-amber-600 transition-colors">Ligadu</a>
+                <h3 class="font-semibold text-on-surface">LinkedIn</h3>
+                <a href="#" class="text-primary hover:text-primary transition-colors">Ligadu</a>
               </div>
             </div>
           </div>
-          
+
         </div>
       </div>
-      
+
       <!-- FAQ Section -->
-      <div class="bg-slate-50 rounded-lg p-6">
-        <h2 class="text-2xl font-semibold text-slate-700 mb-6">Perguntas ki kustuma ta fazedu</h2>
-        
+      <div class="bg-surface-container-low rounded-xl p-6">
+        <h2 class="text-2xl font-semibold font-headline text-on-surface mb-6">Perguntas ki kustuma ta fazedu</h2>
+
         <div class="space-y-4">
           <div>
-            <h3 class="font-semibold text-slate-700 mb-2">N pode da algun sujiston di artigus pa publika?</h3>
-            <p class="text-slate-600">Klaru! Nu gosta di resebe sujistons di artigus pa publika. Manda bus sujeston i nu ta odja si ta da pa publika ô nau.</p>
+            <h3 class="font-semibold text-on-surface mb-2">N pode da algun sujiston di artigus pa publika?</h3>
+            <p class="text-on-surface-variant">Klaru! Nu gosta di resebe sujistons di artigus pa publika. Manda bus sujeston i nu ta odja si ta da pa publika ô nau.</p>
           </div>
-          
+
           <div>
-            <h3 class="font-semibold text-slate-700 mb-2">Modi ki N pode resebe artigus i otus informason sobri “Ligadu”?</h3>
-            <p class="text-slate-600">Klika na buton “Inskreve” na parti di riba di pájina i poi bu informason di kontaktu. É di grasa!</p>
+            <h3 class="font-semibold text-on-surface mb-2">Modi ki N pode resebe artigus i otus informason sobri "Ligadu"?</h3>
+            <p class="text-on-surface-variant">Klika na buton "Inskreve" na parti di riba di pájina i poi bu informason di kontaktu. É di grasa!</p>
           </div>
-          
+
           <div>
-            <h3 class="font-semibold text-slate-700 mb-2">Bu tene algun prublema tékniku ku nos site?</h3>
-            <p class="text-slate-600">Si bu tene algun prublema tékniku, manda nu un email ta splika kal ki é prublema i nu ta resolve-l mas rápidu posível.</p>
+            <h3 class="font-semibold text-on-surface mb-2">Bu tene algun prublema tékniku ku nos site?</h3>
+            <p class="text-on-surface-variant">Si bu tene algun prublema tékniku, manda nu un email ta splika kal ki é prublema i nu ta resolve-l mas rápidu posível.</p>
           </div>
         </div>
       </div>
     </div>
   </div>
-  
-</Layout>
 
+</Layout>

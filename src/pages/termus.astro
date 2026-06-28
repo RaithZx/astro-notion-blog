@@ -7,53 +7,53 @@ import { getDatabase } from '../lib/notion/client.ts'
 const database = await getDatabase()
 ---
 
-<Layout 
-  title="Régras di uzu" 
-  description="Régras di uzu i lisénsa di uzu di <em>site</em>." 
+<Layout
+  title="Régras di uzu"
+  description="Régras di uzu i lisénsa di uzu di <em>site</em>."
   path="/termus"
   ogImage=""
 >
   <div slot="main">
     <div class="max-w-4xl mx-auto">
-      <h1 class="text-4xl font-bold text-slate-800 mb-8">Régras di uzu i lisénsa di uzu di <em>site</em></h1>
-      
+      <h1 class="text-4xl font-bold font-headline text-on-surface mb-8">Régras di uzu i lisénsa di uzu di <em>site</em></h1>
+
       <div class="prose prose-slate max-w-none">
-        <p class="text-slate-600 mb-6">
+        <p class="text-on-surface-variant mb-6">
           <strong>Últimu atualizason:</strong> {new Date().toLocaleDateString('pt-CV')}
         </p>
-        
-        <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-8">
-          <h2 class="text-xl font-semibold text-amber-800 mb-2">Régras di uzu i Lisénsa di uzu di <em>site</em></h2>
-          <p class="text-amber-700">
+
+        <div class="bg-surface-container border border-outline-variant/40 rounded-xl p-6 mb-8">
+          <h2 class="text-xl font-semibold font-headline text-primary mb-2">Régras di uzu i Lisénsa di uzu di <em>site</em></h2>
+          <p class="text-on-surface-variant">
             Óras ki bu uza es <em>site</em>, bu sta dexa klaru ma bu ta konkorda ku
 tudu Régras di uzu. Si bu ka ta konkorda ku tudu Régras di uzu, nton ka bu uza es <em>site</em>.
           </p>
         </div>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">1. Signifikadu di termus</h2>
-          
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">1. Signifikadu di termus</h2>
+
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li><strong>"Ligadu"</strong> Es <em>site</em> i donus di es <em>site</em></li>
             <li><strong>"Kliénti"</strong> É kalker algen ki entra na <em>site</em></li>
             <li><strong>"Kontiúdu"</strong> É artigus, imajens, vídius i otus kuza uzadu na <em>site</em></li>
             <li><strong>"Servisus"</strong> É email, komentarius, i otu meius di komunikason</li>
           </ul>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">2. Uzu di <em>Site</em></h2>
-          
-          <h3 class="text-xl font-semibold text-slate-600 mb-3">2.1 Modi ki es <em>site</em> debe uzadu?</h3>
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">2. Uzu di <em>Site</em></h2>
+
+          <h3 class="text-xl font-semibold font-headline text-on-surface-variant mb-3">2.1 Modi ki es <em>site</em> debe uzadu?</h3>
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li>Lê i manda link di artigus pa bu uza pa bo, má ka pa faze ninhun tipu di nogósiu.</li>
             <li>Inskreve na nos <em>site</em></li>
             <li>Deixa komentárius ki ka ta ofende otus algen  (óras ki sta disponível)</li>
             <li>Uza es <em>site</em> di akordu ku lei.</li>
           </ul>
-          
-          <h3 class="text-xl font-semibold text-slate-600 mb-3 mt-6">2.2 Modi ki es <em>site</em> ka debe uzadu</h3>
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+
+          <h3 class="text-xl font-semibold font-headline text-on-surface-variant mb-3 mt-6">2.2 Modi ki es <em>site</em> ka debe uzadu</h3>
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li>El ka debe ser uzadu di un manera ilegal ô ligadu ku algun atividadi ilegal</li>
             <li>Uza es <em>site</em> di un maneira ki ta kauza ô ki pode kauza stragu na kel <em>site</em> li, ô prujudika se disponibilidadi i entrada na el.</li>
             <li>Tenta entra na es <em>site</em> i ses sirbisu ku métodus ki é ka kes ki dadu klaramenti.</li>
@@ -65,180 +65,180 @@ testus di kel <em>site</em> li, i dipôs ku obijetivu di distribui kes informaso
             <li><strong>É proibidu uza nos <em>site</em> i kontiúdu di nos <em>site</em> pa treina IA ô kalker otu prugrama di konputador sen nos autorizason primeiru.</strong></li>
           </ul>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">3. Propriadadi Inteletual</h2>
-          
-          <h3 class="text-xl font-semibold text-slate-600 mb-3">3.1 Nos Kontiúdu</h3>
-          <p class="text-slate-600 mb-4">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">3. Propriadadi Inteletual</h2>
+
+          <h3 class="text-xl font-semibold font-headline text-on-surface-variant mb-3">3.1 Nos Kontiúdu</h3>
+          <p class="text-on-surface-variant mb-4">
             Tudu kontiúdu na <em>site</em> (artigus, imajens, vídius i otus kuza uzadu na <em>site</em>) é propriadadi di Ligadu ô Ligadu paga pa algun lisénsa di uzu. Sta protejedu pa leis di direitu di autor.
           </p>
-          
-          <h3 class="text-xl font-semibold text-slate-600 mb-3">3.2 Uzu di Kontiúdu</h3>
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+
+          <h3 class="text-xl font-semibold font-headline text-on-surface-variant mb-3">3.2 Uzu di Kontiúdu</h3>
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li><strong>Maneras ki bu pode uza es <em>site</em>:</strong> Lê i manda link di artigus pa otus algen ô pa bu uza pa bo, má ka pa faze ninhun tipu di nogósiu.</li>
             <li><strong>Fla di undi ki informason ben:</strong> Debe deixa klaru ki kel informason di es <em>site</em> li, ki bu manda é di Ligadu.</li>
             <li><strong>Nogósiu:</strong> Nos <em>site</em> ka debe uzadu pa faze ninhun tipu di nogósiu sen nos autorizason.</li>
             <li><strong>Mudansas:</strong> Ka bu faze ninhun mudansa di kuzas di es <em>site</em> sen nos autorizason</li>
           </ul>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">4. Fika ligadu</h2>
-          
-          <h3 class="text-xl font-semibold text-slate-600 mb-3">4.1 Inskreve</h3>
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">4. Fika ligadu</h2>
+
+          <h3 class="text-xl font-semibold font-headline text-on-surface-variant mb-3">4.1 Inskreve</h3>
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li>Inskreve é ka obrigatóriu i é di grasa</li>
             <li>Debe poi un email ki bu ta uza</li>
             <li>Debe konkorda Régras di Privasidadi</li>
             <li>Pode kansela kalker óra</li>
           </ul>
-          
-          <h3 class="text-xl font-semibold text-slate-600 mb-3 mt-6">4.2 Fika Ligadu i resebe</h3>
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+
+          <h3 class="text-xl font-semibold font-headline text-on-surface-variant mb-3 mt-6">4.2 Fika Ligadu i resebe</h3>
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li>Artigus i notísias sobri siénsia, teknolojia i saúdi</li>
             <li>Nobidadis sobri Ligadu</li>
             <li>Alvês nu pode manda un oferta di un parseiru</li>
             <li>Kantu bês ki nu pode manda un email: un bês pa semana ô dôs bês pa mês</li>
           </ul>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">5. Deixa Komentárius</h2>
-          
-          <h3 class="text-xl font-semibold text-slate-600 mb-3">5.1 Régras pa deixa komentárius</h3>
-          <p class="text-slate-600 mb-4">
-            Óras ki opson di deixa komentárius sta disponível, Bo é responsável pa kuzê ki bu ta posta. 
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">5. Deixa Komentárius</h2>
+
+          <h3 class="text-xl font-semibold font-headline text-on-surface-variant mb-3">5.1 Régras pa deixa komentárius</h3>
+          <p class="text-on-surface-variant mb-4">
+            Óras ki opson di deixa komentárius sta disponível, Bo é responsável pa kuzê ki bu ta posta.
             Bus komentáriu debe:
           </p>
-          
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li>Djuda otus entende kel asuntu midjór ô da otu pontu di vista sen kritika</li>
             <li>Pâpia sobri kel artigu ô stória ki sta na pájina ki bu sta komenta na el</li>
             <li>Ka debe ten link pa ninhun prugrama di konputador, spam ô uzadu faze negósiu</li>
             <li>Mostra ruspetu pa otus algen</li>
           </ul>
-          
-          <h3 class="text-xl font-semibold text-slate-600 mb-3 mt-6">5.2 Vijia di Komentárius</h3>
-          <p class="text-slate-600">
-            Nu ten direitu de vijia, idita ô tra komentárius ki 
+
+          <h3 class="text-xl font-semibold font-headline text-on-surface-variant mb-3 mt-6">5.2 Vijia di Komentárius</h3>
+          <p class="text-on-surface-variant">
+            Nu ten direitu de vijia, idita ô tra komentárius ki
             viola kes régra pa deixa komentárius.
           </p>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">6. Limiti di Responsabilidadi</h2>
-          
-          <p class="text-slate-600 mb-4">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">6. Limiti di Responsabilidadi</h2>
+
+          <p class="text-on-surface-variant mb-4">
             Nos <em>site</em> é "sima sta". Nu ka ta garanti ki:
           </p>
-          
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li>Nos <em>site</em> ta sta sénpri disponível</li>
             <li>Nos kontiúdu ta sta sénpri atualizadu</li>
             <li>Nos <em>site</em> ka ta tene ninhun éru</li>
             <li>Nos <em>site</em> ta konsigi djuda-u na un kuza ki bu sta meste</li>
           </ul>
-          
-          <p class="text-slate-600 mt-4">
+
+          <p class="text-on-surface-variant mt-4">
             <strong>Inportanti:</strong> Informason sobri saúdi i siénsia é sô pa informa. Si bu ten ki algun disizon sobri saúdi djobe sénpri konsedju di algen kualifikadu na ária di saúdi.
           </p>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">7. <em>Links</em> pa Otus <em>Site</em></h2>
-          
-          <p class="text-slate-600 mb-4">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">7. <em>Links</em> pa Otus <em>Site</em></h2>
+
+          <p class="text-on-surface-variant mb-4">
             Nos <em>site</em> pode ten links pa otus <em>site</em>. Nos é ka responsável pa:
           </p>
-          
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li>Kontiúdu di kes <em>site</em></li>
             <li>Régras di Privasidadi di kes <em>site</em></li>
             <li>Suguransa di kes <em>site</em></li>
             <li>Produtus ô servisus di kes <em>site</em></li>
           </ul>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">8. Violason di Régras di uzu</h2>
-          
-          <p class="text-slate-600 mb-4">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">8. Violason di Régras di uzu</h2>
+
+          <p class="text-on-surface-variant mb-4">
             Ligadu pode suspende bu entrada na <em>site</em> ô proibi bu entrada na <em>site</em> si bu:
           </p>
-          
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li>Viola termus di uzu</li>
             <li>Uza nos <em>site</em> di manera ki ka sta dretu</li>
             <li>Mexe ku otus klienti na nos <em>site</em></li>
             <li>Faze kuzas ilegal</li>
           </ul>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">9. Mudansas</h2>
-          
-          <p class="text-slate-600">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">9. Mudansas</h2>
+
+          <p class="text-on-surface-variant">
             Nu pode disidi atualiza nos Régras di uzu. Óras ki nu faze mudansas ki pode afeta bu spriensa na nos <em>site</em>, nu ta dexa-u sabe atravês di nos <em>site</em> ô email. Si bu kontinua ta uza nos <em>site</em> kel-li krê fla ma bu aseita Régras di uzu.
           </p>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">10. Lei i jurisdison</h2>
-          
-          <p class="text-slate-600">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">10. Lei i jurisdison</h2>
+
+          <p class="text-on-surface-variant">
             Régras di uzu é governadu i interpretadu di akordu ku leis di Kabu Verdi. Kalker medida jurídiku ligadu ku Régras di uzu, debe lebadu pa un tribunal di Kabu Verdi.
           </p>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">11. Kontaktu</h2>
-          
-          <p class="text-slate-600 mb-4">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">11. Kontaktu</h2>
+
+          <p class="text-on-surface-variant mb-4">
             Si bu ten perguntas sobri Régras di uzu, kontakta-nu:
           </p>
-          
-          <div class="bg-slate-50 rounded-lg p-6">
-            <ul class="space-y-2 text-slate-600">
+
+          <div class="bg-surface-container-low rounded-xl p-6">
+            <ul class="space-y-2 text-on-surface-variant">
               <li><strong>Email:</strong> legal@ligadu.com</li>
-              <li><strong>Formulário:</strong> <a href="/kontaktu" class="text-amber-600 hover:text-amber-700 underline">Pájina di Kontaktu</a></li>
+              <li><strong>Formulário:</strong> <a href="/kontaktu" class="text-primary hover:text-primary underline">Pájina di Kontaktu</a></li>
               <li><strong>Inderésu:</strong> Kabu Verdi</li>
             </ul>
           </div>
         </section>
-        
-        <div class="bg-green-50 border border-green-200 rounded-lg p-6 mt-8">
-          <h2 class="text-xl font-semibold text-green-800 mb-2">Agradecimento</h2>
-          <p class="text-green-700">
+
+        <div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-6 mt-8">
+          <h2 class="text-xl font-semibold font-headline text-tertiary mb-2">Agradecimento</h2>
+          <p class="text-on-surface-variant">
             Obrigadu pa uza Ligadu! Nu ta spera ma bu gosta di kontiúdu di nos <em>site</em> i ki bu kontinua ta djuntu ku nos na nos jornada.
           </p>
         </div>
       </div>
     </div>
   </div>
-  
+
   <div slot="aside">
-    <div class="bg-white rounded-lg p-6 shadow-sm">
-      <h3 class="text-lg font-semibold text-slate-700 mb-4"><em>Links</em> Inportanti</h3>
+    <div class="bg-surface-container-lowest rounded-xl p-6 shadow-ambient">
+      <h3 class="text-lg font-semibold font-headline text-on-surface mb-4"><em>Links</em> Inportanti</h3>
       <div class="space-y-3">
-        <a href="/privasidadi" class="block text-amber-600 hover:text-amber-700 underline">
+        <a href="/privasidadi" class="block text-primary hover:text-primary underline">
           Régras di Privasidadi
         </a>
-        <a href="/kontaktu" class="block text-amber-600 hover:text-amber-700 underline">
+        <a href="/kontaktu" class="block text-primary hover:text-primary underline">
           Kontaktu
         </a>
-        <a href="/" class="block text-amber-600 hover:text-amber-700 underline">
+        <a href="/" class="block text-primary hover:text-primary underline">
           Volta pa Inisiu
         </a>
       </div>
     </div>
-    
-    <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 mt-6">
-      <h3 class="text-lg font-semibold text-amber-800 mb-2">Ten Dúvidas?</h3>
-      <p class="text-amber-700 text-sm mb-4">
+
+    <div class="bg-surface-container border border-outline-variant/30 rounded-xl p-6 mt-6">
+      <h3 class="text-lg font-semibold font-headline text-primary mb-2">Ten Dúvidas?</h3>
+      <p class="text-on-surface-variant text-sm mb-4">
         Si bu tene kalker pergunta sobri nos Régras di uzu, kontakta-nu.
       </p>
-      <a href="/kontaktu" class="inline-block bg-amber-400 text-slate-900 border-0 px-4 py-2 rounded font-bold cursor-pointer hover:bg-amber-500 transition-colors">
+      <a href="/kontaktu" class="ds-btn-primary inline-block px-4 py-2">
         Kontaktu
       </a>
     </div>

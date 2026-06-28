@@ -7,51 +7,51 @@ import { getDatabase } from '../lib/notion/client.ts'
 const database = await getDatabase()
 ---
 
-<Layout 
-  title="Régras di Privasidadi" 
-  description="Régras di Privasidadi di Ligadu. Sabe modi ki nu ta proteje i uza bus informason pesoal." 
+<Layout
+  title="Régras di Privasidadi"
+  description="Régras di Privasidadi di Ligadu. Sabe modi ki nu ta proteje i uza bus informason pesoal."
   path="/privasidadi"
   ogImage=""
 >
   <div slot="main">
     <div class="max-w-4xl mx-auto">
-      <h1 class="text-4xl font-bold text-slate-800 mb-8">Régras di Privasidadi</h1>
-      
+      <h1 class="text-4xl font-bold font-headline text-on-surface mb-8">Régras di Privasidadi</h1>
+
       <div class="prose prose-slate max-w-none">
-        <p class="text-slate-600 mb-6">
+        <p class="text-on-surface-variant mb-6">
           <strong>Últimu atualizason:</strong> {new Date().toLocaleDateString('pt-CV')}
         </p>
-        
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-          <h2 class="text-xl font-semibold text-blue-800 mb-2">Resumo</h2>
-          <p class="text-blue-700">
-            Nos régras ta splika modi ki nu ta djunta, uza i proteje bu informason pesoal óras ki bu ta uza es site Ligadu. Nu ta ruspeta bu privasidadi i nu ta leba asériu obrigason ki nu ten di proteje bus informason pesoal.
+
+        <div class="bg-surface-container border border-outline-variant/40 rounded-xl p-6 mb-8">
+          <h2 class="text-xl font-semibold font-headline text-primary mb-2">Resumo</h2>
+          <p class="text-on-surface-variant">
+            Nos régras ta splika modi ki nu ta djunta, uza i proteje bu informason pesoal óras ki bu ta uza es site Ligadu. Nu ta ruspeta bu privasidadi i nu ta leba asériu obrigasons ki nu ten di proteje bus informason pesoal.
           </p>
         </div>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">1. Informason ki Nu ta Djunta</h2>
-          
-          <h3 class="text-xl font-semibold text-slate-600 mb-3">1.1 Informason ki Bu ta Da-nu</h3>
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">1. Informason ki Nu ta Djunta</h2>
+
+          <h3 class="text-xl font-semibold font-headline text-on-surface-variant mb-3">1.1 Informason ki Bu ta Da-nu</h3>
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li><strong><em>Newsletter</em>:</strong> Email i nomi (opsional) óras ki bu ta inskreve na <em>newsletter</em></li>
             <li><strong>Entrada na site:</strong> Óras ki bu ta uza <em>Entra</em> (Google ó redes soshal), nu uza email di bu konta (i nom si disponivel) pa rejistra bu na <em>newsletter</em> otomatikamenti, na kunfurmansa ku es régras li.</li>
             <li><strong>Kontaktu:</strong> Nomi, email, asuntu i mensajen óras ki bu ta uza formulariu di kontaktu</li>
             <li><strong>Comentários:</strong> Nomi i email óras ki bu ta dexa komentárius (si sta disponivel)</li>
           </ul>
-          
-          <h3 class="text-xl font-semibold text-slate-600 mb-3 mt-6">1.2 Informason ki Nu ta Djunta Óras ki bu ta entra na nos site</h3>
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+
+          <h3 class="text-xl font-semibold font-headline text-on-surface-variant mb-3 mt-6">1.2 Informason ki Nu ta Djunta Óras ki bu ta entra na nos site</h3>
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li><strong>Dadus di Navigason:</strong> Inderesu IP, tipu di browser, pajinas vizitadu, óra di vizita</li>
             <li><strong><em>Cookies</em>:</strong> Fixerus pikinoti ki ta midjora bu spiriénsia na es <em>site</em></li>
             <li><strong>Analytics:</strong> Dadus anónimu sobri uzu di site(Google Analytics)</li>
           </ul>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">2.  Modi ki Nu ta Uza Bus Informason</h2>
-          
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">2.  Modi ki Nu ta Uza Bus Informason</h2>
+
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li><strong><em>Newsletter</em>:</strong> Pa manda artigus i notísias sobre siénsia, teknolojia i saúdi</li>
             <li><strong>Kontaktu:</strong> Pa responde bus pergunta i sujestons</li>
             <li><strong>Melhoria do Site:</strong> Pa intende modi ki klientis ta uza site i midjora-l</li>
@@ -59,63 +59,63 @@ const database = await getDatabase()
             <li><strong>Legal:</strong> Pa kunpri obrigasons legal óras ki nisisáriu</li>
           </ul>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">3. Partilha di Informason</h2>
-          
-          <p class="text-slate-600 mb-4">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">3. Partilha di Informason</h2>
+
+          <p class="text-on-surface-variant mb-4">
             NUNKA <strong>NU KA TA</strong> bende, luga ô partilha bu informason pesoal ku terserus, ku iseson di:
           </p>
-          
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li><strong>Servisus di Terserus:</strong> Google Analytics (dadus anónimu) pa midjora site</li>
             <li><strong>Obrigason Legal:</strong> Óras ki lei ô autoridadis ta pidi</li>
             <li><strong>Proteson:</strong> Pa proteje nos diretus, propriedadi ô suguransa</li>
           </ul>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">4. <em>Cookies</em></h2>
-          
-          <p class="text-slate-600 mb-4">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">4. <em>Cookies</em></h2>
+
+          <p class="text-on-surface-variant mb-4">
             Nu ta uza <em>cookies</em> pa midjora bu speriénsia na <em>site</em>. <em>Cookies</em> é fixerus pikinoti ki ta fika na bu konputador i ki ta djuda-nu pa:
           </p>
-          
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li>Lenbra kuzê ki bu ta prifiri</li>
             <li>Analiza modi ki bu ta uza es site</li>
             <li>Midjora nos site</li>
             <li>Publika mas artigus i kontiúdu ki bu gosta</li>
           </ul>
-          
-          <p class="text-slate-600 mt-4">
+
+          <p class="text-on-surface-variant mt-4">
             Bu pode dizativa <em>cookies</em> na konfigurasons di bu browser, ma keli pode afeta funsionalidadi di <em>site</em>.
           </p>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">5. Suguransa</h2>
-          
-          <p class="text-slate-600 mb-4">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">5. Suguransa</h2>
+
+          <p class="text-on-surface-variant mb-4">
            Nu ta uza medidas di suguransa téknikas i na nos organizason pa proteje bu informason pesoal:
           </p>
-          
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li>Encriptason SSL/TLS pa transmison di dadus</li>
             <li>Asesu limitadu pa proteje dadus pesoal</li>
             <li>Vijia regular di suguransa</li>
             <li>Backup suguru di dadus</li>
           </ul>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">6. Bu Diretus</h2>
-          
-          <p class="text-slate-600 mb-4">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">6. Bu Diretus</h2>
+
+          <p class="text-on-surface-variant mb-4">
             Bu ten diretu di:
           </p>
-          
-          <ul class="list-disc pl-6 space-y-2 text-slate-600">
+
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant">
             <li><strong>Asesu:</strong> Sabe ki informason nu ten sobri bo</li>
             <li><strong>Koreson:</strong> Koriji informason ki sta eradu</li>
             <li><strong>Elimina:</strong> Pidi pa nu tra ô elimina bus informason</li>
@@ -124,78 +124,78 @@ const database = await getDatabase()
             <li><strong>Direitu di Kansela:</strong> Kansela bu inskrison na kalker momentu</li>
           </ul>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">7. Guarda Bus Dadus</h2>
-          
-          <p class="text-slate-600">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">7. Guarda Bus Dadus</h2>
+
+          <p class="text-on-surface-variant">
             Nu ta mante bu informason pesoal sô pa tenpu nisisáriu pa kunpri objetivus di akordu ku nos régras, pur izénplu:
           </p>
-          
-          <ul class="list-disc pl-6 space-y-2 text-slate-600 mt-4">
+
+          <ul class="list-disc pl-6 space-y-2 text-on-surface-variant mt-4">
             <li><strong><em>Newsletter</em>:</strong> Ti ki bu kansela bu inskrison</li>
             <li><strong>Kontaktu:</strong> 3 anu dipôs di últimu interason</li>
             <li><strong>Analitiks:</strong> 26 mês (Google Analytics)</li>
           </ul>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">8. Kes menór di Idadi</h2>
-          
-          <p class="text-slate-600">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">8. Kes menór di Idadi</h2>
+
+          <p class="text-on-surface-variant">
             Si di akordu ku lei di país ki bu sta ta uza nos site, abo é
 menór di idadi, bu pode da-nu bus informason ku autorizason di bu pai ku bu mai ô otu algen responsável pa bo. Si bo é pai ô mai ô responsável i bu ta dexa kel menór da-nu se informason pesoal na kel site li, kel-la krê fla ma bu ta konkorda ku nos régras di uzu di site pa kes menór di idadi.
           </p>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">9. Mudansas na Régras</h2>
-          
-          <p class="text-slate-600">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">9. Mudansas na Régras</h2>
+
+          <p class="text-on-surface-variant">
             Nu pode disidi atualiza kes régras. Óras ki nu faze mudansas ki pode afeta bu spriensa na nos site, nu ta dexa-u sabe atravês di nos site ô email. Data di últimu atualizason ta parse na parti di riba di es pájina.
           </p>
         </section>
-        
+
         <section class="mb-8">
-          <h2 class="text-2xl font-semibold text-slate-700 mb-4">10. Kontaktu</h2>
-          
-          <p class="text-slate-600 mb-4">
+          <h2 class="text-2xl font-semibold font-headline text-on-surface mb-4">10. Kontaktu</h2>
+
+          <p class="text-on-surface-variant mb-4">
             Si bu ten perguntas sobri es régra di privasidadi ô bu krê bus diretus, kontakta-nu:
           </p>
-          
-          <div class="bg-slate-50 rounded-lg p-6">
-            <ul class="space-y-2 text-slate-600">
+
+          <div class="bg-surface-container-low rounded-xl p-6">
+            <ul class="space-y-2 text-on-surface-variant">
               <li><strong>Email:</strong> privasidadi@ligadu.com</li>
-              <li><strong>Formuláriu:</strong> <a href="/kontaktu" class="text-amber-600 hover:text-amber-700 underline">Pájina di Kontaktu</a></li>
+              <li><strong>Formuláriu:</strong> <a href="/kontaktu" class="text-primary hover:text-primary underline">Pájina di Kontaktu</a></li>
             </ul>
           </div>
         </section>
       </div>
     </div>
   </div>
-  
+
   <div slot="aside">
-    <div class="bg-white rounded-lg p-6 shadow-sm">
-      <h3 class="text-lg font-semibold text-slate-700 mb-4"><em>Links</em> Úteis</h3>
+    <div class="bg-surface-container-lowest rounded-xl p-6 shadow-ambient">
+      <h3 class="text-lg font-semibold font-headline text-on-surface mb-4"><em>Links</em> Úteis</h3>
       <div class="space-y-3">
-        <a href="/termus" class="block text-amber-600 hover:text-amber-700 underline">
+        <a href="/termus" class="block text-primary hover:text-primary underline">
           Régras di uzu
         </a>
-        <a href="/kontaktu" class="block text-amber-600 hover:text-amber-700 underline">
+        <a href="/kontaktu" class="block text-primary hover:text-primary underline">
           Kontaktu
         </a>
-        <a href="/" class="block text-amber-600 hover:text-amber-700 underline">
+        <a href="/" class="block text-primary hover:text-primary underline">
           Volta pa Inisiu
         </a>
       </div>
     </div>
-    
-    <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 mt-6">
-      <h3 class="text-lg font-semibold text-amber-800 mb-2">Tem Dúvidas?</h3>
-      <p class="text-amber-700 text-sm mb-4">
+
+    <div class="bg-surface-container border border-outline-variant/30 rounded-xl p-6 mt-6">
+      <h3 class="text-lg font-semibold font-headline text-primary mb-2">Tem Dúvidas?</h3>
+      <p class="text-on-surface-variant text-sm mb-4">
        Si bu ten perguntas sobri es regra di privasidadi ô bu krê bus diretus, kontakta-nu:
       </p>
-      <a href="/kontaktu" class="inline-block bg-amber-400 text-slate-900 border-0 px-4 py-2 rounded font-bold cursor-pointer hover:bg-amber-500 transition-colors">
+      <a href="/kontaktu" class="ds-btn-primary inline-block px-4 py-2">
         Kontaktu
       </a>
     </div>

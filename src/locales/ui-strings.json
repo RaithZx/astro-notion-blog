@@ -162,7 +162,6 @@
       "ariaOpenMobileMenu": "Abri menu mobil",
       "ariaCloseMobileMenu": "Fitxa menu mobil",
       "ariaOpenSearch": "Abri piskiza",
-      "ariaCloseNewsletterModal": "Fitxa kaxa di newsletter",
       "navHome": "Inisiu",
       "navHealth": "Saúdi",
       "navScience": "Siênsia",
@@ -172,7 +171,6 @@
       "authSignIn": "Entra",
       "authSignUp": "Rejista",
       "navSignUpCta": "Rejista",
-      "newsletterSubscribeShort": "Inskreve",
       "footerBrandLogoAlt": "Ligadu Logo",
       "footerBrandBlurb": "Artigus di siênsia, tekinolojia i saúdi.",
       "footerLinksHeadingHtml": "<em>Links</em> pa kada asuntu",
@@ -181,23 +179,10 @@
       "footerTermsInnerHtml": "Régras di uzu i Lisénsa di uzu di <em>site</em>",
       "footerContact": "Kontaktu",
       "footerCookiesInnerHtml": "<em>Cookies</em>",
-      "footerNewsletterHeading": "Fika ligadu",
-      "footerNewsletterBlurb": "Resebe kes ultimu artigus i notísias sobri siênsia, tekinolojia i saúdi.",
-      "footerNewsletterCta": "Inskreve i fika ligadu",
+      "footerNewsletterHeading": "Fika Ligadu",
+      "footerNewsletterCta": "Entra",
       "footerCopyright": "Tudu direitu rezervadu.",
-      "footerCaboVerdeLabel": "Cabo Verde",
-      "newsletterModalTitle": "Fika Ligadu",
-      "newsletterModalSubtitle": "Resebe artigus sobri siênsia, tekinolojia i saúdi diretamenti na bu email",
-      "newsletterEmailLabel": "Email",
-      "newsletterEmailPlaceholder": "nomi di konta@email.com",
-      "newsletterNameLabel": "Nómi",
-      "newsletterNamePlaceholder": "Bu nómi",
-      "newsletterPrivacyPrefix": "Konkorda ku ",
-      "newsletterPrivacyLink": "régras di privasidadi",
-      "newsletterPrivacyMid": " i ",
-      "newsletterTermsLink": "régras di uzu i lisénsa di uzu di site",
-      "newsletterSubmit": "Inskreve i fika ligadu",
-      "newsletterFooterNote": "Pode kansela na kalker momentu. Nunka nu ka ta manda spam, sô konteúdu di kualidadi."
+      "footerCaboVerdeLabel": "Cabo Verde"
     },
     "search": {
       "placeholder": "Piskiza...",
@@ -209,34 +194,6 @@
       "empty": "Nenhun rezultadu inkontradu.",
       "loadError": "Éru timenti dadus staba ta karega."
     },
-    "inlineNewsletterBanner": {
-      "title": "Fika Ligadu",
-      "subtitle": "Resebe kes ultimu artigu i stórias na bu email",
-      "badge": "Di grasa",
-      "emailPlaceholder": "Bu email",
-      "submit": "Inskreve",
-      "trustNoSpam": "Nunka spam"
-    },
-    "scripts": {
-      "newsletterModal": {
-        "privacyRequired": "Pur favor, konkorda ku régras di privasidadi i régras di uzu i lisénsa di uzu di site.",
-        "csrfError": "Éru di suguransa. Pur favor, atualiza pájina i tenta otu bês.",
-        "submitLoadingHtml": "<span class=\"loading-spinner\"></span> Enviadu...",
-        "successAlreadySubscribed": "Bu email sta konfirmadu i rejistadu. Obrigadu pa kontinua ligadu.",
-        "successNew": "Obrigadu! Dja bu inskreve i bu sta ligadu! Djobe bu email pa konfirma.",
-        "errorGeneric": "Algun éru kontise duranti bu inskrison. Pur favor, tenta otu bês.",
-        "errorNetwork": "Éru di ligason. Tenta otu bês.",
-        "submitButtonResetHtml": "<span class=\"text-lg\">✉</span> Inskreve i fika ligadu"
-      },
-      "inlineNewsletter": {
-        "csrfError": "✕ Éru di suguransa. Pur favor, atualiza pájina i tenta otu bês.",
-        "submitLoadingLabel": "Enviadu...",
-        "errorGeneric": "Algun éru kontise duranti bu inskrison. Pur favor, tenta otu bês.",
-        "errorNetwork": "✕ Éru di ligason. Tenta otu bês.",
-        "successPrefix": "✓ ",
-        "errorPrefix": "✕ "
-      }
-    },
     "comingSoon": {
       "logoAlt": "Ligadu Logo",
       "heading": "Artigus di siênsia, tekinolojia i saúdi",
@@ -246,6 +203,16 @@
       "emailAriaLabel": "Email address",
       "submit": "Inskreve",
       "successMessage": "✓ Obrigadu! Bu sta na lista di nobidadis."
+    },
+    "contentGate": {
+      "heading": "Entra pa lê artigu kompletu",
+      "subheading": "Djunta Ligadu pa ten aksês grátis a tudu nos artigu i stória.",
+      "benefit1": "Tudu artigu i stória kompletu",
+      "benefit2": "Nobidadis diretamenti na bu email",
+      "benefit3": "Siênsia, tekinolojia i saúdi",
+      "cta": "Djunta Ligadu — di grasa",
+      "hasAccount": "Dja ten konta?",
+      "signIn": "Entra"
     },
     "backToTop": {
       "ariaLabel": "Volta pa sima",
@@ -277,11 +244,9 @@
       "spotlightVisitTitle": "Quer saber mais?",
       "spotlightVisitBlurb": "Fala konos i diskobrê manera di kolaborá.",
       "spotlightCta": "Kontaktu",
-      "newsletterBandTitle": "Fica Sempri Informadu",
-      "newsletterBandBlurb": "Resebe kes mior artigus diretamenti na tua kaixa di entrada.",
-      "newsletterBandPlaceholder": "teu@email.com",
-      "newsletterBandSubmit": "Skrevê grátis",
-      "newsletterBandDisclaimer": "Sem spam. Podi kansela kualkir altira.",
+      "fikaLigaduTitle": "Fika Ligadu",
+      "fikaLigaduBlurb": "Aksês grátis a tudu artigu di siênsia, tekinolojia i saúdi.",
+      "fikaLigaduCta": "Entra",
       "loadMorePosts": "Odja más artigu",
       "showLessPosts": "Ver menus"
     }

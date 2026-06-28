@@ -1,0 +1,70 @@
+---
+import type { Block } from '../lib/interfaces.ts'
+import PostBody from './PostBody.astro'
+import uiStrings from '../locales/ui-strings.json'
+
+interface Props {
+  previewBlocks: Block[]
+}
+
+const { previewBlocks } = Astro.props
+const gate = uiStrings.app.contentGate
+---
+
+{previewBlocks.length > 0 && (
+  <div class="relative mb-0 pointer-events-none select-none">
+    <PostBody blocks={previewBlocks} />
+    <div
+      class="absolute bottom-0 left-0 right-0 h-48"
+      style="background: linear-gradient(to bottom, transparent, var(--bg, #f7fafc));"
+      aria-hidden="true"
+    ></div>
+  </div>
+)}
+
+<div class="max-w-2xl mx-auto py-16 px-6 text-center">
+  <!-- Lock icon -->
+  <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+    <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+    </svg>
+  </div>
+
+  <h2 class="text-2xl font-bold font-headline text-on-background mb-3">
+    {gate.heading}
+  </h2>
+  <p class="text-on-surface-variant leading-relaxed mb-8 max-w-md mx-auto">
+    {gate.subheading}
+  </p>
+
+  <!-- Benefits -->
+  <ul class="text-left space-y-3 mb-8 max-w-xs mx-auto">
+    {[gate.benefit1, gate.benefit2, gate.benefit3].map((b) => (
+      <li class="flex items-center gap-3 text-sm text-on-surface">
+        <svg class="w-5 h-5 text-primary shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+        </svg>
+        {b}
+      </li>
+    ))}
+  </ul>
+
+  <!-- Primary CTA -->
+  <button
+    type="button"
+    class="ligadu-open-sign-up ds-btn-primary w-full max-w-xs py-3 text-base mb-4"
+  >
+    {gate.cta}
+  </button>
+
+  <!-- Sign in link -->
+  <p class="text-sm text-on-surface-variant">
+    {gate.hasAccount}{' '}
+    <button
+      type="button"
+      class="ligadu-open-sign-in text-primary hover:underline bg-transparent border-0 cursor-pointer p-0 font-medium"
+    >
+      {gate.signIn}
+    </button>
+  </p>
+</div>

@@ -50,9 +50,6 @@ const siteOGImage = new URL(
   Astro.site
 )
 
-// Newsletter API URL - defaults to relative path for production (Coolify proxy)
-const newsletterApiUrl = import.meta.env.NEWSLETTER_API_URL || ''
-
 let coverImageURL: string
 if (database.Cover) {
   if (database.Cover.Type === 'external') {
@@ -236,18 +233,12 @@ if (database.Icon && database.Icon.Type === 'file') {
               </svg>
               <span>{app.layout.searchShort}</span>
             </button>
-            <div class="ligadu-auth-when-signed-out space-y-3">
+            <div class="ligadu-auth-when-signed-out">
               <button
                 type="button"
                 class="ligadu-open-sign-in w-full ds-btn-primary px-4 py-3 text-sm"
               >
                 {app.layout.authSignIn}
-              </button>
-              <button
-                type="button"
-                class="newsletter-btn w-full ds-btn-secondary px-4 py-3 text-sm"
-              >
-                {app.layout.newsletterSubscribeShort}
               </button>
             </div>
             <div class="ligadu-auth-when-signed-in flex justify-center py-2 ligadu-auth-hide">
@@ -328,10 +319,9 @@ if (database.Icon && database.Icon.Type === 'file') {
         <div>
           <h4 class="font-bold font-headline mb-6 text-primary">{app.layout.footerNewsletterHeading}</h4>
           <div class="ligadu-auth-when-signed-out">
-            <button 
+            <button
               type="button"
-              id="footer-newsletter-btn"
-              class="newsletter-btn w-full ds-btn-primary py-3 text-sm"
+              class="ligadu-open-sign-in w-full ds-btn-primary py-3 text-sm"
             >
               {app.layout.footerNewsletterCta}
             </button>
@@ -345,119 +335,6 @@ if (database.Icon && database.Icon.Type === 'file') {
       </div>
     </footer>
     
-    <!-- Newsletter Signup Modal - Modern Redesign -->
-    <div id="newsletter-modal" class="fixed inset-0 z-[110] hidden">
-      <!-- Overlay with backdrop blur -->
-      <div id="newsletter-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm"></div>
-      
-      <!-- Modal Content -->
-      <div class="relative flex items-center justify-center min-h-screen p-4">
-        <div class="relative bg-surface-container-lowest shadow-ambient-lg rounded-lg max-w-[440px] w-full overflow-hidden animate-modal-in">
-          
-          <!-- Close Button - Floating -->
-          <button 
-            id="newsletter-close-button" 
-            class="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-all cursor-pointer border-0"
-            aria-label={app.layout.ariaCloseNewsletterModal}
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-          
-          <!-- Header with Icon — signature gradient (DESIGN.md §2) -->
-          <div class="bg-cta-primary-br px-8 pt-8 pb-6 text-center">
-            <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <svg class="w-8 h-8 text-on-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-              </svg>
-            </div>
-            <h2 class="text-2xl font-bold font-headline text-on-primary mb-2">{app.layout.newsletterModalTitle}</h2>
-            <p class="text-on-primary/90 text-sm leading-relaxed">
-              {app.layout.newsletterModalSubtitle}
-            </p>
-          </div>
-          
-          <!-- Form Body -->
-          <div class="px-8 py-6 bg-surface-container-lowest">
-            <form id="newsletter-form" class="space-y-4">
-              <!-- Email Field -->
-              <div>
-                <label for="newsletter-email" class="block text-sm font-medium text-on-surface-variant mb-1.5">
-                  {app.layout.newsletterEmailLabel}
-                </label>
-                <input 
-                  type="email" 
-                  id="newsletter-email" 
-                  name="email"
-                  required
-                  class="ds-input"
-                  placeholder={app.layout.newsletterEmailPlaceholder}
-                />
-              </div>
-              
-              <!-- Name Field -->
-              <div>
-                <label for="newsletter-name" class="block text-sm font-medium text-on-surface-variant mb-1.5">
-                  {app.layout.newsletterNameLabel}
-                </label>
-                <input 
-                  type="text" 
-                  id="newsletter-name" 
-                  name="name"
-                  class="ds-input"
-                  placeholder={app.layout.newsletterNamePlaceholder}
-                />
-              </div>
-              
-              <!-- Privacy Checkbox - Compact -->
-              <div class="flex items-start pt-1">
-                <input 
-                  type="checkbox" 
-                  id="newsletter-privacy" 
-                  name="privacy"
-                  required
-                  class="mt-0.5 h-4 w-4 rounded text-primary focus:ring-primary border-0 cursor-pointer accent-primary"
-                />
-                <label for="newsletter-privacy" class="ml-2.5 text-xs leading-relaxed text-on-surface-variant">
-                  {app.layout.newsletterPrivacyPrefix}<a href="/privasidadi" class="text-primary hover:underline">{app.layout.newsletterPrivacyLink}</a>{app.layout.newsletterPrivacyMid}<a href="/termus" class="text-primary hover:underline">{app.layout.newsletterTermsLink}</a>
-                </label>
-              </div>
-              
-              <!-- Honeypot -->
-              <input 
-                type="text" 
-                name="honeypot" 
-                id="newsletter-honeypot" 
-                style="position: absolute; left: -9999px; opacity: 0;" 
-                tabindex="-1" 
-                autocomplete="off"
-                aria-hidden="true"
-              />
-              
-              <!-- Submit — primary gradient CTA -->
-              <button 
-                type="submit" 
-                class="w-full ds-btn-primary px-6 py-3 text-sm flex items-center justify-center gap-2"
-              >
-                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                </svg>
-                {app.layout.newsletterSubmit}
-              </button>
-            </form>
-            
-            <!-- Footer Note - Compact -->
-            <p class="text-xs text-center text-on-surface-variant mt-4 flex items-center justify-center gap-1">
-              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-              </svg>
-              {app.layout.newsletterFooterNote}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
     
     {
       ENABLE_LIGHTBOX && (
@@ -465,233 +342,20 @@ if (database.Icon && database.Icon.Type === 'file') {
       )
     }
     
-    <!-- Mobile Menu & Newsletter Modal JavaScript -->
-    <script define:vars={{ newsletterApiUrl, newsletterScript: app.scripts.newsletterModal }}>
+    <!-- Mobile Menu & Auth JavaScript -->
+    <script>
       document.addEventListener('DOMContentLoaded', function() {
-        // Newsletter API configuration
-        const API_BASE_URL = newsletterApiUrl || '';
-        
-        // 🔒 CSRF Protection: Helper function to get CSRF token
-        async function getCsrfToken() {
-          try {
-            const apiUrl = API_BASE_URL ? `${API_BASE_URL}/api/csrf-token` : '/api/csrf-token';
-            const response = await fetch(apiUrl, {
-              credentials: 'include'  // Important for cookies
-            });
-            if (!response.ok) throw new Error('Failed to get CSRF token');
-            const data = await response.json();
-            return data.csrfToken;
-          } catch (error) {
-            console.error('CSRF token error:', error);
-            return null;
-          }
-        }
-
-        const OAUTH_NEWSLETTER_USER_KEY = 'ligadu_oauth_newsletter_user_id';
-
-        function userShouldSkipNewsletterPrompts() {
-          if (localStorage.getItem('newsletter_subscribed') === 'true') return true;
-          if (window.Clerk && window.Clerk.user) return true;
-          return false;
-        }
-
         function waitForClerkLoaded(timeoutMs) {
           return new Promise(function (resolve) {
             const start = Date.now();
             function tick() {
-              if (window.Clerk && window.Clerk.loaded) {
-                resolve();
-                return;
-              }
-              if (Date.now() - start > timeoutMs) {
-                resolve();
-                return;
-              }
+              if (window.Clerk && window.Clerk.loaded) { resolve(); return; }
+              if (Date.now() - start > timeoutMs) { resolve(); return; }
               setTimeout(tick, 50);
             }
             tick();
           });
         }
-
-        async function trySubscribeFromClerkUser() {
-          const clerk = window.Clerk;
-          if (!clerk || !clerk.user) return;
-          const u = clerk.user;
-          const email = u.primaryEmailAddress && u.primaryEmailAddress.emailAddress;
-          if (!email) return;
-          if (localStorage.getItem(OAUTH_NEWSLETTER_USER_KEY) === u.id) return;
-          const csrfToken = await getCsrfToken();
-          if (!csrfToken) return;
-          try {
-            const apiUrl = API_BASE_URL ? `${API_BASE_URL}/api/subscribe` : '/api/subscribe';
-            const response = await fetch(apiUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': csrfToken,
-              },
-              credentials: 'include',
-              body: JSON.stringify({
-                email,
-                name:
-                  [u.firstName, u.lastName].filter(Boolean).join(' ').trim() ||
-                  (u.fullName || '').trim() ||
-                  '',
-                privacy: true,
-                honeypot: '',
-              }),
-            });
-            const data = await response.json();
-            if (response.ok && data.success) {
-              localStorage.setItem('newsletter_subscribed', 'true');
-              localStorage.setItem(OAUTH_NEWSLETTER_USER_KEY, u.id);
-              if (typeof window.umami !== 'undefined') {
-                window.umami.track('newsletter_subscribed', {
-                  source: 'oauth_login',
-                  already_subscribed: data.alreadySubscribed || false,
-                });
-              }
-            }
-          } catch (err) {
-            console.error('OAuth newsletter subscribe error:', err);
-          }
-        }
-
-        function wireClerkNewsletterHook() {
-          waitForClerkLoaded(20000).then(function () {
-            if (!window.Clerk) return;
-            window.Clerk.addListener(function () {
-              if (window.Clerk.user) {
-                trySubscribeFromClerkUser();
-                if (newsletterModal && !newsletterModal.classList.contains('hidden')) {
-                  closeNewsletterModal();
-                }
-              } else {
-                localStorage.removeItem(OAUTH_NEWSLETTER_USER_KEY);
-              }
-            });
-            if (window.Clerk.user) {
-              trySubscribeFromClerkUser();
-            }
-          });
-        }
-        
-        // Mobile Menu Elements
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileCloseButton = document.getElementById('mobile-close-button');
-        const mobileDrawer = document.getElementById('mobile-drawer');
-        const mobileOverlay = document.getElementById('mobile-overlay');
-        
-        // Newsletter Modal Elements
-        const newsletterModal = document.getElementById('newsletter-modal');
-        const newsletterOverlay = document.getElementById('newsletter-overlay');
-        const newsletterCloseButton = document.getElementById('newsletter-close-button');
-        const newsletterForm = document.getElementById('newsletter-form');
-        const ctaButtons = document.querySelectorAll('.newsletter-btn');
-        const footerNewsletterBtn = document.getElementById('footer-newsletter-btn');
-        const mainHeader = document.getElementById('main-header');
-        
-        // Mobile Menu Functions
-        function openMobileMenu() {
-          const drawer = document.getElementById('mobile-drawer');
-          const overlay = document.getElementById('mobile-overlay');
-          
-          // Enable pointer events
-          drawer.style.pointerEvents = 'auto';
-          overlay.style.pointerEvents = 'auto';
-          
-          // Show overlay
-          overlay.classList.remove('opacity-0');
-          overlay.classList.add('opacity-100');
-          
-          // Slide in drawer
-          drawer.classList.remove('-translate-x-full');
-          drawer.classList.add('translate-x-0');
-          
-          mobileMenuButton.setAttribute('aria-expanded', 'true');
-          document.body.style.overflow = 'hidden';
-          
-          // 📊 TRACK: Mobile menu opened
-          if (typeof window.umami !== 'undefined') {
-            window.umami.track('menu_opened', { device: 'mobile' });
-          }
-        }
-        
-        function closeMobileMenu() {
-          const drawer = document.getElementById('mobile-drawer');
-          const overlay = document.getElementById('mobile-overlay');
-          
-          // Slide out drawer
-          drawer.classList.remove('translate-x-0');
-          drawer.classList.add('-translate-x-full');
-          
-          // Hide overlay
-          overlay.classList.remove('opacity-100');
-          overlay.classList.add('opacity-0');
-          
-          // Disable pointer events after animation
-          setTimeout(() => {
-            drawer.style.pointerEvents = 'none';
-            overlay.style.pointerEvents = 'none';
-          }, 300);
-          
-          mobileMenuButton.setAttribute('aria-expanded', 'false');
-          document.body.style.overflow = '';
-        }
-        
-        // Newsletter tracking variables
-        let modalOpenTime = 0;
-        let currentTrigger = 'unknown';
-        const pageStartTime = Date.now();
-        
-        // Newsletter Modal Functions
-        function openNewsletterModal(trigger = 'unknown') {
-          if (userShouldSkipNewsletterPrompts()) return;
-          currentTrigger = trigger;
-          modalOpenTime = Date.now();
-          
-          newsletterModal.classList.remove('hidden');
-          document.body.style.overflow = 'hidden';
-          
-          // 📊 TRACK: Newsletter modal opened
-          if (typeof window.umami !== 'undefined') {
-            const articleTitle = document.querySelector('article h1')?.textContent?.trim();
-            window.umami.track('newsletter_modal_opened', {
-              trigger: trigger,
-              seconds_on_page: Math.round((Date.now() - pageStartTime) / 1000),
-              article: articleTitle || 'homepage'
-            });
-          }
-          
-          // Focus on email input
-          setTimeout(() => {
-            document.getElementById('newsletter-email').focus();
-          }, 100);
-        }
-        
-        function closeNewsletterModal() {
-          const timeOpen = modalOpenTime > 0 ? Math.round((Date.now() - modalOpenTime) / 1000) : 0;
-          const emailInput = document.getElementById('newsletter-email');
-          const formTouched = emailInput && emailInput.value.length > 0;
-          
-          // 📊 TRACK: Modal dismissed (only if it was opened)
-          if (typeof window.umami !== 'undefined' && modalOpenTime > 0) {
-            const articleTitle = document.querySelector('article h1')?.textContent?.trim();
-            window.umami.track('newsletter_modal_dismissed', {
-              seconds_open: timeOpen,
-              had_interaction: formTouched,
-              article: articleTitle || 'homepage'
-            });
-          }
-          
-          newsletterModal.classList.add('hidden');
-          document.body.style.overflow = '';
-          // Reset form
-          newsletterForm.reset();
-          modalOpenTime = 0;
-        }
-
-        wireClerkNewsletterHook();
 
         function setupLigaduAuthChrome() {
           function syncAuthPanels() {
@@ -700,43 +364,28 @@ if (database.Icon && database.Icon.Type === 'file') {
             var signedOut = document.querySelectorAll('.ligadu-auth-when-signed-out');
             var signedIn = document.querySelectorAll('.ligadu-auth-when-signed-in');
             if (c.user) {
-              signedOut.forEach(function (el) {
-                el.classList.add('ligadu-auth-hide');
-              });
-              signedIn.forEach(function (el) {
-                el.classList.remove('ligadu-auth-hide');
-              });
+              signedOut.forEach(function (el) { el.classList.add('ligadu-auth-hide'); });
+              signedIn.forEach(function (el) { el.classList.remove('ligadu-auth-hide'); });
             } else {
-              signedIn.forEach(function (el) {
-                el.classList.add('ligadu-auth-hide');
-              });
-              signedOut.forEach(function (el) {
-                el.classList.remove('ligadu-auth-hide');
-              });
+              signedIn.forEach(function (el) { el.classList.add('ligadu-auth-hide'); });
+              signedOut.forEach(function (el) { el.classList.remove('ligadu-auth-hide'); });
             }
           }
-
-          document.body.addEventListener(
-            'click',
-            function (e) {
-              var t = e.target;
-              if (!(t instanceof Element)) return;
-              var signInBtn = t.closest('.ligadu-open-sign-in');
-              var signUpBtn = t.closest('.ligadu-open-sign-up');
-              if (!signInBtn && !signUpBtn) return;
-              var c = window.Clerk;
-              if (!c) return;
-              if (signInBtn && typeof c.openSignIn === 'function') {
-                e.preventDefault();
-                c.openSignIn({});
-              } else if (signUpBtn && typeof c.openSignUp === 'function') {
-                e.preventDefault();
-                c.openSignUp({});
-              }
-            },
-            true
-          );
-
+          document.body.addEventListener('click', function (e) {
+            var t = e.target;
+            if (!(t instanceof Element)) return;
+            var signInBtn = t.closest('.ligadu-open-sign-in');
+            var signUpBtn = t.closest('.ligadu-open-sign-up');
+            if (!signInBtn && !signUpBtn) return;
+            var c = window.Clerk;
+            if (!c) return;
+            var redirectUrl = window.location.href;
+            if (signInBtn && typeof c.openSignIn === 'function') {
+              e.preventDefault(); c.openSignIn({ afterSignInUrl: redirectUrl });
+            } else if (signUpBtn && typeof c.openSignUp === 'function') {
+              e.preventDefault(); c.openSignUp({ afterSignUpUrl: redirectUrl, afterSignInUrl: redirectUrl });
+            }
+          }, true);
           waitForClerkLoaded(30000).then(function () {
             if (!window.Clerk) return;
             syncAuthPanels();
@@ -744,189 +393,68 @@ if (database.Icon && database.Icon.Type === 'file') {
           });
         }
         setupLigaduAuthChrome();
-        
-        // Mobile Menu Event Listeners
+
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileCloseButton = document.getElementById('mobile-close-button');
+        const mobileDrawer = document.getElementById('mobile-drawer');
+        const mobileOverlay = document.getElementById('mobile-overlay');
+        const mainHeader = document.getElementById('main-header');
+
+        function openMobileMenu() {
+          const drawer = document.getElementById('mobile-drawer');
+          const overlay = document.getElementById('mobile-overlay');
+          drawer.style.pointerEvents = 'auto';
+          overlay.style.pointerEvents = 'auto';
+          overlay.classList.remove('opacity-0');
+          overlay.classList.add('opacity-100');
+          drawer.classList.remove('-translate-x-full');
+          drawer.classList.add('translate-x-0');
+          mobileMenuButton.setAttribute('aria-expanded', 'true');
+          document.body.style.overflow = 'hidden';
+          if (typeof window.umami !== 'undefined') {
+            window.umami.track('menu_opened', { device: 'mobile' });
+          }
+        }
+
+        function closeMobileMenu() {
+          const drawer = document.getElementById('mobile-drawer');
+          const overlay = document.getElementById('mobile-overlay');
+          drawer.classList.remove('translate-x-0');
+          drawer.classList.add('-translate-x-full');
+          overlay.classList.remove('opacity-100');
+          overlay.classList.add('opacity-0');
+          setTimeout(() => {
+            drawer.style.pointerEvents = 'none';
+            overlay.style.pointerEvents = 'none';
+          }, 300);
+          mobileMenuButton.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
+        }
+
         mobileMenuButton.addEventListener('click', openMobileMenu);
         mobileCloseButton.addEventListener('click', closeMobileMenu);
         mobileOverlay.addEventListener('click', closeMobileMenu);
-        
-        // Newsletter Modal Event Listeners
-        ctaButtons.forEach(button => {
-          button.addEventListener('click', function(e) {
-            e.preventDefault();
-            openNewsletterModal('cta_click');
-          });
-        });
-        
-        // Footer newsletter button
-        if (footerNewsletterBtn) {
-          footerNewsletterBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            openNewsletterModal();
-          });
-        }
-        
-        newsletterCloseButton.addEventListener('click', closeNewsletterModal);
-        newsletterOverlay.addEventListener('click', closeNewsletterModal);
-        
-        // Newsletter Form Submission
-        newsletterForm.addEventListener('submit', async function(e) {
-          e.preventDefault();
-          
-          const email = document.getElementById('newsletter-email').value;
-          const name = document.getElementById('newsletter-name').value;
-          const privacy = document.getElementById('newsletter-privacy').checked;
-          const honeypot = document.getElementById('newsletter-honeypot').value;
-          const submitButton = newsletterForm.querySelector('button[type="submit"]');
-          
-          if (!privacy) {
-            showNotification(newsletterScript.privacyRequired, 'error');
-            return;
-          }
-          
-          // 🔒 Get CSRF token before submitting
-          const csrfToken = await getCsrfToken();
-          if (!csrfToken) {
-            showNotification(newsletterScript.csrfError, 'error');
-            return;
-          }
-          
-          // Show loading state
-          if (submitButton) {
-            submitButton.disabled = true;
-            submitButton.innerHTML = newsletterScript.submitLoadingHtml;
-          }
-          
-          try {
-            const apiUrl = API_BASE_URL ? `${API_BASE_URL}/api/subscribe` : '/api/subscribe';
-            const response = await fetch(apiUrl, {
-              method: 'POST',
-              headers: { 
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': csrfToken  // 🔒 Include CSRF token
-              },
-              credentials: 'include',  // 🔒 Include cookies
-              body: JSON.stringify({ 
-                email, 
-                name, 
-                privacy,
-                honeypot
-              })
-            });
-            
-            const data = await response.json();
-            
-            if (response.ok && data.success) {
-              // 📊 TRACK: Newsletter subscription
-              if (typeof window.umami !== 'undefined') {
-                const articleTitle = document.querySelector('article h1')?.textContent?.trim();
-                window.umami.track('newsletter_subscribed', {
-                  source: 'modal',
-                  article: articleTitle || 'homepage',
-                  seconds_to_convert: Math.round((Date.now() - pageStartTime) / 1000),
-                  already_subscribed: data.alreadySubscribed || false
-                });
-              }
-              
-              // Mark as subscribed in localStorage
-              localStorage.setItem('newsletter_subscribed', 'true');
-              
-              // Show appropriate message
-              if (data.alreadySubscribed) {
-                showNotification(newsletterScript.successAlreadySubscribed, 'success');
-              } else {
-                showNotification(newsletterScript.successNew, 'success');
-              }
-              
-              closeNewsletterModal();
-            } else {
-              showNotification(data.error || newsletterScript.errorGeneric, 'error');
-            }
-            
-          } catch (error) {
-            console.error('Subscription error:', error);
-            if (error.message && error.message.includes('fetch')) {
-              showNotification(newsletterScript.errorNetwork, 'error');
-            } else {
-              showNotification(newsletterScript.errorGeneric, 'error');
-            }
-          } finally {
-            if (submitButton) {
-              submitButton.disabled = false;
-              submitButton.innerHTML = newsletterScript.submitButtonResetHtml;
-            }
-          }
-        });
-        
-        // Notification system
-        function showNotification(message, type = 'success') {
-          const notification = document.createElement('div');
-          notification.className = `notification notification-${type}`;
-          notification.textContent = message;
-          document.body.appendChild(notification);
-          
-          setTimeout(() => {
-            notification.classList.add('show');
-          }, 10);
-          
-          setTimeout(() => {
-            notification.classList.remove('show');
-            setTimeout(() => {
-              document.body.removeChild(notification);
-            }, 300);
-          }, 3000);
-        }
-        
-        // Newsletter trigger — exit intent only (desktop)
-        const isDismissed = sessionStorage.getItem('newsletter_dismissed') === 'true';
 
-        if (!isDismissed && !userShouldSkipNewsletterPrompts()) {
-          let hasShownModal = false;
-
-          document.addEventListener('mouseleave', function (e) {
-            if (
-              e.clientY < 10 &&
-              !hasShownModal &&
-              !userShouldSkipNewsletterPrompts()
-            ) {
-              hasShownModal = true;
-              openNewsletterModal('exit_intent');
-            }
-          });
-        }
-        
-        // Close modals on escape key
         document.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape') {
-            if (!mobileDrawer.classList.contains('-translate-x-full')) {
-              closeMobileMenu();
-            }
-            if (!newsletterModal.classList.contains('hidden')) {
-              closeNewsletterModal();
-            }
-          }
-        });
-        
-        // Close mobile menu on window resize to desktop
-        window.addEventListener('resize', function() {
-          if (window.innerWidth >= 768) {
+          if (e.key === 'Escape' && !mobileDrawer.classList.contains('-translate-x-full')) {
             closeMobileMenu();
           }
         });
-        
-        // Sticky header scroll effect with smooth transition
+
+        window.addEventListener('resize', function() {
+          if (window.innerWidth >= 768) closeMobileMenu();
+        });
+
         let ticking = false;
         window.addEventListener('scroll', function() {
           if (!ticking) {
             window.requestAnimationFrame(function() {
               const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-              
               if (scrollTop > 10) {
                 mainHeader.classList.add('scrolled');
               } else {
                 mainHeader.classList.remove('scrolled');
               }
-              
               ticking = false;
             });
             ticking = true;
@@ -1441,54 +969,6 @@ if (database.Icon && database.Icon.Type === 'file') {
     display: none !important;
   }
 
-  /* Newsletter Modal Styles */
-  #newsletter-modal {
-    backdrop-filter: blur(4px);
-  }
-  
-  #newsletter-modal .relative {
-    animation: modalSlideIn 0.3s ease-out;
-  }
-  
-  @keyframes modalSlideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-20px) scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-  
-  /* Form input focus styles */
-  #newsletter-form input:focus {
-    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
-  }
-  
-  /* Checkbox styling */
-  #newsletter-privacy:checked {
-    background-color: #f59e0b;
-    border-color: #f59e0b;
-  }
-  
-  /* Button hover effects */
-  #newsletter-form button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
-  }
-  
-  /* Mobile modal adjustments */
-  @media (max-width: 640px) {
-    #newsletter-modal .relative {
-      padding: 1rem;
-    }
-    
-    #newsletter-modal .max-w-md {
-      max-width: 100%;
-    }
-  }
-  
   /* Footer Styles */
   footer {
     margin-top: auto;

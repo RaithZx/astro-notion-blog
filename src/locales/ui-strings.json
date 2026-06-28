@@ -1,5 +1,5 @@
 {
-  "_translatorReadme": "Ligadu UI copy — single source of truth. Translators: edit string values only; keep keys and {{placeholders}} exactly as-is. Sections: clerk (Clerk auth/profile; {{applicationName}} and other tokens per Clerk docs), app (layout shell, newsletter modal/banner scripts, search modal, coming soon, back-to-top, home page headings). Wired in Layout.astro, SearchModal, subscribeBanner, ComingSoon, BackToTop, index.astro, and src/lib/clerk-localization.mjs. Other pages (e.g. kontaktu, posts, legal) may still have copy only in their .astro files — add keys under app and import ui-strings.json there to include them in this handoff.",
+  "_translatorReadme": "Ligadu UI copy — single source of truth. Translators: edit string values only; keep keys and {{placeholders}} exactly as-is. Sections: clerk (Clerk auth/profile; {{applicationName}} and other tokens per Clerk docs), app (layout shell, search modal, coming soon, back-to-top, home page, post page, pagination, category archive, no-contents, legal pages). Wired in Layout.astro, SearchModal, ComingSoon, BackToTop, index.astro, [slug].astro, RelatedArticles.astro, LatestPosts.astro, Pagination.astro, CategoryTagMain.astro, NoContents.astro, kontaktu.astro, privasidadi.astro, termus.astro, and src/lib/clerk-localization.mjs.",
   "clerk": {
     "formFieldLabel__emailAddress": "Email",
     "formFieldLabel__password": "Senha",
@@ -163,26 +163,22 @@
       "ariaCloseMobileMenu": "Fitxa menu mobil",
       "ariaOpenSearch": "Abri piskiza",
       "navHome": "Inisiu",
-      "navHealth": "Saúdi",
       "navScience": "Siênsia",
       "navTech": "Tekinolojia",
       "navContact": "Kontaktu",
       "searchShort": "Piskiza...",
       "authSignIn": "Entra",
-      "authSignUp": "Rejista",
-      "navSignUpCta": "Rejista",
       "footerBrandLogoAlt": "Ligadu Logo",
       "footerBrandBlurb": "Artigus di siênsia, tekinolojia i saúdi.",
-      "footerLinksHeadingHtml": "<em>Links</em> pa kada asuntu",
       "footerLegalHeading": "Legal",
       "footerPrivacy": "Régras di Privasidadi",
       "footerTermsInnerHtml": "Régras di uzu i Lisénsa di uzu di <em>site</em>",
       "footerContact": "Kontaktu",
-      "footerCookiesInnerHtml": "<em>Cookies</em>",
       "footerNewsletterHeading": "Fika Ligadu",
       "footerNewsletterCta": "Entra",
       "footerCopyright": "Tudu direitu rezervadu.",
-      "footerCaboVerdeLabel": "Cabo Verde"
+      "footerNavHeading": "Navegason",
+      "footerTopicsHeading": "Topikus"
     },
     "search": {
       "placeholder": "Piskiza...",
@@ -219,37 +215,65 @@
       "title": "Volta pa sima"
     },
     "home": {
-      "categoriesLabel": "Kategorias",
-      "featuredBadge": "Sta Ligadu",
-      "topStoriesHeading": "Artigus distakadu",
-      "latestHeading": "Kes últimu artigu i stória",
-      "readingTimeMinutes": "{{minutes}} min",
-      "heroAttribution": "Ligadu",
       "popularHeading": "Más Populár",
       "viewAllPosts": "Odja tudu artigu",
-      "newsletterMiniHeading": "Fica ligadu",
-      "newsletterMiniBlurb": "Resebe kes últimu notísia diretamenti na tua kaixa.",
-      "newsletterMiniPlaceholder": "teu@email.com",
-      "newsletterMiniCta": "Skrevê",
-      "exploreCategoriesTitle": "Explora pa Kategorias",
-      "exploreCategoriesSubtitle": "Skobre tópiku ki ta interesa-bu",
-      "spotlightKicker": "Destaki",
-      "spotlightTitle": "Kabuvérdi na Vanguarda di Inovasaun",
-      "spotlightItem1Title": "Siénsia i Teknolojiia",
-      "spotlightItem1Desc": "Kes últimu diskobertas ki ta mudá nos mundu.",
-      "spotlightItem2Title": "Inovasaun Lokal",
-      "spotlightItem2Desc": "Proyetus kabuverdianus ki ta krià futuru.",
-      "spotlightItem3Title": "Espasu i Fronteiras",
-      "spotlightItem3Desc": "Esplorasaun alím di nos planeta.",
-      "spotlightVisitTitle": "Quer saber mais?",
-      "spotlightVisitBlurb": "Fala konos i diskobrê manera di kolaborá.",
-      "spotlightCta": "Kontaktu",
-      "fikaLigaduEyebrow": "Aksês Grátis",
+      "latestHeading": "Kes últimu artigu i stória",
       "fikaLigaduTitle": "Fika Ligadu",
-      "fikaLigaduBlurb": "Aksês grátis a tudu artigu di siênsia, tekinolojia i saúdi.",
+      "fikaLigaduBlurb": "Artigus di siênsia, tekinolojia i saúdi.",
       "fikaLigaduCta": "Entra",
       "loadMorePosts": "Odja más artigu",
       "showLessPosts": "Ver menus"
+    },
+    "post": {
+      "readingTimeSuffix": "min de leitura",
+      "shareTwitterAriaLabel": "Partilha na Twitter",
+      "shareFacebookAriaLabel": "Partilha na Facebook",
+      "shareWhatsAppAriaLabel": "Partilha na WhatsApp",
+      "shareCopyLinkAriaLabel": "Kopia link",
+      "relatedHeading": "Artigus di Mesmu Tipu",
+      "viewAllPosts": "Odja tudu artigu",
+      "latestHeading": "Kes Ultimu Artigu",
+      "viewAll": "Odja tudu"
+    },
+    "pagination": {
+      "pageOf": "Págin {{current}} di {{total}}",
+      "previous": "Anterior",
+      "next": "Próximu",
+      "pageAriaLabel": "Págin {{page}}",
+      "previousAriaLabel": "Págin anterior",
+      "nextAriaLabel": "Próximu págin"
+    },
+    "categoryArchive": {
+      "allLabel": "Tudu",
+      "noPostsAll": "Ka tene artigu publicadu inda.",
+      "noPostsCategory": "Ka tene artigu nesta kategoria inda.",
+      "viewAllPosts": "Odja tudu artigus",
+      "loadMore": "Odja más artigu",
+      "showLess": "Ver menus"
+    },
+    "categoryPage": {
+      "titleTemplate": "{{tag}} | {{brand}}",
+      "titlePageTemplate": "{{tag}} | págin {{page}} | {{brand}}",
+      "descriptionTemplate": "Artigus di {{tag}}"
+    },
+    "allPostsPage": {
+      "titleAll": "Tudu | {{brand}}",
+      "titlePage": "Tudu · págin {{page}} | {{brand}}"
+    },
+    "noContents": {
+      "message": "Ka tene ninhun sujeston inda"
+    },
+    "kontaktu": {
+      "pageTitle": "Kontaktu",
+      "pageDescription": "Kontakta Ligadu. Faze perguntas, manda sujiston, ô partilha ku nos."
+    },
+    "privasidadi": {
+      "pageTitle": "Régras di Privasidadi",
+      "pageDescription": "Régras di Privasidadi di Ligadu. Sabe modi ki nu ta proteje i uza bus informason pesoal."
+    },
+    "termus": {
+      "pageTitle": "Régras di uzu",
+      "pageDescription": "Régras di uzu i lisénsa di uzu di site."
     }
   }
 }

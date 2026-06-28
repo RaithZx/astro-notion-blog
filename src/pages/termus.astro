@@ -3,13 +3,14 @@ export const prerender = true
 
 import Layout from '../layouts/Layout.astro'
 import { getDatabase } from '../lib/notion/client.ts'
+import uiStrings from '../locales/ui-strings.json'
 
 const database = await getDatabase()
 ---
 
 <Layout
-  title="Régras di uzu"
-  description="Régras di uzu i lisénsa di uzu di <em>site</em>."
+  title={uiStrings.app.termus.pageTitle}
+  description={uiStrings.app.termus.pageDescription}
   path="/termus"
   ogImage=""
 >

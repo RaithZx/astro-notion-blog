@@ -297,7 +297,7 @@ if (database.Icon && database.Icon.Type === 'file') {
         
         <!-- Navigation -->
         <div>
-          <h4 class="font-bold font-headline mb-6 text-primary">Navegason</h4>
+          <h4 class="font-bold font-headline mb-6 text-primary">{app.layout.footerNavHeading}</h4>
           <ul class="space-y-4 text-sm">
             <li><a href={getNavLink('/')} class="text-on-background/70 no-underline hover:underline decoration-tertiary decoration-2 underline-offset-4 transition-colors">{app.layout.navHome}</a></li>
             <li><a href={getNavLink('/kontaktu')} class="text-on-background/70 no-underline hover:underline decoration-tertiary decoration-2 underline-offset-4 transition-colors">{app.layout.navContact}</a></li>
@@ -308,7 +308,7 @@ if (database.Icon && database.Icon.Type === 'file') {
         
         <!-- Topics -->
         <div>
-          <h4 class="font-bold font-headline mb-6 text-primary">Topikus</h4>
+          <h4 class="font-bold font-headline mb-6 text-primary">{app.layout.footerTopicsHeading}</h4>
           <ul class="space-y-4 text-sm">
             <li><a href={navTopicScience} class="text-on-background/70 no-underline hover:underline decoration-tertiary decoration-2 underline-offset-4 transition-colors">{app.layout.navScience}</a></li>
             <li><a href={navTopicTech} class="text-on-background/70 no-underline hover:underline decoration-tertiary decoration-2 underline-offset-4 transition-colors">{app.layout.navTech}</a></li>

@@ -11,6 +11,8 @@ import { getCategoryExplorerIconKind } from '../lib/home-category-icons.ts'
 import CategoryExplorerIcon from './CategoryExplorerIcon.astro'
 import Pagination from './Pagination.astro'
 import PostCard from './PostCard.astro'
+import uiStrings from '../locales/ui-strings.json'
+const ca = uiStrings.app.categoryArchive
 
 export interface Props {
   /** Tag name when viewing a category; use '' when `allPostsArchive` is true */
@@ -41,7 +43,7 @@ const {
 } = Astro.props
 
 const paginationTag = allPostsArchive ? '' : tag
-const headerLabel = allPostsArchive ? 'Tudu' : tag
+const headerLabel = allPostsArchive ? ca.allLabel : tag
 
 
 
@@ -97,7 +99,7 @@ const allPostsIndexPath = getNavLink('/posts/page/1')
           : 'font-medium bg-surface-container-lowest border-outline-variant/20 text-on-surface-variant hover:bg-surface-container hover:text-on-surface',
       ]}
     >
-      Tudu
+      {ca.allLabel}
     </a>
     {allTags.map((t) => {
       const active = !allPostsArchive && t.name === tag
@@ -126,16 +128,14 @@ const allPostsIndexPath = getNavLink('/posts/page/1')
       totalInTag === 0 ? (
         <div class="bg-surface-container-low rounded-lg p-12 text-center">
           <p class="text-on-surface-variant text-lg m-0 mb-6">
-            {allPostsArchive
-              ? 'Ka tene artigu publicadu inda.'
-              : 'Ka tene artigu nesta kategoria inda.'}
+            {allPostsArchive ? ca.noPostsAll : ca.noPostsCategory}
           </p>
           {!allPostsArchive && (
             <a
               href={allPostsIndexPath}
               class="inline-flex items-center gap-2 text-primary font-bold no-underline hover:underline underline-offset-4 decoration-2"
             >
-              Odja tudu artigus
+              {ca.viewAllPosts}
               <span class="material-symbols-outlined !text-lg" aria-hidden="true">arrow_forward</span>
             </a>
           )}
@@ -202,10 +202,10 @@ const allPostsIndexPath = getNavLink('/posts/page/1')
                 id="tag-load-more-btn"
                 type="button"
                 class="flex items-center gap-2 px-8 py-3 rounded-full border-2 border-outline-variant text-on-surface font-bold hover:border-primary hover:text-primary transition-colors"
-                data-label-more="Odja más artigu"
-                data-label-less="Ver menus"
+                data-label-more={ca.loadMore}
+                data-label-less={ca.showLess}
               >
-                Odja más artigu
+                {ca.loadMore}
                 <span class="material-symbols-outlined text-lg" id="tag-load-more-icon">expand_more</span>
               </button>
             </div>

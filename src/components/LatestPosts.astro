@@ -2,13 +2,14 @@
 import type { Post } from '../lib/interfaces.ts'
 import { getNavLink } from '../lib/blog-helpers.ts'
 import PostCard from './PostCard.astro'
+import uiStrings from '../locales/ui-strings.json'
 
 export interface Props {
   posts: Post[]
   title?: string
 }
 
-const { posts, title = 'Kes Ultimu Artigu' } = Astro.props
+const { posts, title = uiStrings.app.post.latestHeading } = Astro.props
 ---
 
 {
@@ -20,7 +21,7 @@ const { posts, title = 'Kes Ultimu Artigu' } = Astro.props
           href={getNavLink('/posts/page/1')}
           class="inline-flex items-center gap-1 shrink-0 text-primary font-bold text-sm no-underline hover:underline underline-offset-4 decoration-tertiary"
         >
-          Odja tudu
+          {uiStrings.app.post.viewAll}
           <span class="material-symbols-outlined text-lg">chevron_right</span>
         </a>
       </div>

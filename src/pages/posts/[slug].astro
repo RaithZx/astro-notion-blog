@@ -17,6 +17,7 @@ import NoContents from '../../components/NoContents.astro'
 import RelatedArticles from '../../components/RelatedArticles.astro'
 import LatestPosts from '../../components/LatestPosts.astro'
 import ContentGate from '../../components/ContentGate.astro'
+import uiStrings from '../../locales/ui-strings.json'
 
 const { slug } = Astro.params
 const { userId } = Astro.locals.auth()
@@ -173,7 +174,7 @@ const readTime = isSignedIn ? estimateReadTime(blocks.length) : null
           <time datetime={post.Date} class="font-medium">{formatDateShort(post.Date)}</time>
         )}
         {readTime && <span aria-hidden="true">·</span>}
-        {readTime && <span>{readTime} min de leitura</span>}
+        {readTime && <span>{readTime} {uiStrings.app.post.readingTimeSuffix}</span>}
       </div>
     </article>
 
@@ -196,7 +197,7 @@ const readTime = isSignedIn ? estimateReadTime(blocks.length) : null
               class="share-sidebar-twitter text-on-surface-variant hover:text-primary transition-colors flex justify-center"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Partilha na Twitter"
+              aria-label={uiStrings.app.post.shareTwitterAriaLabel}
               data-path={getPostLink(post.Slug)}
               data-title={post.Title}
             >
@@ -209,7 +210,7 @@ const readTime = isSignedIn ? estimateReadTime(blocks.length) : null
               class="share-sidebar-facebook text-on-surface-variant hover:text-primary transition-colors flex justify-center"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Partilha na Facebook"
+              aria-label={uiStrings.app.post.shareFacebookAriaLabel}
               data-path={getPostLink(post.Slug)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -221,7 +222,7 @@ const readTime = isSignedIn ? estimateReadTime(blocks.length) : null
               class="share-sidebar-whatsapp text-on-surface-variant hover:text-primary transition-colors flex justify-center"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Partilha na WhatsApp"
+              aria-label={uiStrings.app.post.shareWhatsAppAriaLabel}
               data-path={getPostLink(post.Slug)}
               data-title={post.Title}
             >
@@ -232,7 +233,7 @@ const readTime = isSignedIn ? estimateReadTime(blocks.length) : null
             </a>
             <button
               class="share-sidebar-copy text-on-surface-variant hover:text-primary transition-colors flex justify-center bg-transparent border-0 cursor-pointer p-0"
-              aria-label="Kopia link"
+              aria-label={uiStrings.app.post.shareCopyLinkAriaLabel}
               data-path={getPostLink(post.Slug)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -268,11 +269,11 @@ const readTime = isSignedIn ? estimateReadTime(blocks.length) : null
     <RelatedArticles
       posts={relatedPosts.length > 0 ? relatedPosts : rankedPosts}
       currentPostSlug={post.Slug}
-      title="Artigus di Mesmu Tipu"
+      title={uiStrings.app.post.relatedHeading}
     />
 
     <!-- Latest Posts Section -->
-    <LatestPosts posts={latestForSection} title="Kes Ultimu Artigu" />
+    <LatestPosts posts={latestForSection} title={uiStrings.app.post.latestHeading} />
   </div>
 </Layout>
 

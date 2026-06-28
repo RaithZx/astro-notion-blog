@@ -1,5 +1,7 @@
 ---
 import { getPageLink } from '../lib/blog-helpers.ts'
+import uiStrings from '../locales/ui-strings.json'
+const p = uiStrings.app.pagination
 
 export interface Props {
   currentPage: number
@@ -29,7 +31,7 @@ const numberBase = `flex items-center justify-center min-w-[2.75rem] h-11 px-3 r
 <nav class="flex flex-col gap-4 w-full my-8 py-6" aria-label="Pagination Navigation">
   <div class="text-center">
     <span class="text-on-surface-variant text-sm font-medium">
-      Págin {currentPage} di {numberOfPages}
+      {p.pageOf.replace('{{current}}', String(currentPage)).replace('{{total}}', String(numberOfPages))}
     </span>
   </div>
 
@@ -37,13 +39,13 @@ const numberBase = `flex items-center justify-center min-w-[2.75rem] h-11 px-3 r
     <a
       href={getPageLink(Math.max(1, currentPage - 1), tag)}
       class:list={[btnBase, isFirstPage && 'opacity-50 pointer-events-none']}
-      aria-label="Págin anterior"
+      aria-label={p.previousAriaLabel}
       aria-disabled={isFirstPage}
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="15 18 9 12 15 6"></polyline>
       </svg>
-      <span class="hidden sm:inline">Anterior</span>
+      <span class="hidden sm:inline">{p.previous}</span>
     </a>
 
     <div class="flex items-center gap-1">
@@ -61,7 +63,7 @@ const numberBase = `flex items-center justify-center min-w-[2.75rem] h-11 px-3 r
               numberBase,
               p === currentPage && 'bg-primary text-on-primary font-semibold hover:brightness-105',
             ]}
-            aria-label={`Págin ${p}`}
+            aria-label={uiStrings.app.pagination.pageAriaLabel.replace('{{page}}', String(p))}
             aria-current={p === currentPage ? 'page' : undefined}
           >
             {p}
@@ -79,10 +81,10 @@ const numberBase = `flex items-center justify-center min-w-[2.75rem] h-11 px-3 r
     <a
       href={getPageLink(Math.min(numberOfPages, currentPage + 1), tag)}
       class:list={[btnBase, isLastPage && 'opacity-50 pointer-events-none']}
-      aria-label="Próximu págin"
+      aria-label={p.nextAriaLabel}
       aria-disabled={isLastPage}
     >
-      <span class="hidden sm:inline">Próximu</span>
+      <span class="hidden sm:inline">{p.next}</span>
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="9 18 15 12 9 6"></polyline>
       </svg>

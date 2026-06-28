@@ -10,6 +10,7 @@ import {
 } from '../../../../../lib/notion/client.ts'
 import Layout from '../../../../../layouts/Layout.astro'
 import CategoryTagMain from '../../../../../components/CategoryTagMain.astro'
+import uiStrings from '../../../../../locales/ui-strings.json'
 
 export async function getStaticPaths() {
   const allTags = await getAllTags()
@@ -32,6 +33,8 @@ export async function getStaticPaths() {
 const { tag, page } = Astro.params
 
 const currentPage = parseInt(page, 10)
+const brand = uiStrings.app.layout.brandName
+const cp = uiStrings.app.categoryPage
 
 const [posts, tags, numberOfPages, totalInTag] = await Promise.all([
   getPostsByTagAndPage(tag, currentPage),
@@ -42,8 +45,8 @@ const [posts, tags, numberOfPages, totalInTag] = await Promise.all([
 ---
 
 <Layout
-  title={`${tag} | págin ${currentPage} | Ligadu`}
-  description={`Artigus di ${tag}`}
+  title={cp.titlePageTemplate.replace('{{tag}}', tag).replace('{{page}}', String(currentPage)).replace('{{brand}}', brand)}
+  description={cp.descriptionTemplate.replace('{{tag}}', tag)}
   path={`/posts/tag/${tag}/page/${page}`}
   ogImage=""
   fullWidth={true}

@@ -3,13 +3,14 @@ export const prerender = true
 
 import Layout from '../layouts/Layout.astro'
 import { getDatabase } from '../lib/notion/client.ts'
+import uiStrings from '../locales/ui-strings.json'
 
 const database = await getDatabase()
 ---
 
 <Layout
-  title="Régras di Privasidadi"
-  description="Régras di Privasidadi di Ligadu. Sabe modi ki nu ta proteje i uza bus informason pesoal."
+  title={uiStrings.app.privasidadi.pageTitle}
+  description={uiStrings.app.privasidadi.pageDescription}
   path="/privasidadi"
   ogImage=""
 >

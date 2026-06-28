@@ -36,7 +36,9 @@ const totalAllPosts = allPostsList.length
 const app = uiStrings.app
 const brand = app.layout.brandName
 const pageTitle =
-  currentPage > 1 ? `Tudu · págin ${currentPage} | ${brand}` : `Tudu | ${brand}`
+  currentPage > 1
+    ? app.allPostsPage.titlePage.replace('{{page}}', String(currentPage)).replace('{{brand}}', brand)
+    : app.allPostsPage.titleAll.replace('{{brand}}', brand)
 ---
 
 <Layout

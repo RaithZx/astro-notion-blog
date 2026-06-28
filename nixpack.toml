@@ -36,6 +36,5 @@ cacheDirectories = [
 ]
 
 [start]
-# Astro's "start" runs preview or server depending on config
-# Coolify will inject HOST and PORT automatically.
-cmd = "npm run start"
+# Node standalone server — Coolify injects HOST and PORT automatically.
+cmd = "node ./dist/server/entry.mjs"

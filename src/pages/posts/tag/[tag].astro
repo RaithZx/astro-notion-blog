@@ -2,11 +2,9 @@
 export const prerender = true
 
 import type { SelectProperty } from '../../../lib/interfaces.ts'
-import { NUMBER_OF_POSTS_PER_PAGE } from '../../../server-constants.ts'
 import {
   getPostsByTag,
   getAllTags,
-  getNumberOfPagesByTag,
   getPostCountByTag,
 } from '../../../lib/notion/client.ts'
 import Layout from '../../../layouts/Layout.astro'
@@ -19,10 +17,9 @@ export async function getStaticPaths() {
 
 const { tag } = Astro.params
 
-const [posts, tags, numberOfPages, totalInTag] = await Promise.all([
-  getPostsByTag(tag, NUMBER_OF_POSTS_PER_PAGE),
+const [posts, tags, totalInTag] = await Promise.all([
+  getPostsByTag(tag, 9999),
   getAllTags(),
-  getNumberOfPagesByTag(tag),
   getPostCountByTag(tag),
 ])
 ---
@@ -40,9 +37,10 @@ const [posts, tags, numberOfPages, totalInTag] = await Promise.all([
       tag={tag}
       posts={posts}
       currentPage={1}
-      numberOfPages={numberOfPages}
+      numberOfPages={1}
       totalInTag={totalInTag}
       allTags={tags}
+      useLoadMore={true}
     />
   </div>
 </Layout>

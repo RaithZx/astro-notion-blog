@@ -23,7 +23,11 @@ export interface Props {
   allTags: SelectProperty[]
   /** Full post list at `/posts/page/N` — same chrome as tag archives, "Tudu" pill active */
   allPostsArchive?: boolean
+  /** Replace pagination with a load-more button (all posts pre-rendered, toggled client-side) */
+  useLoadMore?: boolean
 }
+
+const GRID_INITIAL = 8
 
 const {
   tag,
@@ -33,6 +37,7 @@ const {
   totalInTag,
   allTags,
   allPostsArchive = false,
+  useLoadMore = false,
 } = Astro.props
 
 const paginationTag = allPostsArchive ? '' : tag
@@ -182,14 +187,31 @@ const allPostsIndexPath = getNavLink('/posts/page/1')
           )}
 
           {gridPosts.length > 0 && (
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
-              {gridPosts.map((post) => (
-                <PostCard post={post} kicker={cardKicker(post)} />
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12" id="tag-grid">
+              {gridPosts.map((post, i) => (
+                <div class:list={[useLoadMore && i >= GRID_INITIAL && 'tag-extra hidden']}>
+                  <PostCard post={post} kicker={cardKicker(post)} />
+                </div>
               ))}
             </div>
           )}
 
-          {numberOfPages > 1 && (
+          {useLoadMore && gridPosts.length > GRID_INITIAL && (
+            <div class="flex justify-center mt-8">
+              <button
+                id="tag-load-more-btn"
+                type="button"
+                class="flex items-center gap-2 px-8 py-3 rounded-full border-2 border-outline-variant text-on-surface font-bold hover:border-primary hover:text-primary transition-colors"
+                data-label-more="Odja más artigu"
+                data-label-less="Ver menus"
+              >
+                Odja más artigu
+                <span class="material-symbols-outlined text-lg" id="tag-load-more-icon">expand_more</span>
+              </button>
+            </div>
+          )}
+
+          {!useLoadMore && numberOfPages > 1 && (
             <div class="pt-4">
               <Pagination
                 tag={paginationTag}
@@ -203,3 +225,23 @@ const allPostsIndexPath = getNavLink('/posts/page/1')
     }
   </div>
 </div>
+
+<script>
+  const btn = document.getElementById('tag-load-more-btn') as HTMLButtonElement | null
+  const icon = document.getElementById('tag-load-more-icon')
+  const extras = document.querySelectorAll<HTMLElement>('.tag-extra')
+
+  if (btn && extras.length > 0) {
+    let expanded = false
+    const labelMore = btn.dataset.labelMore ?? ''
+    const labelLess = btn.dataset.labelLess ?? ''
+
+    btn.addEventListener('click', () => {
+      expanded = !expanded
+      extras.forEach((el) => el.classList.toggle('hidden', !expanded))
+      const textNode = btn.firstChild as Text
+      if (textNode?.nodeType === Node.TEXT_NODE) textNode.data = expanded ? labelLess : labelMore
+      if (icon) icon.textContent = expanded ? 'expand_less' : 'expand_more'
+    })
+  }
+</script>

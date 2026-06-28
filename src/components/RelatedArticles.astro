@@ -1,6 +1,6 @@
 ---
 import type { Post } from '../lib/interfaces.ts'
-import { getNavLink } from '../lib/blog-helpers.ts'
+import { getNavLink, getPostLink } from '../lib/blog-helpers.ts'
 import PostCard from './PostCard.astro'
 
 export interface Props {
@@ -20,9 +20,7 @@ const relatedPosts = posts
   relatedPosts.length > 0 && (
     <section class="mt-12 pb-16 px-0 border-t border-outline-variant/25 pt-10">
       <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6 mb-12">
-        <div>
-          <h2 class="font-headline text-3xl md:text-4xl font-bold text-on-background m-0">{title}</h2>
-        </div>
+        <h2 class="font-headline text-xl font-bold text-outline m-0">{title}</h2>
         <a
           href={getNavLink('/')}
           class="inline-flex items-center gap-2 shrink-0 self-start sm:self-auto text-primary font-bold text-sm no-underline hover:underline underline-offset-4 decoration-tertiary"

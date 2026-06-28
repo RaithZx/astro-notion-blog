@@ -28,6 +28,7 @@ import PostBody from '../../components/PostBody.astro'
 import PostFeaturedImage from '../../components/PostFeaturedImage.astro'
 import NoContents from '../../components/NoContents.astro'
 import RelatedArticles from '../../components/RelatedArticles.astro'
+import LatestPosts from '../../components/LatestPosts.astro'
 import SubscribeBanner from '../../components/subscribeBanner.astro'
 
 export async function getStaticPaths() {
@@ -62,6 +63,11 @@ const relatedPosts = allPosts
   .sort((a, b) => b.overlap - a.overlap)
   .slice(0, 6)
   .map((entry) => entry.post)
+
+const shownRelatedSlugs = new Set([post.Slug, ...relatedPosts.slice(0, 3).map((p) => p.Slug)])
+const latestForSection = allPosts
+  .filter((p) => !shownRelatedSlugs.has(p.Slug))
+  .slice(0, 4)
 
 let ogImage = ''
 if (post.FeaturedImage && post.FeaturedImage.Url) {
@@ -218,6 +224,9 @@ const readTime = estimateReadTime(blocks.length)
       currentPostSlug={post.Slug}
       title="Artigus di Mesmu Tipu"
     />
+
+    <!-- Latest Posts Section -->
+    <LatestPosts posts={latestForSection} title="Kes Ultimu Artigu" />
   </div>
 </Layout>
 

@@ -14,6 +14,7 @@ import {
 } from '../lib/notion/client.ts'
 import Layout from '../layouts/Layout.astro'
 import NoContents from '../components/NoContents.astro'
+import AdUnit from '../components/AdUnit.astro'
 import PostFeaturedImage from '../components/PostFeaturedImage.astro'
 import { getPostLink, getTagLink, getNavLink } from '../lib/blog-helpers.ts'
 import { getImageFromNotionUrl } from '../lib/image-helpers.ts'
@@ -232,6 +233,9 @@ const sortedTags = [...tags].sort((a, b) => a.name.localeCompare(b.name, 'kea'))
               </div>
             </section>
           )}
+
+          <!-- Mid-feed ad -->
+          <AdUnit label="Ad — 728×90" format="horizontal" class="my-6" />
 
           <!-- Kes Ultimu Artigu -->
           {latestPosts.length > 0 && (

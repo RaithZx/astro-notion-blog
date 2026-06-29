@@ -1,6 +1,6 @@
 ---
 import '../styles/globals.css'
-import { PUBLIC_GA_TRACKING_ID, ENABLE_LIGHTBOX, COMING_SOON } from '../server-constants.ts'
+import { PUBLIC_GA_TRACKING_ID, ENABLE_LIGHTBOX, COMING_SOON, PUBLIC_ADSENSE_PUBLISHER_ID } from '../server-constants.ts'
 import { getDatabase, getAllTags } from '../lib/notion/client.ts'
 import { getNavLink, getTagLink, getStaticFilePath, filePath } from '../lib/blog-helpers.ts'
 import '../styles/syntax-coloring.css'
@@ -114,12 +114,19 @@ if (database.Icon && database.Icon.Type === 'file') {
       integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0"
       crossorigin="anonymous"
     />
-	 <script 
-      defer 
-      src="https://stats.ligadu.com/script.js" 
+	 <script
+      defer
+      src="https://stats.ligadu.com/script.js"
       data-website-id="3a333f58-6b50-445d-9ccf-3cec581bc5e9"
       data-do-not-track={isProduction ? "false" : "true"}
     ></script>
+    {PUBLIC_ADSENSE_PUBLISHER_ID && (
+      <script
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PUBLIC_ADSENSE_PUBLISHER_ID}`}
+        crossorigin="anonymous"
+      ></script>
+    )}
   </head>
   <body>
     {showComingSoon ? (
@@ -202,52 +209,104 @@ if (database.Icon && database.Icon.Type === 'file') {
         </div>
       )}
 
-      <!-- Mobile Navigation Drawer -->
-      <div id="mobile-overlay" class="md:hidden fixed inset-0 bg-black/50 opacity-0 transition-opacity duration-300 pointer-events-none" style="z-index: 9998;"></div>
-      
-      <div id="mobile-drawer" class="md:hidden fixed top-0 left-0 w-80 max-w-sm h-full bg-surface-container-lowest shadow-ambient-lg transform -translate-x-full transition-transform duration-300 ease-in-out pointer-events-none flex flex-col" style="z-index: 9999;">
-        <div class="flex items-center justify-between p-5 bg-surface-container-low">
-          <a href={getNavLink('/')} class="text-lg font-bold font-headline text-primary no-underline">{app.layout.brandName}</a>
-          <button 
-            id="mobile-close-button" 
-            class="bg-transparent border-0 text-on-surface-variant text-2xl cursor-pointer p-2 hover:text-primary rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
-            aria-label={app.layout.ariaCloseMobileMenu}
+    </header>
+
+    <!-- Mobile Navigation Drawer — outside <header> to escape backdrop-filter stacking context -->
+    <div id="mobile-overlay" class="md:hidden fixed inset-0 bg-black/60 opacity-0 transition-opacity duration-300 pointer-events-none" style="z-index: 9998;"></div>
+
+    <div id="mobile-drawer" class="md:hidden fixed top-0 left-0 w-[85vw] max-w-xs h-full transform -translate-x-full transition-transform duration-300 ease-in-out pointer-events-none flex flex-col" style="z-index: 9999; background: #ffffff; box-shadow: 4px 0 24px rgba(0,0,0,0.12);">
+
+      <!-- Drawer Header -->
+      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <a href={getNavLink('/')} class="text-xl font-black font-headline text-primary no-underline tracking-tight">{app.layout.brandName}</a>
+        <button
+          id="mobile-close-button"
+          class="bg-gray-100 border-0 text-gray-500 cursor-pointer w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 transition-colors"
+          aria-label={app.layout.ariaCloseMobileMenu}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Scrollable body -->
+      <div class="flex-1 overflow-y-auto flex flex-col">
+
+        <!-- Search bar -->
+        <div class="px-4 pt-4 pb-2">
+          <button
+            class="open-search-modal w-full flex items-center gap-3 px-4 py-3 rounded-xl border-0 cursor-pointer text-left transition-colors"
+            style="background: #f1f5f9; color: #64748b;"
+            type="button"
           >
-            <span aria-hidden="true">✕</span>
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <span class="text-sm">{app.layout.searchShort}...</span>
           </button>
         </div>
-        
-        <div class="flex-1 p-5 overflow-y-auto">
-          <nav class="space-y-1">
-            <a href={getNavLink('/')} class="block text-on-surface no-underline py-3 px-4 font-medium rounded-lg hover:text-primary hover:bg-surface-container-low transition-colors">{app.layout.navHome}</a>
-            <a href={getNavLink('/kontaktu')} class="block text-on-surface no-underline py-3 px-4 font-medium rounded-lg hover:text-primary hover:bg-surface-container-low transition-colors">{app.layout.navContact}</a>
-          </nav>
-          
-          <div class="mt-6 pt-6 space-y-3 bg-surface-container-low -mx-5 px-5 py-6 rounded-xl">
-            <button 
-              class="open-search-modal w-full ds-btn-secondary px-4 py-3 text-sm cursor-pointer flex items-center justify-center gap-2"
-              type="button"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-              </svg>
-              <span>{app.layout.searchShort}</span>
-            </button>
-            <div class="ligadu-auth-when-signed-out">
-              <button
-                type="button"
-                class="ligadu-open-sign-in w-full ds-btn-primary px-4 py-3 text-sm"
-              >
-                {app.layout.authSignIn}
-              </button>
-            </div>
-            <div class="ligadu-auth-when-signed-in flex justify-center py-2 ligadu-auth-hide">
-              <UserButton />
+
+        <!-- Nav links -->
+        <nav class="px-3 pt-2 pb-4">
+          <p class="px-3 pt-2 pb-1 text-xs font-semibold uppercase tracking-widest text-gray-400">Menu</p>
+          <a href={getNavLink('/')} class="flex items-center gap-3 text-gray-800 no-underline py-2.5 px-3 font-medium rounded-xl hover:bg-gray-50 hover:text-primary transition-colors text-sm">
+            <span class="material-symbols-outlined text-lg leading-none text-gray-400" aria-hidden="true">home</span>
+            {app.layout.navHome}
+          </a>
+          <a href={getNavLink('/kontaktu')} class="flex items-center gap-3 text-gray-800 no-underline py-2.5 px-3 font-medium rounded-xl hover:bg-gray-50 hover:text-primary transition-colors text-sm">
+            <span class="material-symbols-outlined text-lg leading-none text-gray-400" aria-hidden="true">mail</span>
+            {app.layout.navContact}
+          </a>
+        </nav>
+
+        <!-- Topics -->
+        {allTags.length > 0 && (
+          <div class="px-3 pb-4 border-t border-gray-100 pt-4">
+            <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-widest text-gray-400">Tópikus</p>
+            <div class="flex flex-wrap gap-2 px-3">
+              {allTags.slice(0, 6).map((tag) => (
+                <a
+                  href={getTagLink(tag.name)}
+                  class="text-xs font-medium px-3 py-1.5 rounded-full no-underline transition-colors"
+                  style="background: #f1f5f9; color: #475569;"
+                >
+                  {tag.name}
+                </a>
+              ))}
             </div>
           </div>
+        )}
+
+        <!-- Spacer -->
+        <div class="flex-1" />
+
+        <!-- Auth + Support footer -->
+        <div class="px-4 pb-6 pt-4 border-t border-gray-100 space-y-3">
+          <div class="ligadu-auth-when-signed-out">
+            <button
+              type="button"
+              class="ligadu-open-sign-in w-full ds-btn-primary py-3 text-sm"
+            >
+              {app.layout.authSignIn}
+            </button>
+          </div>
+          <div class="ligadu-auth-when-signed-in ligadu-auth-hide flex items-center gap-3 px-1 py-2">
+            <UserButton />
+            <span class="text-sm font-medium text-gray-700">Minha conta</span>
+          </div>
+          <a
+            href="https://buymeacoffee.com/Ligadu"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold no-underline transition-opacity hover:opacity-90"
+            style="background-color: #40DCA5; color: #000;"
+          >
+            ☕ Apoia-nos
+          </a>
         </div>
       </div>
-    </header>
+    </div>
 
     <div
       class:list={["min-h-screen bg-surface layout-page-shell", showCategoryNav ? "pt-[7rem] md:pt-[7.5rem]" : "pt-[4.75rem] md:pt-[5rem]"]}
@@ -315,16 +374,30 @@ if (database.Icon && database.Icon.Type === 'file') {
           </ul>
         </div>
         
-        <!-- Newsletter -->
-        <div>
-          <h4 class="font-bold font-headline mb-6 text-primary">{app.layout.footerNewsletterHeading}</h4>
-          <div class="ligadu-auth-when-signed-out">
-            <button
-              type="button"
-              class="ligadu-open-sign-in w-full ds-btn-primary py-3 text-sm"
+        <!-- Newsletter + Support -->
+        <div class="space-y-6">
+          <div>
+            <h4 class="font-bold font-headline mb-6 text-primary">{app.layout.footerNewsletterHeading}</h4>
+            <div class="ligadu-auth-when-signed-out">
+              <button
+                type="button"
+                class="ligadu-open-sign-in w-full ds-btn-primary py-3 text-sm"
+              >
+                {app.layout.footerNewsletterCta}
+              </button>
+            </div>
+          </div>
+          <div>
+            <h4 class="font-bold font-headline mb-4 text-primary">Apoia-nos</h4>
+            <a
+              href="https://buymeacoffee.com/Ligadu"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 w-full justify-center px-4 py-3 rounded-full text-sm font-bold no-underline transition-opacity duration-200 hover:opacity-90 active:scale-95"
+              style="background-color: #40DCA5; color: #000000;"
             >
-              {app.layout.footerNewsletterCta}
-            </button>
+              ☕ Apoia-nos no Buy Me a Coffee
+            </a>
           </div>
         </div>
       </div>

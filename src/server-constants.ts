@@ -20,3 +20,5 @@ export const REQUEST_TIMEOUT_MS = parseInt(
 )
 export const ENABLE_LIGHTBOX = import.meta.env.ENABLE_LIGHTBOX
 export const COMING_SOON = import.meta.env.COMING_SOON || process.env.COMING_SOON || 'false'
+export const PUBLIC_ADSENSE_PUBLISHER_ID =
+  import.meta.env.PUBLIC_ADSENSE_PUBLISHER_ID ?? process.env.PUBLIC_ADSENSE_PUBLISHER_ID ?? ''

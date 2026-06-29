@@ -1,0 +1,59 @@
+---
+import { PUBLIC_ADSENSE_PUBLISHER_ID } from '../server-constants.ts'
+
+interface Props {
+  adSlot?: string
+  format?: 'auto' | 'rectangle' | 'horizontal' | 'vertical'
+  label?: string
+  class?: string
+}
+
+const {
+  adSlot,
+  format = 'auto',
+  label = 'Advertisement',
+  class: className = '',
+} = Astro.props
+
+const hasAdsense = !!PUBLIC_ADSENSE_PUBLISHER_ID && !!adSlot
+const isDev = import.meta.env.DEV
+const showPlaceholder = !hasAdsense && isDev
+
+const minHeights: Record<string, string> = {
+  horizontal: '90px',
+  rectangle: '250px',
+  vertical: '600px',
+  auto: '90px',
+}
+const minHeight = minHeights[format] ?? '90px'
+---
+
+{hasAdsense && (
+  <div class:list={['ad-unit', className]}>
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client={PUBLIC_ADSENSE_PUBLISHER_ID}
+      data-ad-slot={adSlot}
+      data-ad-format={format}
+      data-full-width-responsive="true"
+    ></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+)}
+
+{showPlaceholder && (
+  <div
+    class:list={[
+      'ad-placeholder flex items-center justify-center w-full rounded-lg border border-dashed',
+      'border-outline-variant/40 bg-surface-container-low',
+      className,
+    ]}
+    style={`min-height: ${minHeight};`}
+    aria-hidden="true"
+  >
+    <span class="text-on-surface-variant/40 text-xs uppercase tracking-widest select-none">
+      {label}
+    </span>
+  </div>
+)}

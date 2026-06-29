@@ -188,7 +188,9 @@
       "hintClose": "Fitxa",
       "loading": "Ta karega...",
       "empty": "Nenhun rezultadu inkontradu.",
-      "loadError": "Éru timenti dadus staba ta karega."
+      "loadError": "Éru timenti dadus staba ta karega.",
+      "idleTitle": "Piskiza artiklu",
+      "idleSub": "Poi un palaura pa komeça"
     },
     "comingSoon": {
       "logoAlt": "Ligadu Logo",

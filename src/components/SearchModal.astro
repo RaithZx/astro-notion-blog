@@ -8,23 +8,47 @@ const s = uiStrings.app.search
 
   <div class="search-modal">
     <div class="search-prompt">
-      <input type="text" placeholder={s.placeholder} aria-label={s.ariaLabel} />
+      <div class="search-input-row">
+        <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input type="text" placeholder={s.placeholder} aria-label={s.ariaLabel} autocomplete="off" spellcheck="false" />
+        <kbd class="esc-hint">Esc</kbd>
+      </div>
       <div class="search-hints">
         <span class="hint-item"><kbd>↑↓</kbd> {s.hintNavigate}</span>
-        <span class="hint-item"><kbd>Enter</kbd> {s.hintOpen}</span>
-        <span class="hint-item"><kbd>Esc</kbd> {s.hintClose}</span>
+        <span class="hint-item"><kbd>↵</kbd> {s.hintOpen}</span>
+        <span class="hint-item"><kbd>⌘K</kbd> Abri</span>
       </div>
     </div>
+
     <div class="search-result">
       <div class="search-loading" style="display: none;">
         <div class="loading-spinner"></div>
         <span>{s.loading}</span>
       </div>
-      <div class="search-empty" style="display: none;">
-        <p>{s.empty}</p>
+
+      <div class="search-idle" style="display: none;">
+        <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" style="opacity:0.3;">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <p class="idle-title">{s.idleTitle}</p>
+        <p class="idle-sub">{s.idleSub}</p>
       </div>
-      <ul>
-      </ul>
+
+      <div class="search-empty" style="display: none;">
+        <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" style="opacity:0.3;">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p class="idle-title">{s.empty}</p>
+        <p class="idle-sub" id="search-empty-query"></p>
+      </div>
+
+      <div class="search-results-header" style="display: none;">
+        <span id="search-result-count"></span>
+      </div>
+
+      <ul></ul>
     </div>
   </div>
 </div>
@@ -37,180 +61,254 @@ const s = uiStrings.app.search
   div.overlay {
     z-index: 99;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
   }
 
   div.search-modal {
     z-index: 100;
     position: fixed;
-    top: 50%;
+    top: 12%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 600px;
-    max-height: 80vh;
-    border-radius: 12px;
-    background-color: var(--bg);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateX(-50%);
+    width: 92%;
+    max-width: 620px;
+    max-height: 76vh;
+    border-radius: 16px;
+    background-color: #ffffff;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0,0,0,0.06);
     overflow: hidden;
     display: flex;
     flex-direction: column;
   }
+
   @media (max-width: 640px) {
     div.search-modal {
-      top: 10%;
-      transform: translate(-50%, 0);
-      width: 95%;
-      max-height: 85vh;
-      border-radius: 8px;
+      top: 5%;
+      width: 96%;
+      max-height: 88vh;
+      border-radius: 12px;
     }
   }
 
+  /* --- Input row --- */
   div.search-prompt {
-    margin: 0;
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid var(--hr-border);
+    padding: 0.875rem 1rem 0;
+    border-bottom: 1px solid #f1f5f9;
   }
+
+  .search-input-row {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0 0.25rem 0.75rem;
+  }
+
+  .search-icon {
+    color: #94a3b8;
+    flex-shrink: 0;
+  }
+
   div.search-prompt input {
-    width: 100%;
-    border: 0px solid transparent;
-    padding: 0.75rem;
-    background-color: var(--input-bg);
-    color: var(--fg);
-    font-size: 1.1rem;
-    line-height: 1.5rem;
-    border-radius: 6px;
+    flex: 1;
+    border: none;
+    padding: 0;
+    background: transparent;
+    color: #0f172a;
+    font-size: 1.05rem;
+    line-height: 1.5;
     outline: none;
   }
-  div.search-prompt input:focus {
-    outline: 2px solid #3b82f6;
-    outline-offset: 2px;
+
+  div.search-prompt input::placeholder {
+    color: #94a3b8;
   }
-  
+
+  .esc-hint {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.45rem;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.3rem;
+    font-size: 0.6875rem;
+    font-family: monospace;
+    color: #64748b;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
   .search-hints {
     display: flex;
     gap: 1rem;
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid var(--hr-border);
+    padding-bottom: 0.625rem;
     flex-wrap: wrap;
   }
-  
+
   .hint-item {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    font-size: 0.75rem;
+    gap: 0.3rem;
+    font-size: 0.72rem;
     color: #94a3b8;
   }
-  
+
   .hint-item kbd {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-width: 1.5rem;
     height: 1.25rem;
-    padding: 0 0.25rem;
-    background-color: #f1f5f9;
+    padding: 0 0.3rem;
+    background: #f1f5f9;
     border: 1px solid #e2e8f0;
     border-radius: 0.25rem;
     font-size: 0.6875rem;
     font-family: monospace;
     color: #475569;
   }
-  
-  @media (max-width: 640px) {
-    .search-hints {
-      gap: 0.75rem;
-    }
-    
-    .hint-item {
-      font-size: 0.6875rem;
-    }
-  }
 
+  /* --- Results area --- */
   div.search-result {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    position: relative;
   }
+
+  .search-results-header {
+    padding: 0.625rem 1rem 0.25rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
   div.search-result ul {
     list-style: none;
     margin: 0;
-    padding: 0.5rem;
+    padding: 0.375rem 0.5rem 0.5rem;
   }
-  
+
+  /* --- Idle / empty states --- */
+  .search-idle,
+  .search-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+  }
+
   .search-loading {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
+    gap: 0.75rem;
     padding: 2rem;
     color: #64748b;
+    font-size: 0.875rem;
   }
-  
+
   .search-loading .loading-spinner {
-    width: 2rem;
-    height: 2rem;
-    border: 3px solid #e2e8f0;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 2px solid #e2e8f0;
     border-top-color: #3b82f6;
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
   }
-  
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-  .search-empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    color: #64748b;
-    text-align: center;
-  }
-  
-  .search-empty p {
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .idle-title {
     margin: 0;
-    font-size: 0.875rem;
-  }
-  div.search-result ul > :global(li) {
-  }
-  div.search-result ul > :global(li > a) {
-    display: block;
-    padding: 0.4rem 0.6rem;
-    border-radius: var(--radius);
-  }
-  div.search-result ul > :global(li.selected > a) {
-    background-color: #eff6ff;
-    border-left: 3px solid #3b82f6;
-  }
-  
-  div.search-result ul > :global(li > a:hover) {
-    background-color: #f8fafc;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #475569;
   }
 
-  div.search-result :global(div.search-result-title) {
-    padding: 0.1rem 0;
-    color: var(--fg);
-    font-size: 1.1rem;
-    line-height: 1.2rem;
-    font-weight: bold;
+  .idle-sub {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #94a3b8;
   }
-  div.search-result :global(div.search-result-description) {
-    margin: 0 0 0.1rem;
-    color: var(--fg);
-    font-size: 0.9rem;
-    line-height: 1.2rem;
+
+  /* --- Result list items --- */
+  div.search-result ul > :global(li > a) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background 0.12s;
+  }
+
+  div.search-result ul > :global(li.selected > a),
+  div.search-result ul > :global(li > a:hover) {
+    background-color: #eff6ff;
+  }
+
+  div.search-result ul > :global(li.selected > a) {
+    outline: 2px solid #bfdbfe;
+  }
+
+  div.search-result :global(.result-title) {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0f172a;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  div.search-result :global(.result-excerpt) {
+    font-size: 0.8rem;
+    color: #64748b;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  div.search-result :global(.result-meta) {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-wrap: wrap;
+    margin-top: 0.125rem;
+  }
+
+  div.search-result :global(.result-tag) {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 500;
+    padding: 0.15rem 0.5rem;
+    border-radius: 99px;
+    background: #f1f5f9;
+    color: #475569;
+  }
+
+  div.search-result :global(.result-date) {
+    font-size: 0.68rem;
+    color: #94a3b8;
+    margin-left: auto;
+  }
+
+  div.search-result :global(mark) {
+    background: #fef08a;
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 1px;
   }
 </style>
 
@@ -219,256 +317,248 @@ const s = uiStrings.app.search
     let feedItems = []
     let fetched = false
     let debounceTimer = null
-    const DEBOUNCE_DELAY = 300 // ms to wait after typing stops
+    const DEBOUNCE = 250
 
-    // Debounce function - waits for typing to stop before executing
-    function debounce(func, delay) {
-      return function(...args) {
-        if (debounceTimer) clearTimeout(debounceTimer)
-        debounceTimer = setTimeout(() => func.apply(this, args), delay)
-      }
+    const container = document.querySelector('.search-modal-container')
+    const input = document.querySelector('.search-prompt input')
+    const overlay = document.querySelector('.overlay')
+    const ul = document.querySelector('.search-result ul')
+    const loadingEl = document.querySelector('.search-loading')
+    const idleEl = document.querySelector('.search-idle')
+    const emptyEl = document.querySelector('.search-empty')
+    const emptyQuery = document.getElementById('search-empty-query')
+    const resultsHeader = document.querySelector('.search-results-header')
+    const resultCount = document.getElementById('search-result-count')
+    const escHint = document.querySelector('.esc-hint')
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
     }
 
-    // Debounced search function
-    const debouncedSearch = debounce(() => {
-      searchAndRender()
-    }, DEBOUNCE_DELAY)
+    function highlight(text, query) {
+      if (!query || !text) return escapeHtml(text || '')
+      const safe = escapeHtml(text)
+      const escapedQ = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      return safe.replace(new RegExp(escapedQ, 'gi'), '<mark>$&</mark>')
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return ''
+      try {
+        return new Intl.DateTimeFormat('pt', { month: 'short', year: 'numeric' }).format(new Date(dateStr))
+      } catch { return '' }
+    }
+
+    function setState(state) {
+      loadingEl.style.display = state === 'loading' ? 'flex' : 'none'
+      idleEl.style.display = state === 'idle' ? 'flex' : 'none'
+      emptyEl.style.display = state === 'empty' ? 'flex' : 'none'
+      resultsHeader.style.display = state === 'results' ? 'block' : 'none'
+      ul.style.display = state === 'results' ? 'block' : 'none'
+    }
 
     async function openModal() {
-      document.querySelector('.search-modal-container').style.display = 'block'
-      const input = document.querySelector('.search-prompt input')
+      container.style.display = 'block'
       input.focus()
+      input.select()
 
       if (!fetched) {
-        showLoading()
+        setState('loading')
         try {
           await fetchSearchIndex()
-        } catch (error) {
-          showError(searchLoadError)
-        } finally {
-          hideLoading()
+        } catch {
+          setState('empty')
+          if (emptyQuery) emptyQuery.textContent = searchLoadError
+          return
         }
       }
+
       searchAndRender()
-    }
-    
-    function showLoading() {
-      const loading = document.querySelector('.search-loading')
-      const empty = document.querySelector('.search-empty')
-      const ul = document.querySelector('.search-result ul')
-      if (loading) loading.style.display = 'flex'
-      if (empty) empty.style.display = 'none'
-      if (ul) ul.style.display = 'none'
-    }
-    
-    function hideLoading() {
-      const loading = document.querySelector('.search-loading')
-      const ul = document.querySelector('.search-result ul')
-      if (loading) loading.style.display = 'none'
-      if (ul) ul.style.display = 'block'
-    }
-    
-    function showError(message) {
-      const empty = document.querySelector('.search-empty')
-      const ul = document.querySelector('.search-result ul')
-      if (empty) {
-        empty.querySelector('p').textContent = message
-        empty.style.display = 'block'
-      }
-      if (ul) ul.style.display = 'none'
     }
 
     function closeModal() {
-      document.querySelector('.search-modal-container').style.display = 'none'
-      // Clear any pending debounce when closing
+      container.style.display = 'none'
       if (debounceTimer) clearTimeout(debounceTimer)
     }
 
-    function handleKeydown(event) {
-      if (event.keyCode === 13) {
-        // Enter - execute search immediately and select
-        if (debounceTimer) clearTimeout(debounceTimer)
-        searchAndRender()
-        select()
-      } else if (event.keyCode === 27) {
-        // ESC
-        closeModal()
-      } else if (event.keyCode === 38) {
-        // Up
-        selectUp(event)
-      } else if (event.keyCode === 40) {
-        // Down
-        selectDown(event)
-      }
-      // Note: search is now triggered by 'input' event with debouncing, not here
-    }
-    
-    // Handle input changes with debouncing
-    function handleInput() {
-      debouncedSearch()
-    }
-
-    function select() {
-      const a = document.querySelector('.search-result ul > li.selected a')
-      a.click()
-    }
-
-    function selectFirst() {
-      const li = document.querySelector('.search-result ul > li:first-child')
-      if (li) {
-        li.classList.add('selected')
-      }
-    }
-
-    function selectUp(event) {
-      event.preventDefault()
-
-      const ul = document.querySelector('.search-result ul')
-      const selected = ul.querySelector('.selected')
-      if (selected) {
-        selected.classList.remove('selected')
-
-        if (selected.previousElementSibling) {
-          selected.previousElementSibling.classList.add('selected')
-        } else {
-          ul.lastElementChild.classList.add('selected')
-        }
-      } else {
-        ul.lastElementChild.classList.add('selected')
-      }
-    }
-
-    function selectDown(event) {
-      event.preventDefault()
-
-      const ul = document.querySelector('.search-result ul')
-      const selected = ul.querySelector('.selected')
-      if (selected) {
-        selected.classList.remove('selected')
-
-        if (selected.nextElementSibling) {
-          selected.nextElementSibling.classList.add('selected')
-        } else {
-          ul.firstElementChild.classList.add('selected')
-        }
-      } else {
-        ul.firstElementChild.classList.add('selected')
-      }
-    }
-
-    function handleMouseover(event) {
-      Array.from(event.target.closest('ul').children).forEach((element) => {
-        element.classList.remove('selected')
-      })
-      event.target.closest('li').classList.add('selected')
-    }
-
-    function searchAndRender() {
-      const text = document.querySelector('.search-prompt input').value.trim()
-
-      if (text !== '') {
-        const results = search(text)
-        renderResults(results)
-      } else {
-        renderResults(feedItems)
-      }
-
-      selectFirst()
-    }
-
     function search(query) {
-      const results = []
-      const lowerQuery = query.toLowerCase()
+      const q = query.toLowerCase()
+      const scored = []
       feedItems.forEach((item) => {
-        // Case-insensitive search across title, description/excerpt, and full content
-        const titleMatch = item.title?.toLowerCase().includes(lowerQuery)
-        const descMatch = item.description?.toLowerCase().includes(lowerQuery)
-        const contentMatch = item.content?.toLowerCase().includes(lowerQuery)
-        
-        if (titleMatch || descMatch || contentMatch) {
-          results.push(item)
-        }
+        const titleLower = (item.title || '').toLowerCase()
+        const descLower = (item.description || '').toLowerCase()
+        let score = 0
+        if (titleLower.startsWith(q)) score = 3
+        else if (titleLower.includes(q)) score = 2
+        else if (descLower.includes(q)) score = 1
+        if (score > 0) scored.push({ item, score })
       })
-      return results
+      scored.sort((a, b) => b.score - a.score)
+      return scored.map((s) => s.item)
     }
 
-    function renderResults(results) {
-      const ul = document.querySelector('.search-result ul')
-      const empty = document.querySelector('.search-empty')
+    function renderResults(results, query) {
       ul.innerHTML = ''
-      
-      if (results.length === 0) {
-        if (empty) empty.style.display = 'block'
+
+      if (!query) {
+        setState('idle')
         return
       }
-      
-      if (empty) empty.style.display = 'none'
+
+      if (results.length === 0) {
+        setState('empty')
+        if (emptyQuery) emptyQuery.textContent = `"${query}"`
+        return
+      }
+
+      setState('results')
+      if (resultCount) {
+        resultCount.textContent = `${results.length} rezultadu${results.length !== 1 ? 's' : ''}`
+      }
 
       results.forEach((item) => {
         const li = document.createElement('li')
         const a = document.createElement('a')
-        const title = document.createElement('div')
-        const description = document.createElement('div')
-
-        title.classList.add('search-result-title')
-        title.textContent = item.title
-        description.classList.add('search-result-description')
-        description.textContent = item.description
         a.href = item.link
 
-        li.addEventListener('mouseover', handleMouseover)
+        const title = document.createElement('div')
+        title.className = 'result-title'
+        title.innerHTML = highlight(item.title, query)
 
         a.appendChild(title)
-        a.appendChild(description)
+
+        if (item.description) {
+          const excerpt = document.createElement('div')
+          excerpt.className = 'result-excerpt'
+          excerpt.innerHTML = highlight(item.description, query)
+          a.appendChild(excerpt)
+        }
+
+        const meta = document.createElement('div')
+        meta.className = 'result-meta'
+
+        if (item.tags && item.tags.length > 0) {
+          item.tags.slice(0, 3).forEach((tag) => {
+            const chip = document.createElement('span')
+            chip.className = 'result-tag'
+            chip.textContent = tag
+            meta.appendChild(chip)
+          })
+        }
+
+        const date = formatDate(item.pubDate)
+        if (date) {
+          const dateEl = document.createElement('span')
+          dateEl.className = 'result-date'
+          dateEl.textContent = date
+          meta.appendChild(dateEl)
+        }
+
+        if (meta.children.length > 0) a.appendChild(meta)
+
+        li.addEventListener('mouseover', handleMouseover)
         li.appendChild(a)
         ul.appendChild(li)
       })
+
+      selectFirst()
+    }
+
+    function searchAndRender() {
+      const query = input.value.trim()
+      if (!query) {
+        renderResults([], '')
+        return
+      }
+      const results = search(query)
+      renderResults(results, query)
+    }
+
+    function selectFirst() {
+      const first = ul.querySelector('li:first-child')
+      if (first) first.classList.add('selected')
+    }
+
+    function handleMouseover(e) {
+      const li = e.target.closest('li')
+      if (!li) return
+      ul.querySelectorAll('li').forEach((el) => el.classList.remove('selected'))
+      li.classList.add('selected')
+    }
+
+    function handleKeydown(e) {
+      if (!container || container.style.display === 'none') {
+        // Cmd+K / Ctrl+K to open
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault()
+          openModal()
+        }
+        return
+      }
+
+      if (e.key === 'Enter') {
+        if (debounceTimer) clearTimeout(debounceTimer)
+        const selected = ul.querySelector('li.selected a')
+        if (selected) selected.click()
+      } else if (e.key === 'Escape') {
+        closeModal()
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        moveSelection(-1)
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        moveSelection(1)
+      }
+    }
+
+    function moveSelection(dir) {
+      const items = Array.from(ul.querySelectorAll('li'))
+      if (!items.length) return
+      const currentIdx = items.findIndex((li) => li.classList.contains('selected'))
+      items.forEach((li) => li.classList.remove('selected'))
+      let next = currentIdx + dir
+      if (next < 0) next = items.length - 1
+      if (next >= items.length) next = 0
+      items[next]?.classList.add('selected')
+      items[next]?.scrollIntoView({ block: 'nearest' })
     }
 
     async function fetchSearchIndex() {
       const url = new URL(location.href)
       const port = url.port ? `:${url.port}` : ''
-
-      const res = await fetch(
-        `${url.protocol}//${url.hostname}${port}/search-index.json`
-      )
-      if (res.status !== 200) {
-        console.log(res.status)
-        throw new Error('Failed to fetch search index')
-      }
-
+      const res = await fetch(`${url.protocol}//${url.hostname}${port}/search-index.json`)
+      if (!res.ok) throw new Error('fetch failed')
       const items = await res.json()
-
-      items.forEach((item) => {
-        feedItems.push({
-          title: item.title,
-          link: window.location.origin + item.link,
-          description: item.excerpt ?? item.description,
-          content: item.content,
-          pubDate: item.pubDate,
-          tags: item.tags,
-        })
-      })
-
+      feedItems = items.map((item) => ({
+        title: item.title,
+        link: window.location.origin + item.link,
+        description: item.excerpt ?? item.description ?? '',
+        pubDate: item.pubDate,
+        tags: item.tags ?? [],
+      }))
       fetched = true
     }
 
-    Array.from(document.getElementsByClassName('open-search-modal')).forEach(
-      (element) => {
-        element.addEventListener('click', openModal)
-      }
-    )
-    document
-      .getElementsByClassName('overlay')[0]
-      .addEventListener('click', closeModal)
-    
-    // Use 'input' event for debounced search (fires on any text change)
-    const searchInput = document.querySelector('.search-prompt input')
-    if (searchInput) {
-      searchInput.addEventListener('input', handleInput)
-    }
-    
-    // Keydown only handles navigation (Enter, Esc, Up, Down)
+    // Wire up open buttons
+    document.querySelectorAll('.open-search-modal').forEach((el) => {
+      el.addEventListener('click', openModal)
+    })
+
+    overlay.addEventListener('click', closeModal)
+    if (escHint) escHint.addEventListener('click', closeModal)
+
+    input.addEventListener('input', () => {
+      if (debounceTimer) clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(searchAndRender, DEBOUNCE)
+    })
+
     document.addEventListener('keydown', handleKeydown)
+
+    // Show idle state immediately when fetched and input is empty
+    setState('idle')
   })
 </script>

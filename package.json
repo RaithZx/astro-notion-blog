@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "astro dev",
     "start": "node ./dist/server/entry.mjs",
-    "build": "astro build",
-    "build:cached": "npm run cache:fetch && astro build",
+    "build": "npm run strings && astro build",
+    "build:cached": "npm run strings && npm run cache:fetch && astro build",
+    "strings": "node scripts/strings-to-json.cjs",
     "preview": "astro preview",
     "astro": "astro",
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint --ext .js,.ts,.astro src",

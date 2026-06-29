@@ -1,5 +1,5 @@
 {
-  "_translatorReadme": "Ligadu UI copy — single source of truth. Translators: edit string values only; keep keys and {{placeholders}} exactly as-is. Sections: clerk (Clerk auth/profile; {{applicationName}} and other tokens per Clerk docs), app (layout shell, search modal, coming soon, back-to-top, home page, post page, pagination, category archive, no-contents, legal pages). Wired in Layout.astro, SearchModal, ComingSoon, BackToTop, index.astro, [slug].astro, RelatedArticles.astro, LatestPosts.astro, Pagination.astro, CategoryTagMain.astro, NoContents.astro, kontaktu.astro, privasidadi.astro, termus.astro, and src/lib/clerk-localization.mjs.",
+  "_translatorReadme": "Ligadu UI copy — generated from ui-strings.md. DO NOT edit manually — run `npm run strings` instead. Translators: edit ui-strings.md.",
   "clerk": {
     "formFieldLabel__emailAddress": "Email",
     "formFieldLabel__password": "Senha",
@@ -42,8 +42,8 @@
         "actionLink": "Entra"
       },
       "continue": {
-        "subtitle": "Pa kontinua na {{applicationName}}",
         "title": "Prenxe kel ki falta",
+        "subtitle": "Pa kontinua na {{applicationName}}",
         "actionText": "Dja bu ten konta?",
         "actionLink": "Entra"
       }

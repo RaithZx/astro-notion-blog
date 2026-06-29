@@ -7,21 +7,26 @@ import {
   getAllTags,
   getPostCountByTag,
 } from '../../../lib/notion/client.ts'
+import { slugifyTag } from '../../../lib/blog-helpers.ts'
 import Layout from '../../../layouts/Layout.astro'
 import CategoryTagMain from '../../../components/CategoryTagMain.astro'
 import uiStrings from '../../../locales/ui-strings.json'
 
 export async function getStaticPaths() {
   const allTags = await getAllTags()
-  return allTags.map((t: SelectProperty) => ({ params: { tag: t.name } }))
+  return allTags.map((t: SelectProperty) => ({
+    params: { tag: slugifyTag(t.name) },
+    props: { tagName: t.name },
+  }))
 }
 
 const { tag } = Astro.params
+const { tagName } = Astro.props
 
 const [posts, tags, totalInTag] = await Promise.all([
-  getPostsByTag(tag, 9999),
+  getPostsByTag(tagName, 9999),
   getAllTags(),
-  getPostCountByTag(tag),
+  getPostCountByTag(tagName),
 ])
 
 const brand = uiStrings.app.layout.brandName
@@ -29,8 +34,8 @@ const cp = uiStrings.app.categoryPage
 ---
 
 <Layout
-  title={cp.titleTemplate.replace('{{tag}}', tag).replace('{{brand}}', brand)}
-  description={cp.descriptionTemplate.replace('{{tag}}', tag)}
+  title={cp.titleTemplate.replace('{{tag}}', tagName).replace('{{brand}}', brand)}
+  description={cp.descriptionTemplate.replace('{{tag}}', tagName)}
   path={`/posts/tag/${tag}`}
   ogImage=""
   fullWidth={true}
@@ -38,7 +43,7 @@ const cp = uiStrings.app.categoryPage
 >
   <div slot="main" class="w-full min-w-0">
     <CategoryTagMain
-      tag={tag}
+      tag={tagName}
       posts={posts}
       currentPage={1}
       numberOfPages={1}

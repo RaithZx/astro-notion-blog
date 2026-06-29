@@ -8,6 +8,7 @@ import {
   getNumberOfPagesByTag,
   getPostCountByTag,
 } from '../../../../../lib/notion/client.ts'
+import { slugifyTag } from '../../../../../lib/blog-helpers.ts'
 import Layout from '../../../../../layouts/Layout.astro'
 import CategoryTagMain from '../../../../../components/CategoryTagMain.astro'
 import uiStrings from '../../../../../locales/ui-strings.json'
@@ -15,13 +16,16 @@ import uiStrings from '../../../../../locales/ui-strings.json'
 export async function getStaticPaths() {
   const allTags = await getAllTags()
 
-  let params: Array<{ params: { tag: string; page: string } }> = []
+  let params: Array<{ params: { tag: string; page: string }; props: { tagName: string } }> = []
 
   await Promise.all(
     allTags.map((t: SelectProperty) => {
       return getNumberOfPagesByTag(t.name).then((numberOfPages: number) => {
         for (let i = 2; i <= numberOfPages; i++) {
-          params.push({ params: { tag: t.name, page: i.toString() } })
+          params.push({
+            params: { tag: slugifyTag(t.name), page: i.toString() },
+            props: { tagName: t.name },
+          })
         }
       })
     })
@@ -31,22 +35,23 @@ export async function getStaticPaths() {
 }
 
 const { tag, page } = Astro.params
+const { tagName } = Astro.props
 
 const currentPage = parseInt(page, 10)
 const brand = uiStrings.app.layout.brandName
 const cp = uiStrings.app.categoryPage
 
 const [posts, tags, numberOfPages, totalInTag] = await Promise.all([
-  getPostsByTagAndPage(tag, currentPage),
+  getPostsByTagAndPage(tagName, currentPage),
   getAllTags(),
-  getNumberOfPagesByTag(tag),
-  getPostCountByTag(tag),
+  getNumberOfPagesByTag(tagName),
+  getPostCountByTag(tagName),
 ])
 ---
 
 <Layout
-  title={cp.titlePageTemplate.replace('{{tag}}', tag).replace('{{page}}', String(currentPage)).replace('{{brand}}', brand)}
-  description={cp.descriptionTemplate.replace('{{tag}}', tag)}
+  title={cp.titlePageTemplate.replace('{{tag}}', tagName).replace('{{page}}', String(currentPage)).replace('{{brand}}', brand)}
+  description={cp.descriptionTemplate.replace('{{tag}}', tagName)}
   path={`/posts/tag/${tag}/page/${page}`}
   ogImage=""
   fullWidth={true}
@@ -54,7 +59,7 @@ const [posts, tags, numberOfPages, totalInTag] = await Promise.all([
 >
   <div slot="main" class="w-full min-w-0">
     <CategoryTagMain
-      tag={tag}
+      tag={tagName}
       posts={posts}
       currentPage={currentPage}
       numberOfPages={numberOfPages}

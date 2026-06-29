@@ -133,8 +133,19 @@ export const getPostLink = (slug: string) => {
   return pathJoin(BASE_PATH, `/posts/${slug}`)
 }
 
+export const slugifyTag = (tag: string): string =>
+  tag
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'untitled'
+
 export const getTagLink = (tag: string) => {
-  return pathJoin(BASE_PATH, `/posts/tag/${encodeURIComponent(tag)}`)
+  return pathJoin(BASE_PATH, `/posts/tag/${slugifyTag(tag)}`)
 }
 
 export const getPageLink = (page: number, tag: string) => {
@@ -146,7 +157,7 @@ export const getPageLink = (page: number, tag: string) => {
   return tag
     ? pathJoin(
         BASE_PATH,
-        `/posts/tag/${encodeURIComponent(tag)}/page/${page.toString()}`
+        `/posts/tag/${slugifyTag(tag)}/page/${page.toString()}`
       )
     : pathJoin(BASE_PATH, `/posts/page/${page.toString()}`)
 }

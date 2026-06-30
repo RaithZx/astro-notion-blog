@@ -22,7 +22,7 @@
 - action__manageAccount: Kria konta
 - action__openUserMenu: Abri menu
 - action__signOut: Sai
-- action__signOutAll: Sai di tudu kontas
+- action__signOutAll: Sai di tudu konta
 
 ### signIn.start
 - title: Entra
@@ -75,8 +75,8 @@
 
 ### userProfile.start.emailAddressesSection
 - title: Inderésus di email
-- primaryButton: Djunta email
-- destructiveAction: Tra email
+- primaryButton: Djunta bu email
+- destructiveAction: Tra bu email
 - detailsAction__nonPrimary: Skodje kómu prinsipal
 - detailsAction__primary: Konpleta verifikason
 - detailsAction__unverified: Verifika
@@ -112,7 +112,7 @@
 - primaryButton: Liga konta
 - destructiveActionTitle: Tra
 - actionLabel__connectionFailed: Tenta otu bês
-- actionLabel__reauthorize: Autoriza agora
+- actionLabel__reauthorize: Autoriza gósi
 
 ### userProfile.start.activeDevicesSection
 - title: Dispozitivus ativu
@@ -176,10 +176,10 @@
 - footerNewsletterCta: Entra
 - footerCopyright: Tudu direitu rezervadu.
 - footerNavHeading: Navegason
-- footerTopicsHeading: Topikus
-- footerSupportHeading: Apoia-nos
-- footerSupportCta: ☕ Apoia-nos no Buy Me a Coffee
-- drawerSupportCta: ☕ Apoia-nos
+- footerTopicsHeading: Asuntus
+- footerSupportHeading: Apoia-nu
+- footerSupportCta: ☕ Apoia-nu no Buy Me a Coffee
+- drawerSupportCta: ☕ Apoia-nu
 
 ### search
 - placeholder: Piskiza...
@@ -206,16 +206,17 @@
 ### contentGate
 - heading: Entra pa lê artigu kompletu
 - subheading: Djunta Ligadu pa ten aksês grátis a tudu nos artigu i stória.
-- benefit1: Tudu artigu i stória kompletu
-- benefit2: Nobidadis diretamenti na bu email
+- benefit1: Tudu artigu i stória konplétu
+- benefit2: Nobidadis di artigus na bu email
 - benefit3: Siênsia, tekinolojia i saúdi
 - cta: Djunta Ligadu — di grasa
 - hasAccount: Dja ten konta?
 - signIn: Entra
 
 ### backToTop
-- ariaLabel: Volta pa sima
-- title: Volta pa sima
+
+- ariaLabel: Volta pa riba
+- title: Volta pa riba
 
 ### home
 - popularHeading: Más Populár
@@ -225,7 +226,7 @@
 - fikaLigaduBlurb: Artigus di siênsia, tekinolojia i saúdi.
 - fikaLigaduCta: Entra
 - loadMorePosts: Odja más artigu
-- showLessPosts: Ver menus
+- showLessPosts: Odja ménus
 
 ### post
 - readingTimeSuffix: min de leitura
@@ -235,36 +236,37 @@
 - shareCopyLinkAriaLabel: Kopia link
 - relatedHeading: Artigus di Mesmu Tipu
 - viewAllPosts: Odja tudu artigu
-- latestHeading: Kes Ultimu Artigu
+- latestHeading: Kes Ultimu Artigu ki sai
 - viewAll: Odja tudu
 
 ### pagination
-- pageOf: Págin {{current}} di {{total}}
+
+- pageOf: Pájina {{current}} di {{total}}
 - previous: Anterior
-- next: Próximu
-- pageAriaLabel: Págin {{page}}
-- previousAriaLabel: Págin anterior
-- nextAriaLabel: Próximu págin
+- next: Prósimu
+- pageAriaLabel: Pájina {{page}}
+- previousAriaLabel: Pájina anterior
+- nextAriaLabel: Prósimu pájina
 
 ### categoryArchive
 - allLabel: Tudu
-- noPostsAll: Ka tene artigu publicadu inda.
+- noPostsAll: Ka tene artigu publikadu inda.
 - noPostsCategory: Ka tene artigu nesta kategoria inda.
-- viewAllPosts: Odja tudu artigus
+- viewAllPosts: Odja tudu artigu
 - loadMore: Odja más artigu
-- showLess: Ver menus
+- showLess: Odja ménus
 
 ### categoryPage
 - titleTemplate: {{tag}} | {{brand}}
-- titlePageTemplate: {{tag}} | págin {{page}} | {{brand}}
+- titlePageTemplate: {{tag}} | Pájina {{page}} | {{brand}}
 - descriptionTemplate: Artigus di {{tag}}
 
 ### allPostsPage
 - titleAll: Tudu | {{brand}}
-- titlePage: Tudu · págin {{page}} | {{brand}}
+- titlePage: Tudu · Pájina {{page}} | {{brand}}
 
 ### noContents
-- message: Ka tene ninhun sujeston inda
+- message: Ka tene ninhun sujiston inda
 
 ### kontaktu
 - pageTitle: Kontaktu
@@ -277,8 +279,3 @@
 ### termus
 - pageTitle: Régras di uzu
 - pageDescription: Régras di uzu i lisénsa di uzu di site.
-
-### notFound
-- pageTitle: Págin nu inkontra — Ligadu
-- subheading: Nu ka atxa kel pagina li
-- cta: Bai pa inisiu

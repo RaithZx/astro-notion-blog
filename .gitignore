@@ -26,6 +26,9 @@ pnpm-debug.log*
 tmp/
 !tmp/.gitkeep
 
+# social-clips skill output (generated per post, not source)
+social/
+
 public/notion/*
 !public/notion/.gitkeep
 

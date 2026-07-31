@@ -1,0 +1,40 @@
+---
+import type { Post } from '../lib/interfaces.ts'
+import { getPostLink } from '../lib/blog-helpers.ts'
+import PostFeaturedImage from './PostFeaturedImage.astro'
+
+export interface Props {
+  post: Post
+  num: number
+}
+
+const { post, num } = Astro.props
+const numLabel = num.toString().padStart(2, '0')
+---
+
+<a href={getPostLink(post.Slug)} class="group no-underline text-inherit">
+  <div class="rounded-xl overflow-hidden relative aspect-[4/3] bg-surface-container-high">
+    {post.FeaturedImage?.Url && (
+      <div class="absolute inset-0">
+        <PostFeaturedImage post={post} loading="lazy" hoverZoom={true} />
+      </div>
+    )}
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+    <span class="absolute top-4 left-4 font-black font-headline text-5xl leading-none text-white/20 tabular-nums select-none">{numLabel}</span>
+    <div class="absolute bottom-0 left-0 right-0 p-5">
+      {post.Tags?.[0] && (
+        <span class="text-tertiary font-bold text-[10px] uppercase tracking-widest block mb-2">
+          {post.Tags[0].name}
+        </span>
+      )}
+      <h4 class="font-bold text-lg md:text-xl font-headline text-white leading-snug line-clamp-2 group-hover:text-tertiary transition-colors m-0">
+        {post.Title}
+      </h4>
+      {post.Excerpt && (
+        <p class="text-white/70 text-sm leading-snug line-clamp-2 mt-1 m-0">
+          {post.Excerpt}
+        </p>
+      )}
+    </div>
+  </div>
+</a>

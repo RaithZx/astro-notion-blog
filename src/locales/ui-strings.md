@@ -161,6 +161,7 @@
 - ariaCloseMobileMenu: Fitxa menu mobil
 - ariaOpenSearch: Abri piskiza
 - navHome: Inisiu
+- navPosts: Artigus
 - navScience: Siênsia
 - navTech: Tekinolojia
 - navContact: Kontaktu

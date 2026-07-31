@@ -168,6 +168,14 @@ if (database.Icon && database.Icon.Type === 'file') {
         </div>
 
         <div class="flex items-center gap-4 md:gap-6 shrink-0">
+          <a
+            href={getNavLink('/posts/page/1')}
+            class="hidden md:flex items-center gap-1.5 text-on-surface-variant hover:text-primary transition-colors font-medium text-sm no-underline"
+          >
+            <span class="material-symbols-outlined text-xl leading-none" aria-hidden="true">article</span>
+            {app.layout.navPosts}
+          </a>
+
           <button
             class="open-search-modal bg-transparent border-0 text-on-surface-variant hover:text-primary transition-colors p-1.5 rounded-full focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
             aria-label={app.layout.ariaOpenSearch}
@@ -253,6 +261,10 @@ if (database.Icon && database.Icon.Type === 'file') {
           <a href={getNavLink('/')} class="flex items-center gap-3 text-gray-800 no-underline py-2.5 px-3 font-medium rounded-xl hover:bg-gray-50 hover:text-primary transition-colors text-sm">
             <span class="material-symbols-outlined text-lg leading-none text-gray-400" aria-hidden="true">home</span>
             {app.layout.navHome}
+          </a>
+          <a href={getNavLink('/posts/page/1')} class="flex items-center gap-3 text-gray-800 no-underline py-2.5 px-3 font-medium rounded-xl hover:bg-gray-50 hover:text-primary transition-colors text-sm">
+            <span class="material-symbols-outlined text-lg leading-none text-gray-400" aria-hidden="true">article</span>
+            {app.layout.navPosts}
           </a>
           <a href={getNavLink('/kontaktu')} class="flex items-center gap-3 text-gray-800 no-underline py-2.5 px-3 font-medium rounded-xl hover:bg-gray-50 hover:text-primary transition-colors text-sm">
             <span class="material-symbols-outlined text-lg leading-none text-gray-400" aria-hidden="true">mail</span>
@@ -359,6 +371,7 @@ if (database.Icon && database.Icon.Type === 'file') {
           <h4 class="font-bold font-headline mb-6 text-primary">{app.layout.footerNavHeading}</h4>
           <ul class="space-y-4 text-sm">
             <li><a href={getNavLink('/')} class="text-on-background/70 no-underline hover:underline decoration-tertiary decoration-2 underline-offset-4 transition-colors">{app.layout.navHome}</a></li>
+            <li><a href={getNavLink('/posts/page/1')} class="text-on-background/70 no-underline hover:underline decoration-tertiary decoration-2 underline-offset-4 transition-colors">{app.layout.navPosts}</a></li>
             <li><a href={getNavLink('/kontaktu')} class="text-on-background/70 no-underline hover:underline decoration-tertiary decoration-2 underline-offset-4 transition-colors">{app.layout.navContact}</a></li>
             <li><a href="/privasidadi" class="text-on-background/70 no-underline hover:underline decoration-tertiary decoration-2 underline-offset-4 transition-colors">{app.layout.footerPrivacy}</a></li>
             <li><a href="/termus" class="text-on-background/70 no-underline hover:underline decoration-tertiary decoration-2 underline-offset-4 transition-colors" set:html={app.layout.footerTermsInnerHtml}></a></li>

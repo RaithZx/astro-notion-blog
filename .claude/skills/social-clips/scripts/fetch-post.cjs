@@ -47,6 +47,51 @@ function slugFromInput(input) {
   }
 }
 
+// Mirrors _generateSlugFromTitle() in src/lib/notion/client.ts — the site falls
+// back to a slug derived from the title whenever the Notion Slug property is
+// empty, so this script has to do the same to find those posts by URL slug.
+function generateSlugFromTitle(title) {
+  if (!title || title.trim().length === 0) return '';
+  return title
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+async function findPageBySlug(notion, slug) {
+  const directRes = await notion.databases.query({
+    database_id: DATABASE_ID,
+    filter: {
+      property: 'Slug',
+      rich_text: { equals: slug },
+    },
+  });
+  if (directRes.results.length > 0) return directRes.results[0];
+
+  // Fall back: the site generates the slug from the title when the Slug
+  // property is empty, so scan for a title that produces the same slug.
+  let cursor;
+  while (true) {
+    const res = await notion.databases.query({
+      database_id: DATABASE_ID,
+      start_cursor: cursor,
+    });
+    for (const page of res.results) {
+      const title = page.properties.Page?.title
+        ? plainTextFromRichText(page.properties.Page.title)
+        : '';
+      if (generateSlugFromTitle(title) === slug) return page;
+    }
+    if (!res.has_more) return null;
+    cursor = res.next_cursor;
+  }
+}
+
 function plainTextFromRichText(richTextArray) {
   if (!richTextArray) return '';
   return richTextArray.map((rt) => rt.plain_text).join('');
@@ -110,24 +155,18 @@ async function main() {
   const notion = new Client({ auth: NOTION_API_SECRET });
   const slug = slugFromInput(input);
 
-  const queryRes = await notion.databases.query({
-    database_id: DATABASE_ID,
-    filter: {
-      property: 'Slug',
-      rich_text: { equals: slug },
-    },
-  });
+  const page = await findPageBySlug(notion, slug);
 
-  if (queryRes.results.length === 0) {
+  if (!page) {
     console.error(
-      `No page found with Slug = "${slug}" in this database. Note: this does not filter ` +
-        'on Published, so draft/scheduled posts are found too — prepping social artifacts ' +
-        'ahead of publish day is a valid use case.'
+      `No page found with Slug = "${slug}" in this database (checked both the literal Slug ` +
+        'property and titles that would generate this slug). Note: this does not filter on ' +
+        'Published, so draft/scheduled posts are found too — prepping social artifacts ahead ' +
+        'of publish day is a valid use case.'
     );
     process.exit(1);
   }
 
-  const page = queryRes.results[0];
   const props = page.properties;
 
   const title = props.Page?.title ? plainTextFromRichText(props.Page.title) : '';

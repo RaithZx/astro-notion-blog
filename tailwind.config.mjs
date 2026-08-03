@@ -5,104 +5,104 @@ export default {
 	theme: {
     	extend: {
     		colors: {
-    			background: '#f8f9ff',
-    			foreground: '#0b1c30',
+    			background: 'rgb(var(--background) / <alpha-value>)',
+    			foreground: 'rgb(var(--foreground) / <alpha-value>)',
     			card: {
-    				DEFAULT: '#ffffff',
-    				foreground: '#0b1c30'
+    				DEFAULT: 'rgb(var(--card) / <alpha-value>)',
+    				foreground: 'rgb(var(--card-foreground) / <alpha-value>)'
     			},
     			popover: {
-    				DEFAULT: '#ffffff',
-    				foreground: '#0b1c30'
+    				DEFAULT: 'rgb(var(--popover) / <alpha-value>)',
+    				foreground: 'rgb(var(--popover-foreground) / <alpha-value>)'
     			},
     			primary: {
-    				DEFAULT: '#0058be',
-    				foreground: '#ffffff'
+    				DEFAULT: 'rgb(var(--primary) / <alpha-value>)',
+    				foreground: 'rgb(var(--on-primary) / <alpha-value>)'
     			},
     			secondary: {
-    				DEFAULT: '#545f73',
-    				foreground: '#ffffff'
+    				DEFAULT: 'rgb(var(--secondary) / <alpha-value>)',
+    				foreground: 'rgb(var(--on-secondary) / <alpha-value>)'
     			},
     			muted: {
-    				DEFAULT: '#eff4ff',
-    				foreground: '#424754'
+    				DEFAULT: 'rgb(var(--muted) / <alpha-value>)',
+    				foreground: 'rgb(var(--muted-foreground) / <alpha-value>)'
     			},
     			accent: {
-    				DEFAULT: '#e5eeff',
-    				foreground: '#0b1c30'
+    				DEFAULT: 'rgb(var(--accent) / <alpha-value>)',
+    				foreground: 'rgb(var(--accent-foreground) / <alpha-value>)'
     			},
     			destructive: {
-    				DEFAULT: '#ba1a1a',
-    				foreground: '#ffffff'
+    				DEFAULT: 'rgb(var(--error) / <alpha-value>)',
+    				foreground: 'rgb(var(--on-error) / <alpha-value>)'
     			},
-    			border: '#c2c6d6',
-    			input: '#c2c6d6',
-    			ring: '#0058be',
+    			border: 'rgb(var(--border) / <alpha-value>)',
+    			input: 'rgb(var(--input) / <alpha-value>)',
+    			ring: 'rgb(var(--ring) / <alpha-value>)',
 
     			// MD3 surface system
-    			'surface': '#f8f9ff',
-    			'surface-dim': '#cbdbf5',
-    			'surface-bright': '#f8f9ff',
-    			'surface-container-lowest': '#ffffff',
-    			'surface-container-low': '#eff4ff',
-    			'surface-container': '#e5eeff',
-    			'surface-container-high': '#dce9ff',
-    			'surface-container-highest': '#d3e4fe',
-    			'surface-variant': '#d3e4fe',
-    			'surface-tint': '#005ac2',
+    			'surface': 'rgb(var(--surface) / <alpha-value>)',
+    			'surface-dim': 'rgb(var(--surface-dim) / <alpha-value>)',
+    			'surface-bright': 'rgb(var(--surface-bright) / <alpha-value>)',
+    			'surface-container-lowest': 'rgb(var(--surface-container-lowest) / <alpha-value>)',
+    			'surface-container-low': 'rgb(var(--surface-container-low) / <alpha-value>)',
+    			'surface-container': 'rgb(var(--surface-container) / <alpha-value>)',
+    			'surface-container-high': 'rgb(var(--surface-container-high) / <alpha-value>)',
+    			'surface-container-highest': 'rgb(var(--surface-container-highest) / <alpha-value>)',
+    			'surface-variant': 'rgb(var(--surface-variant) / <alpha-value>)',
+    			'surface-tint': 'rgb(var(--surface-tint) / <alpha-value>)',
 
     			// MD3 on-colors
-    			'on-surface': '#0b1c30',
-    			'on-surface-variant': '#424754',
-    			'on-background': '#0b1c30',
-    			'on-primary': '#ffffff',
-    			'on-secondary': '#ffffff',
-    			'on-tertiary': '#ffffff',
-    			'on-error': '#ffffff',
+    			'on-surface': 'rgb(var(--on-surface) / <alpha-value>)',
+    			'on-surface-variant': 'rgb(var(--on-surface-variant) / <alpha-value>)',
+    			'on-background': 'rgb(var(--on-background) / <alpha-value>)',
+    			'on-primary': 'rgb(var(--on-primary) / <alpha-value>)',
+    			'on-secondary': 'rgb(var(--on-secondary) / <alpha-value>)',
+    			'on-tertiary': 'rgb(var(--on-tertiary) / <alpha-value>)',
+    			'on-error': 'rgb(var(--on-error) / <alpha-value>)',
 
     			// MD3 primary containers & fixed
-    			'primary-container': '#2170e4',
-    			'on-primary-container': '#fefcff',
-    			'primary-fixed': '#d8e2ff',
-    			'primary-fixed-dim': '#adc6ff',
-    			'on-primary-fixed': '#001a42',
-    			'on-primary-fixed-variant': '#004395',
+    			'primary-container': 'rgb(var(--primary-container) / <alpha-value>)',
+    			'on-primary-container': 'rgb(var(--on-primary-container) / <alpha-value>)',
+    			'primary-fixed': 'rgb(var(--primary-fixed) / <alpha-value>)',
+    			'primary-fixed-dim': 'rgb(var(--primary-fixed-dim) / <alpha-value>)',
+    			'on-primary-fixed': 'rgb(var(--on-primary-fixed) / <alpha-value>)',
+    			'on-primary-fixed-variant': 'rgb(var(--on-primary-fixed-variant) / <alpha-value>)',
 
     			// MD3 secondary containers & fixed
-    			'secondary-container': '#d5e0f8',
-    			'on-secondary-container': '#586377',
-    			'secondary-fixed': '#d8e3fb',
-    			'secondary-fixed-dim': '#bcc7de',
-    			'on-secondary-fixed': '#111c2d',
-    			'on-secondary-fixed-variant': '#3c475a',
+    			'secondary-container': 'rgb(var(--secondary-container) / <alpha-value>)',
+    			'on-secondary-container': 'rgb(var(--on-secondary-container) / <alpha-value>)',
+    			'secondary-fixed': 'rgb(var(--secondary-fixed) / <alpha-value>)',
+    			'secondary-fixed-dim': 'rgb(var(--secondary-fixed-dim) / <alpha-value>)',
+    			'on-secondary-fixed': 'rgb(var(--on-secondary-fixed) / <alpha-value>)',
+    			'on-secondary-fixed-variant': 'rgb(var(--on-secondary-fixed-variant) / <alpha-value>)',
 
     			// MD3 tertiary system
-    			'tertiary': '#006577',
-    			'tertiary-container': '#008096',
-    			'on-tertiary-container': '#f9fdff',
-    			'tertiary-fixed': '#acedff',
-    			'tertiary-fixed-dim': '#4cd7f6',
-    			'on-tertiary-fixed': '#001f26',
-    			'on-tertiary-fixed-variant': '#004e5c',
+    			'tertiary': 'rgb(var(--tertiary) / <alpha-value>)',
+    			'tertiary-container': 'rgb(var(--tertiary-container) / <alpha-value>)',
+    			'on-tertiary-container': 'rgb(var(--on-tertiary-container) / <alpha-value>)',
+    			'tertiary-fixed': 'rgb(var(--tertiary-fixed) / <alpha-value>)',
+    			'tertiary-fixed-dim': 'rgb(var(--tertiary-fixed-dim) / <alpha-value>)',
+    			'on-tertiary-fixed': 'rgb(var(--on-tertiary-fixed) / <alpha-value>)',
+    			'on-tertiary-fixed-variant': 'rgb(var(--on-tertiary-fixed-variant) / <alpha-value>)',
 
     			// MD3 error system
-    			'error': '#ba1a1a',
-    			'error-container': '#ffdad6',
-    			'on-error-container': '#93000a',
+    			'error': 'rgb(var(--error) / <alpha-value>)',
+    			'error-container': 'rgb(var(--error-container) / <alpha-value>)',
+    			'on-error-container': 'rgb(var(--on-error-container) / <alpha-value>)',
 
     			// MD3 outline & inverse
-    			'outline': '#727785',
-    			'outline-variant': '#c2c6d6',
-    			'inverse-surface': '#213145',
-    			'inverse-on-surface': '#eaf1ff',
-    			'inverse-primary': '#adc6ff',
+    			'outline': 'rgb(var(--outline) / <alpha-value>)',
+    			'outline-variant': 'rgb(var(--outline-variant) / <alpha-value>)',
+    			'inverse-surface': 'rgb(var(--inverse-surface) / <alpha-value>)',
+    			'inverse-on-surface': 'rgb(var(--inverse-on-surface) / <alpha-value>)',
+    			'inverse-primary': 'rgb(var(--inverse-primary) / <alpha-value>)',
 
     			chart: {
-    				'1': '#0058be',
-    				'2': '#006577',
-    				'3': '#213145',
-    				'4': '#2170e4',
-    				'5': '#008096'
+    				'1': 'rgb(var(--chart-1) / <alpha-value>)',
+    				'2': 'rgb(var(--chart-2) / <alpha-value>)',
+    				'3': 'rgb(var(--chart-3) / <alpha-value>)',
+    				'4': 'rgb(var(--chart-4) / <alpha-value>)',
+    				'5': 'rgb(var(--chart-5) / <alpha-value>)'
     			}
     		},
     		fontFamily: {

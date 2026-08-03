@@ -13,6 +13,136 @@
   :root {
     --radius: 0.5rem;
     --ds-ghost-border: rgba(194, 198, 214, 0.15);
+
+    /* Colors below are raw "R G B" channel triples (no # or rgb()) so Tailwind's
+       rgb(var(--x) / <alpha-value>) template in tailwind.config.mjs can apply
+       opacity modifiers like bg-surface/80 or border-outline-variant/20. */
+    --background: 248 249 255;
+    --foreground: 11 28 48;
+    --card: 255 255 255;
+    --card-foreground: 11 28 48;
+    --popover: 255 255 255;
+    --popover-foreground: 11 28 48;
+    --primary: 0 88 190;
+    --secondary: 84 95 115;
+    --muted: 239 244 255;
+    --muted-foreground: 66 71 84;
+    --accent: 229 238 255;
+    --accent-foreground: 11 28 48;
+    --border: 194 198 214;
+    --input: 194 198 214;
+    --ring: 0 88 190;
+
+    /* MD3 surface system */
+    --surface: 248 249 255;
+    --surface-dim: 203 219 245;
+    --surface-bright: 248 249 255;
+    --surface-container-lowest: 255 255 255;
+    --surface-container-low: 239 244 255;
+    --surface-container: 229 238 255;
+    --surface-container-high: 220 233 255;
+    --surface-container-highest: 211 228 254;
+    --surface-variant: 211 228 254;
+    --surface-tint: 0 90 194;
+
+    /* MD3 on-colors */
+    --on-surface: 11 28 48;
+    --on-surface-variant: 66 71 84;
+    --on-background: 11 28 48;
+    --on-primary: 255 255 255;
+    --on-secondary: 255 255 255;
+    --on-tertiary: 255 255 255;
+    --on-error: 255 255 255;
+
+    /* MD3 primary containers & fixed */
+    --primary-container: 33 112 228;
+    --on-primary-container: 254 252 255;
+    --primary-fixed: 216 226 255;
+    --primary-fixed-dim: 173 198 255;
+    --on-primary-fixed: 0 26 66;
+    --on-primary-fixed-variant: 0 67 149;
+
+    /* MD3 secondary containers & fixed */
+    --secondary-container: 213 224 248;
+    --on-secondary-container: 88 99 119;
+    --secondary-fixed: 216 227 251;
+    --secondary-fixed-dim: 188 199 222;
+    --on-secondary-fixed: 17 28 45;
+    --on-secondary-fixed-variant: 60 71 90;
+
+    /* MD3 tertiary system */
+    --tertiary: 0 101 119;
+    --tertiary-container: 0 128 150;
+    --on-tertiary-container: 249 253 255;
+    --tertiary-fixed: 172 237 255;
+    --tertiary-fixed-dim: 76 215 246;
+    --on-tertiary-fixed: 0 31 38;
+    --on-tertiary-fixed-variant: 0 78 92;
+
+    /* MD3 error system */
+    --error: 186 26 26;
+    --error-container: 255 218 214;
+    --on-error-container: 147 0 10;
+
+    /* MD3 outline & inverse */
+    --outline: 114 119 133;
+    --outline-variant: 194 198 214;
+    --inverse-surface: 33 49 69;
+    --inverse-on-surface: 234 241 255;
+    --inverse-primary: 173 198 255;
+
+    --chart-1: 0 88 190;
+    --chart-2: 0 101 119;
+    --chart-3: 33 49 69;
+    --chart-4: 33 112 228;
+    --chart-5: 0 128 150;
+  }
+
+  /*
+   * Dark mode: only the neutral/surface/text hierarchy is redefined here.
+   * Brand colors (primary/secondary/tertiary/error, their "on-*", "-container",
+   * and "-fixed" pairs) stay identical to light mode — they're vivid enough to
+   * read on dark surfaces and keeping them constant avoids re-deriving a second
+   * full MD3 tonal palette without the original Material Theme Builder export.
+   * Dark neutrals derived from on-surface's hue, matched to official MD3 dark
+   * tone percentages (surface=6%, surfaceContainerHighest=22%, onSurface=90%, etc).
+   * inverse-* triplet follows MD3's role-swap rule: dark inverse-* = light's
+   * surface/on-surface/primary values, and vice versa.
+   */
+  .dark {
+    --background: 12 15 19;
+    --foreground: 223 229 236;
+    --card: 23 30 38;
+    --card-foreground: 223 229 236;
+    --popover: 23 30 38;
+    --popover-foreground: 223 229 236;
+    --muted: 19 25 32;
+    --muted-foreground: 192 203 216;
+    --accent: 33 43 54;
+    --accent-foreground: 223 229 236;
+    --border: 58 75 95;
+    --input: 58 75 95;
+
+    --surface: 12 15 19;
+    --surface-dim: 12 15 19;
+    --surface-bright: 47 60 76;
+    --surface-container-lowest: 8 10 13;
+    --surface-container-low: 19 25 32;
+    --surface-container: 23 30 38;
+    --surface-container-high: 33 43 54;
+    --surface-container-highest: 43 55 70;
+    --surface-variant: 33 43 54;
+
+    --on-surface: 223 229 236;
+    --on-surface-variant: 192 203 216;
+    --on-background: 223 229 236;
+
+    --outline: 129 151 177;
+    --outline-variant: 58 75 95;
+
+    --inverse-surface: 234 241 255;
+    --inverse-on-surface: 33 49 69;
+    --inverse-primary: 0 88 190;
   }
 
   .material-symbols-outlined {
@@ -37,7 +167,7 @@
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Space Grotesk', sans-serif;
-    color: #0b1c30;
+    color: rgb(var(--on-surface));
   }
   ::selection {
     @apply bg-tertiary-fixed text-on-tertiary-fixed;

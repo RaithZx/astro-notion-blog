@@ -46,6 +46,11 @@
 - actionText: Dja bu ten konta?
 - actionLink: Entra
 
+### signUp.legalConsent.checkbox
+- label__termsOfServiceAndPrivacyPolicy: [EN placeholder] I accept the {{ termsOfServiceLink || link("Terms of Service") }} and the {{ privacyPolicyLink || link("Privacy Policy") }}
+- label__onlyTermsOfService: [EN placeholder] I accept the {{ termsOfServiceLink || link("Terms of Service") }}
+- label__onlyPrivacyPolicy: [EN placeholder] I accept the {{ privacyPolicyLink || link("Privacy Policy") }}
+
 ### userProfile.navbar
 - title: Konta
 - description: Djobe informason di bu konta.
@@ -160,6 +165,8 @@
 - ariaOpenMobileMenu: Abri menu mobil
 - ariaCloseMobileMenu: Fitxa menu mobil
 - ariaOpenSearch: Abri piskiza
+- ariaToggleDarkModeToDark: [EN placeholder] Switch to dark mode
+- ariaToggleDarkModeToLight: [EN placeholder] Switch to light mode
 - navHome: Inisiu
 - navPosts: Artigus
 - navScience: Siênsia

@@ -385,12 +385,19 @@ const s = uiStrings.app.search
       if (debounceTimer) clearTimeout(debounceTimer)
     }
 
+    function normalizeForSearch(str) {
+      return str
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .toLowerCase()
+    }
+
     function search(query) {
-      const q = query.toLowerCase()
+      const q = normalizeForSearch(query)
       const scored = []
       feedItems.forEach((item) => {
-        const titleLower = (item.title || '').toLowerCase()
-        const descLower = (item.description || '').toLowerCase()
+        const titleLower = normalizeForSearch(item.title || '')
+        const descLower = normalizeForSearch(item.description || '')
         let score = 0
         if (titleLower.startsWith(q)) score = 3
         else if (titleLower.includes(q)) score = 2

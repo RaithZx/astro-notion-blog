@@ -40,7 +40,7 @@ const { block, headings } = Astro.props
 
 <style>
   .to-do {
-    color: #222;
+    color: rgb(var(--on-surface));
     font-weight: 400;
     font-size: 1rem;
     line-height: 1.8rem;
@@ -51,6 +51,6 @@ const { block, headings } = Astro.props
   .to-do > div > input {
   }
   .to-do > div > s {
-    color: var(--accents-3);
+    color: rgb(var(--on-surface-variant));
   }
 </style>

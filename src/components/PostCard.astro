@@ -71,7 +71,7 @@ const label = kicker ?? (post.Tags?.[0]?.name ?? '').toUpperCase()
   <article class="group">
     <a
       href={getPostLink(post.Slug)}
-      class="group flex flex-col sm:flex-row bg-surface-container-lowest hover:bg-surface-container rounded-lg no-underline text-inherit transition-colors ring-1 ring-outline-variant/15 overflow-hidden"
+      class="group flex flex-col sm:flex-row bg-surface-container-lowest hover:bg-surface-container border border-outline-variant/20 hover:border-outline-variant/40 rounded-lg no-underline text-inherit transition-all duration-200 overflow-hidden"
     >
       <div class="relative w-full h-44 sm:w-48 sm:h-auto shrink-0 bg-surface-container-high">
         {image ? (

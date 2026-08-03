@@ -143,6 +143,63 @@
     --inverse-surface: 234 241 255;
     --inverse-on-surface: 33 49 69;
     --inverse-primary: 0 88 190;
+
+    /* text-tertiary is used as plain text (kickers, headings) — the light-mode
+       tertiary (0 101 119) is a dim teal that reads muddy on dark surfaces, so
+       swap it for tertiary-fixed-dim's brighter cyan for legibility. */
+    --tertiary: 76 215 246;
+
+    /* MD3 dark themes swap primary to a lighter tone (used for text/icons/
+       outlines on dark surfaces) and onPrimary to a dark tone, mirroring the
+       surface/on-surface swap above. Without this, every `text-primary` /
+       `border-primary` / `outline-primary` in the app reads as a dim,
+       low-contrast blue on dark backgrounds — this was previously patched
+       one Tailwind class at a time (`dark:text-primary-fixed-dim` etc.)
+       across ~16 files; overriding the token here is the actual fix and
+       makes every current and future `text-primary` usage correct for free.
+       bg-primary + text-on-primary combos (active pagination/tag pills,
+       reading-progress bar) automatically become light-blue-bg/dark-text,
+       which is the correct MD3 dark-theme filled-button look. */
+    --primary: 173 198 255;
+    --on-primary: 0 26 66;
+  }
+
+  /*
+   * Dim mode: lighter "navy" dark variant, layered on top of .dark (still gets
+   * every dark: Tailwind utility) but overrides the near-black neutrals with
+   * lighter navy-toned surfaces. Brand colors (primary/tertiary/on-primary)
+   * stay identical to .dark — they already read fine on a lighter surface.
+   */
+  .dark.dim {
+    --background: 24 32 48;
+    --foreground: 226 232 240;
+    --card: 34 44 64;
+    --card-foreground: 226 232 240;
+    --popover: 34 44 64;
+    --popover-foreground: 226 232 240;
+    --muted: 30 39 56;
+    --muted-foreground: 196 208 224;
+    --accent: 44 56 78;
+    --accent-foreground: 226 232 240;
+    --border: 71 88 115;
+    --input: 71 88 115;
+
+    --surface: 24 32 48;
+    --surface-dim: 24 32 48;
+    --surface-bright: 60 74 99;
+    --surface-container-lowest: 18 25 38;
+    --surface-container-low: 30 39 56;
+    --surface-container: 34 44 64;
+    --surface-container-high: 44 56 78;
+    --surface-container-highest: 54 68 92;
+    --surface-variant: 44 56 78;
+
+    --on-surface: 226 232 240;
+    --on-surface-variant: 196 208 224;
+    --on-background: 226 232 240;
+
+    --outline: 140 160 184;
+    --outline-variant: 71 88 115;
   }
 
   .material-symbols-outlined {
@@ -157,7 +214,11 @@
     white-space: nowrap;
     word-wrap: normal;
     direction: ltr;
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24;
   }
   body {
     @apply bg-surface text-on-surface antialiased;
@@ -165,7 +226,12 @@
     font-size: 1rem;
     line-height: 1.75;
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Space Grotesk', sans-serif;
     color: rgb(var(--on-surface));
   }

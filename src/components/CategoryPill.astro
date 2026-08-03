@@ -1,0 +1,34 @@
+---
+import { getTagLink } from '../lib/blog-helpers.ts'
+import { getCategoryExplorerIconKind } from '../lib/home-category-icons.ts'
+import CategoryExplorerIcon from './CategoryExplorerIcon.astro'
+
+export interface Props {
+  name: string
+  active?: boolean
+  /** Omit or pass false to render a non-link <span> (e.g. read-only tag list) */
+  link?: boolean
+}
+
+const { name, active = false, link = true } = Astro.props
+const iconKind = getCategoryExplorerIconKind(name)
+
+const pillClass = [
+  'shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm no-underline transition-all duration-200 border',
+  active
+    ? 'bg-primary/10 text-primary border-primary/40 font-semibold'
+    : 'font-medium bg-surface-container-lowest border-outline-variant/20 text-on-surface hover:bg-surface-container hover:border-primary/30 hover:text-primary dark:bg-surface-container-high dark:border-outline-variant/40 dark:hover:bg-surface-container-highest',
+].join(' ')
+---
+
+{link ? (
+  <a href={getTagLink(name)} class={pillClass}>
+    <span class="text-primary shrink-0"><CategoryExplorerIcon kind={iconKind} size={16} /></span>
+    {name}
+  </a>
+) : (
+  <span class={pillClass}>
+    <span class="text-primary shrink-0"><CategoryExplorerIcon kind={iconKind} size={16} /></span>
+    {name}
+  </span>
+)}

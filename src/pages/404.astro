@@ -92,7 +92,7 @@ const recentPosts = await getPosts(4)
                   class="flex flex-col gap-1 rounded-xl bg-surface-container-lowest hover:bg-surface-container ring-1 ring-outline-variant/15 px-4 py-3 transition-colors no-underline group"
                 >
                   {post.Tags?.[0] && (
-                    <span class="text-tertiary font-bold text-[10px] uppercase tracking-widest">
+                    <span class="text-tertiary font-bold text-xs uppercase tracking-wide">
                       {post.Tags[0].name}
                     </span>
                   )}

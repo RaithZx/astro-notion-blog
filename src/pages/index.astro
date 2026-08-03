@@ -3,8 +3,7 @@ export const prerender = true
 
 import ImageWithBlur from '../components/ImageWithBlur.astro'
 import PostCard from '../components/PostCard.astro'
-import CategoryExplorerIcon from '../components/CategoryExplorerIcon.astro'
-import { getCategoryExplorerIconKind } from '../lib/home-category-icons.ts'
+import CategoryPill from '../components/CategoryPill.astro'
 import {
   getAllPosts,
   getRankedPosts,
@@ -17,7 +16,7 @@ import NoContents from '../components/NoContents.astro'
 import AdUnit from '../components/AdUnit.astro'
 import PostFeaturedImage from '../components/PostFeaturedImage.astro'
 import PopularFeaturedCard from '../components/PopularFeaturedCard.astro'
-import { getPostLink, getTagLink, getNavLink } from '../lib/blog-helpers.ts'
+import { getPostLink, getNavLink } from '../lib/blog-helpers.ts'
 import { getImageFromNotionUrl } from '../lib/image-helpers.ts'
 import type { Post } from '../lib/interfaces.ts'
 import uiStrings from '../locales/ui-strings.json'
@@ -57,15 +56,6 @@ const LATEST_INITIAL = 8
 const latestPosts = allPostsSlice
   .filter((p) => !heroPost || p.PageId !== heroPost.PageId)
 
-type TagVariant = 'default' | 'tertiary' | 'primary'
-
-function tagCardVariant(name: string): TagVariant {
-  const n = name.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '')
-  if (n.includes('inov')) return 'tertiary'
-  if (n.includes('espasu') || n.includes('space')) return 'primary'
-  return 'default'
-}
-
 const sortedTags = [...tags].sort((a, b) => a.name.localeCompare(b.name, 'kea'))
 ---
 
@@ -85,7 +75,7 @@ const sortedTags = [...tags].sort((a, b) => a.name.localeCompare(b.name, 'kea'))
           <!-- Hero -->
           <div class="py-4 md:py-8">
             <a href={getPostLink(heroPost.Slug)} class="block group no-underline">
-              <div class="rounded-xl overflow-hidden relative h-[420px] md:h-[560px] bg-surface-container-high transition-shadow duration-300 group-hover:shadow-ambient">
+              <div class="rounded-xl overflow-hidden relative aspect-[4/3] sm:aspect-video bg-surface-container-high transition-shadow duration-300 group-hover:shadow-ambient">
                 {heroImage ? (
                   <div class="absolute inset-0 group-hover:scale-105 transition-transform duration-700">
                     <ImageWithBlur
@@ -94,6 +84,7 @@ const sortedTags = [...tags].sort((a, b) => a.name.localeCompare(b.name, 'kea'))
                       width={typeof heroImage === 'string' ? undefined : heroImage.width}
                       height={typeof heroImage === 'string' ? undefined : heroImage.height}
                       loading="eager"
+                      fill
                       class="w-full h-full object-cover"
                     />
                   </div>
@@ -128,39 +119,6 @@ const sortedTags = [...tags].sort((a, b) => a.name.localeCompare(b.name, 'kea'))
             </a>
           </div>
 
-          <!-- Explora pa Kategorias -->
-          {sortedTags.length > 0 && (
-            <div class="flex gap-2 overflow-x-auto py-3 mb-2" style="scrollbar-width: none; -ms-overflow-style: none;">
-              {sortedTags.map((tag) => {
-                const variant = tagCardVariant(tag.name)
-                const iconKind = getCategoryExplorerIconKind(tag.name)
-                return (
-                  <a
-                    href={getTagLink(tag.name)}
-                    class:list={[
-                      'shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium no-underline transition-all duration-200 border',
-                      variant === 'default' &&
-                        'bg-surface-container-lowest border-outline-variant/20 text-on-surface hover:bg-surface-container hover:border-primary/30 hover:text-primary dark:bg-surface-container-high dark:border-outline-variant/40 dark:hover:bg-surface-container-highest dark:hover:border-primary-fixed-dim/40 dark:hover:text-primary-fixed-dim',
-                      variant === 'tertiary' &&
-                        'bg-tertiary-container text-on-tertiary-container border-white/10 hover:brightness-110',
-                      variant === 'primary' &&
-                        'bg-primary-container text-on-primary-container border-white/10 hover:brightness-110',
-                    ]}
-                  >
-                    <span class:list={[
-                      'shrink-0',
-                      variant === 'default' && 'text-primary dark:text-primary-fixed-dim',
-                      variant !== 'default' && 'text-white',
-                    ]}>
-                      <CategoryExplorerIcon kind={iconKind} size={16} />
-                    </span>
-                    {tag.name}
-                  </a>
-                )
-              })}
-            </div>
-          )}
-
           <!-- Mais popular -->
           {popularPosts.length > 0 && (
             <section class="pb-4">
@@ -185,7 +143,7 @@ const sortedTags = [...tags].sort((a, b) => a.name.localeCompare(b.name, 'kea'))
                           </div>
                           <div class="min-w-0 flex-1 px-3 py-2">
                             {post.Tags?.[0] && (
-                              <span class="text-tertiary font-bold text-[10px] uppercase tracking-widest block mb-1">
+                              <span class="text-tertiary font-bold text-xs uppercase tracking-wide block mb-1">
                                 {post.Tags[0].name}
                               </span>
                             )}
@@ -216,6 +174,19 @@ const sortedTags = [...tags].sort((a, b) => a.name.localeCompare(b.name, 'kea'))
 
           <!-- Mid-feed ad -->
           <AdUnit label="Ad — 728×90" format="horizontal" class="my-6" />
+
+          <!-- Explora pa Kategorias -->
+          {sortedTags.length > 0 && (
+            <div class="relative mb-2">
+              <div class="flex gap-2 overflow-x-auto py-3" data-scroll-fade style="scrollbar-width: none; -ms-overflow-style: none;">
+              {sortedTags.map((tag) => (
+                <CategoryPill name={tag.name} />
+              ))}
+              </div>
+              <div class="scroll-fade-left absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-surface to-transparent pointer-events-none opacity-0 transition-opacity" aria-hidden="true" />
+              <div class="scroll-fade-right absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-surface to-transparent pointer-events-none transition-opacity" aria-hidden="true" />
+            </div>
+          )}
 
           <!-- Kes Ultimu Artigu -->
           {latestPosts.length > 0 && (
@@ -291,6 +262,9 @@ const sortedTags = [...tags].sort((a, b) => a.name.localeCompare(b.name, 'kea'))
 </Layout>
 
 <script>
+  import { initScrollFade } from '../lib/scroll-fade-init'
+  initScrollFade()
+
   const btn = document.getElementById('load-more-btn') as HTMLButtonElement | null
   const icon = document.getElementById('load-more-icon')
   const extras = document.querySelectorAll<HTMLElement>('.latest-extra')

@@ -22,3 +22,12 @@ export const ENABLE_LIGHTBOX = import.meta.env.ENABLE_LIGHTBOX
 export const COMING_SOON = import.meta.env.COMING_SOON || process.env.COMING_SOON || 'false'
 export const PUBLIC_ADSENSE_PUBLISHER_ID =
   import.meta.env.PUBLIC_ADSENSE_PUBLISHER_ID ?? process.env.PUBLIC_ADSENSE_PUBLISHER_ID ?? ''
+
+export const RESEND_API_KEY =
+  import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY || ''
+export const RESEND_AUDIENCE_ID =
+  import.meta.env.RESEND_AUDIENCE_ID || process.env.RESEND_AUDIENCE_ID || ''
+export const RESEND_FROM_EMAIL =
+  import.meta.env.RESEND_FROM_EMAIL || process.env.RESEND_FROM_EMAIL || ''
+export const CLERK_WEBHOOK_SECRET =
+  import.meta.env.CLERK_WEBHOOK_SECRET || process.env.CLERK_WEBHOOK_SECRET || ''

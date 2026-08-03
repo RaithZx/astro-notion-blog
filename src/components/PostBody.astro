@@ -14,35 +14,50 @@ const { blocks } = Astro.props
 </div>
 
 <style is:global>
-  /* Editorial measure target: ~70ch at body-lg (1.125rem) — see DESIGN.md §3 */
+  /* Editorial measure target: ~70ch at body-lg — see DESIGN.md §3.
+     Reading distance grows from phone (~12in) to laptop (~20in) to desktop
+     monitor (~24in+) while the column stays a fixed ~44rem measure, so the
+     base size steps up at each breakpoint to hold a comfortable visual
+     angle rather than looking smaller as screens get bigger. Every prose
+     rule below reads off --body-font-size, so this is the single place
+     to retune the whole article's type scale. */
   .article-body {
     max-width: 44rem;
     margin-inline: auto;
     overflow-x: hidden;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    --body-font-size: 1.1875rem; /* 19px: phones + small tablets */
+  }
+  @media (min-width: 640px) {
+    .article-body {
+      --body-font-size: 1.25rem; /* 20px: tablets */
+    }
+  }
+  @media (min-width: 1024px) {
+    .article-body {
+      --body-font-size: 1.3125rem; /* 21px: laptop/desktop */
+    }
   }
   .article-body p {
-    font-size: 1.125rem;
-    line-height: 1.85;
-    color: #424754;
+    font-size: var(--body-font-size);
+    line-height: 1.8;
+    margin: 1.1rem 0;
+    color: rgb(var(--on-surface-variant));
     font-family: 'Lora', Georgia, 'Times New Roman', serif;
   }
-  /* Drop cap on opening paragraph — classic newspaper editorial */
-  .article-body > :first-child p::first-letter {
-    float: left;
-    font-size: 3.75rem;
-    line-height: 0.85;
-    margin-right: 0.1em;
-    margin-top: 0.05em;
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 800;
-    color: #0058be;
+  /* Lora's loaded weights are 400/500/600 — no 700, so browser-default
+     bold (font-weight: bolder -> 700) has no matching file and gets
+     synthesized (faux-bold), which looks uneven/heavier than intended
+     especially at mobile pixel densities. Pin to the real 600 file. */
+  .article-body b,
+  .article-body strong {
+    font-weight: 600;
   }
   .article-body > :first-child p {
-    font-size: 1.2rem;
+    font-size: calc(var(--body-font-size) + 0.0625rem);
     line-height: 1.75;
-    color: #0b1c30;
+    color: rgb(var(--on-surface));
     font-family: 'Lora', Georgia, 'Times New Roman', serif;
   }
   /* Newspaper pull-quote — classic left border, not glass blob */
@@ -53,26 +68,26 @@ const { blocks } = Astro.props
     border-radius: 0;
     margin: 2.5rem 0;
     border: none;
-    border-left: 3px solid #0058be;
+    border-left: 3px solid rgb(var(--primary));
     box-shadow: none;
   }
   .article-body blockquote p {
-    font-size: 1.35rem;
+    font-size: calc(var(--body-font-size) * 1.13);
     font-family: 'Lora', Georgia, serif;
     font-style: italic;
-    color: #424754;
+    color: rgb(var(--on-surface-variant));
     line-height: 1.5;
     font-weight: 500;
   }
   .article-body a {
-    color: #0058be;
+    color: rgb(var(--primary));
     text-decoration: underline;
     text-underline-offset: 3px;
-    text-decoration-color: rgba(0, 88, 190, 0.3);
+    text-decoration-color: rgb(var(--primary) / 0.3);
     transition: text-decoration-color 0.2s;
   }
   .article-body a:hover {
-    text-decoration-color: #0058be;
+    text-decoration-color: rgb(var(--primary));
   }
   .article-body .image-blur-wrapper {
     border-radius: 0.25rem;
@@ -83,9 +98,9 @@ const { blocks } = Astro.props
     margin: 2rem 0;
   }
   .article-body ul, .article-body ol {
-    color: #424754;
-    font-size: 1.1rem;
-    line-height: 1.85;
+    color: rgb(var(--on-surface-variant));
+    font-size: var(--body-font-size);
+    line-height: 1.8;
     font-family: 'Lora', Georgia, serif;
   }
 </style>

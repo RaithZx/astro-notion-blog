@@ -80,8 +80,9 @@ if (database.Icon && database.Icon.Type === 'file') {
       (function () {
         try {
           var stored = localStorage.getItem('ligadu-theme')
-          var isDark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
-          if (isDark) document.documentElement.classList.add('dark')
+          var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          if (theme === 'dark' || theme === 'dim') document.documentElement.classList.add('dark')
+          if (theme === 'dim') document.documentElement.classList.add('dim')
         } catch (e) {}
       })()
     </script>
@@ -198,11 +199,11 @@ if (database.Icon && database.Icon.Type === 'file') {
             class="bg-transparent border-0 text-on-surface-variant hover:text-primary transition-colors p-1.5 rounded-full focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
             aria-label={app.layout.ariaToggleDarkModeToDark}
             data-label-to-dark={app.layout.ariaToggleDarkModeToDark}
+            data-label-to-dim={app.layout.ariaToggleDarkModeToDim}
             data-label-to-light={app.layout.ariaToggleDarkModeToLight}
             type="button"
           >
-            <span class="material-symbols-outlined text-2xl leading-none dark:hidden" aria-hidden="true">dark_mode</span>
-            <span class="material-symbols-outlined text-2xl leading-none hidden dark:inline" aria-hidden="true">light_mode</span>
+            <span id="theme-toggle-icon" class="material-symbols-outlined text-2xl leading-none" aria-hidden="true">dark_mode</span>
           </button>
 
           <div class="ligadu-auth-when-signed-out flex items-center">
@@ -223,8 +224,8 @@ if (database.Icon && database.Icon.Type === 'file') {
       <!-- Category strip -->
       {allTags.length > 0 && showCategoryNav && (
         <div class="border-t border-outline-variant/20 w-full">
-          <div class="max-w-7xl mx-auto px-4 md:px-8">
-            <div class="flex gap-1 overflow-x-auto scrollbar-none py-1.5" style="scrollbar-width: none; -ms-overflow-style: none;">
+          <div class="max-w-7xl mx-auto px-4 md:px-8 relative">
+            <div class="flex gap-1 overflow-x-auto scrollbar-none py-1.5" data-scroll-fade style="scrollbar-width: none; -ms-overflow-style: none;">
               {allTags.map((tag) => (
                 <a
                   href={getTagLink(tag.name)}
@@ -234,6 +235,8 @@ if (database.Icon && database.Icon.Type === 'file') {
                 </a>
               ))}
             </div>
+            <div class="scroll-fade-left absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-surface/80 to-transparent pointer-events-none opacity-0 transition-opacity" aria-hidden="true" />
+            <div class="scroll-fade-right absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-surface/80 to-transparent pointer-events-none transition-opacity" aria-hidden="true" />
           </div>
         </div>
       )}
@@ -339,12 +342,13 @@ if (database.Icon && database.Icon.Type === 'file') {
           <button
             id="theme-toggle-mobile"
             class="w-full flex items-center gap-3 py-2.5 px-3 rounded-xl text-sm font-medium text-on-surface hover:bg-surface-container-low transition-colors border-0 bg-transparent cursor-pointer"
+            data-label-to-dark={app.layout.ariaToggleDarkModeToDark}
+            data-label-to-dim={app.layout.ariaToggleDarkModeToDim}
+            data-label-to-light={app.layout.ariaToggleDarkModeToLight}
             type="button"
           >
-            <span class="material-symbols-outlined text-lg leading-none dark:hidden" aria-hidden="true">dark_mode</span>
-            <span class="material-symbols-outlined text-lg leading-none hidden dark:inline" aria-hidden="true">light_mode</span>
-            <span class="theme-toggle-mobile-label dark:hidden">{app.layout.ariaToggleDarkModeToDark}</span>
-            <span class="theme-toggle-mobile-label hidden dark:inline">{app.layout.ariaToggleDarkModeToLight}</span>
+            <span id="theme-toggle-mobile-icon" class="material-symbols-outlined text-lg leading-none" aria-hidden="true">dark_mode</span>
+            <span id="theme-toggle-mobile-label" class="theme-toggle-mobile-label">{app.layout.ariaToggleDarkModeToDark}</span>
           </button>
         </div>
       </div>
@@ -460,6 +464,9 @@ if (database.Icon && database.Icon.Type === 'file') {
     
     <!-- Mobile Menu & Auth JavaScript -->
     <script>
+      import { initScrollFade } from '../lib/scroll-fade-init'
+      initScrollFade()
+
       document.addEventListener('DOMContentLoaded', function() {
         function waitForClerkLoaded(timeoutMs) {
           return new Promise(function (resolve) {
@@ -551,6 +558,10 @@ if (database.Icon && database.Icon.Type === 'file') {
         mobileCloseButton.addEventListener('click', closeMobileMenu);
         mobileOverlay.addEventListener('click', closeMobileMenu);
 
+        document.querySelectorAll('.open-search-modal').forEach(function(el) {
+          el.addEventListener('click', closeMobileMenu);
+        });
+
         document.addEventListener('keydown', function(e) {
           if (e.key === 'Escape' && !mobileDrawer.classList.contains('-translate-x-full')) {
             closeMobileMenu();
@@ -578,19 +589,42 @@ if (database.Icon && database.Icon.Type === 'file') {
         });
 
         const themeToggle = document.getElementById('theme-toggle');
+        const themeToggleIcon = document.getElementById('theme-toggle-icon');
         const themeToggleMobile = document.getElementById('theme-toggle-mobile');
-        function updateThemeToggleLabel() {
-          var isDark = document.documentElement.classList.contains('dark');
-          if (themeToggle) themeToggle.setAttribute('aria-label', isDark ? themeToggle.dataset.labelToLight : themeToggle.dataset.labelToDark);
+        const themeToggleMobileIcon = document.getElementById('theme-toggle-mobile-icon');
+        const themeToggleMobileLabel = document.getElementById('theme-toggle-mobile-label');
+        const THEME_ORDER = ['light', 'dark', 'dim'];
+        const THEME_ICON = { light: 'dark_mode', dark: 'bedtime', dim: 'light_mode' };
+        function getTheme() {
+          var el = document.documentElement;
+          return el.classList.contains('dim') ? 'dim' : el.classList.contains('dark') ? 'dark' : 'light';
         }
-        function toggleTheme() {
-          var isDark = document.documentElement.classList.toggle('dark');
-          try { localStorage.setItem('ligadu-theme', isDark ? 'dark' : 'light'); } catch (e) {}
-          updateThemeToggleLabel();
+        function applyTheme(theme) {
+          var el = document.documentElement;
+          el.classList.toggle('dark', theme === 'dark' || theme === 'dim');
+          el.classList.toggle('dim', theme === 'dim');
+          try { localStorage.setItem('ligadu-theme', theme); } catch (e) {}
+          updateThemeToggleUI();
         }
-        updateThemeToggleLabel();
-        if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
-        if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+        function updateThemeToggleUI() {
+          var theme = getTheme();
+          var next = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1) % THEME_ORDER.length];
+          var icon = THEME_ICON[theme];
+          var dataKey = 'labelTo' + next.charAt(0).toUpperCase() + next.slice(1);
+          if (themeToggle) {
+            themeToggle.setAttribute('aria-label', themeToggle.dataset[dataKey]);
+          }
+          if (themeToggleIcon) themeToggleIcon.textContent = icon;
+          if (themeToggleMobileIcon) themeToggleMobileIcon.textContent = icon;
+          if (themeToggleMobileLabel && themeToggleMobile) themeToggleMobileLabel.textContent = themeToggleMobile.dataset[dataKey];
+        }
+        function cycleTheme() {
+          var theme = getTheme();
+          applyTheme(THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1) % THEME_ORDER.length]);
+        }
+        updateThemeToggleUI();
+        if (themeToggle) themeToggle.addEventListener('click', cycleTheme);
+        if (themeToggleMobile) themeToggleMobile.addEventListener('click', cycleTheme);
       });
     </script>
 
@@ -900,16 +934,16 @@ if (database.Icon && database.Icon.Type === 'file') {
   figure {
     margin: 0;
     font-size: 0.85rem;
-    color: #999;
+    color: rgb(var(--on-surface-variant));
     line-height: 1.8rem;
   }
 
   a {
-    color: var(--accents-1);
+    color: rgb(var(--primary));
     text-decoration: none;
   }
   a:hover {
-    color: var(--accents-1);
+    color: rgb(var(--primary));
   }
 
   mark {

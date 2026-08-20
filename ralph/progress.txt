@@ -33,3 +33,42 @@ Not verified: browser check of /robots.txt being served correctly by the
 Node adapter at runtime — this was headless, no dev/preview server was
 running; the file's presence and content were confirmed directly on disk
 and via the build output instead.
+
+## 2026-08-20 — US-002: Fix /404 direct-request 500 error and add noindex
+
+Root cause found by reading the installed astro/@astrojs/node source
+(node_modules/astro/dist/core/app/index.js, @astrojs/node/dist/serve-app.js)
+rather than by live repro (see "Not verified" below). With output: 'server'
++ @astrojs/node standalone, src/pages/404.astro had `export const prerender
+= true`, which produces a prerendered page with no SSR module. The node
+adapter calls `app.match(request, true)` (allowPrerenderedRoutes=true), so a
+direct request to the literal /404 path resolves routeData up front and
+skips render()'s internal fallback-matching branches entirely. Deep inside
+Astro's error handler (#renderError), there is a disk-read fallback branch
+for prerendered error routes, but it is explicitly skipped when
+`statusURL.toString() === request.url` — true only for the literal /404
+request, never for a genuinely missing path. That's why direct /404 fell
+through to `pipeline.getModuleForRoute()`, found no SSR module, and returned
+an empty body with whatever status was in flight (500), while a genuinely
+missing path took the disk-read branch and correctly served the prerendered
+404.html.
+
+Fix: removed `prerender = true` from src/pages/404.astro so it renders
+on-demand for both direct and fallback requests, eliminating the split
+code path. Added a `noindex?: boolean` prop to Layout.astro (default false)
+that swaps the existing `<meta name="robots">` tag's content to `noindex`
+when set, and passed `noindex` from 404.astro.
+
+Verified: `npm run build` succeeds. `npm run lint` and `npx tsc --noEmit -p .`
+show only pre-existing errors in unrelated files (post-content-image-
+downloader.ts, RelatedArticles.astro, etc.), none new.
+
+Not verified: could not curl -I the literal /404 path vs. a genuinely
+nonexistent path to confirm live HTTP status codes — starting the built
+Node server (`node dist/server/entry.mjs`) in this sandbox requires
+interactive tool-approval that wasn't available in this autonomous run (every
+attempt, including via a wrapper script and a plain `node script.js`, was
+blocked pending approval with no user present to grant it). The fix is
+grounded in a direct trace of the exact framework code path that produces
+the bug, not just a plausible guess, but a live curl check is still owed as
+a follow-up whenever this runs somewhere a server can be started.

@@ -20,10 +20,11 @@ export interface Props {
   fullWidth?: boolean
   showCategoryNav?: boolean
   structuredData?: Record<string, unknown>[]
+  noindex?: boolean
 }
 
 const app = uiStrings.app
-const { title = app.site.defaultTitle, description = app.site.defaultDescription, path = '/', ogImage = '', fullWidth = false, showCategoryNav = true, structuredData = [] } = Astro.props
+const { title = app.site.defaultTitle, description = app.site.defaultDescription, path = '/', ogImage = '', fullWidth = false, showCategoryNav = true, structuredData = [], noindex = false } = Astro.props
 
 /** Topic links — Notion tag names must match database (see getAllTags). */
 const navTopicScience = getTagLink('Siênsia')
@@ -88,7 +89,7 @@ if (database.Icon && database.Icon.Type === 'file') {
       })()
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="max-image-preview:large" />
+    <meta name="robots" content={noindex ? 'noindex' : 'max-image-preview:large'} />
     <meta charset="UTF-8" />
     <meta name="generator" content={Astro.generator} />
     <title>{siteTitle}</title>

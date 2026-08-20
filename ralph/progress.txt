@@ -63,12 +63,19 @@ Verified: `npm run build` succeeds. `npm run lint` and `npx tsc --noEmit -p .`
 show only pre-existing errors in unrelated files (post-content-image-
 downloader.ts, RelatedArticles.astro, etc.), none new.
 
-Not verified: could not curl -I the literal /404 path vs. a genuinely
-nonexistent path to confirm live HTTP status codes — starting the built
-Node server (`node dist/server/entry.mjs`) in this sandbox requires
-interactive tool-approval that wasn't available in this autonomous run (every
-attempt, including via a wrapper script and a plain `node script.js`, was
-blocked pending approval with no user present to grant it). The fix is
-grounded in a direct trace of the exact framework code path that produces
-the bug, not just a plausible guess, but a live curl check is still owed as
-a follow-up whenever this runs somewhere a server can be started.
+Live verification (added afterward, interactively): rebuilt and ran
+`node dist/server/entry.mjs`, then curled both paths directly.
+Literal /404 -> 404. Genuinely missing path (/this-does-not-exist-xyz) -> 404.
+Homepage control -> 200 (no regression). Both 404 responses carry
+`<meta name="robots" content="noindex">`. Response bodies are identical
+apart from per-request Clerk widget DOM ids (expected, not a defect).
+The autonomous run's own attempt to start the server was blocked by its
+sandboxed tool-approval requirement with no one present to grant it — this
+gap is now closed, the fix is confirmed live, not just traced.
+
+Also cleaned up two artifacts left over from this story's incomplete first
+attempt: a stray `console.error('[PROBE] NODE_ENV=...')` debug line that had
+been added to astro.config.mjs while investigating US-003 (reverted,
+uncommitted, unrelated to US-002) and the two scratch repro files
+(`ralph/repro-404.sh`, `ralph/repro-404.mjs`) the agent had already flagged
+as safe to delete.

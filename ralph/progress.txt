@@ -256,3 +256,20 @@ Verified:
   live page-source check were not performed; the header-override and
   head-tag logic were traced by hand instead. A human should do a quick
   `curl -I` / view-source pass before merge.
+
+## 2026-08-20 — US-009: Add nofollow to outbound support link, fix SocialIcons links
+
+- `src/layouts/Layout.astro`: both Buy Me a Coffee links (mobile drawer ~L357
+  and footer ~L464) now use `rel="nofollow noopener noreferrer"` instead of
+  `rel="noopener noreferrer"`.
+- `src/components/SocialIcons.astro`: LinkedIn `<a>` href changed from `#` to
+  `https://linkedin.com/company/ligadu`; added new Instagram `<a>` (same
+  markup pattern — icon + `aria-label`, `target="_blank"`,
+  `rel="noopener noreferrer"`) linking to the canonical
+  `https://www.instagram.com/ligadu.cv/` with no tracking params.
+- Verified via `npm run lint` and `npx tsc --noEmit -p .`: no errors in either
+  changed file; all reported errors are pre-existing, in untouched files/lines
+  (confirmed via `git diff --stat` on the two changed files).
+- No dev server running in this headless session, so the footer visual/link
+  check was not performed live. A human should confirm in-browser that both
+  icons render in the footer and that neither link still points to `#`.

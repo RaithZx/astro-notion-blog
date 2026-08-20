@@ -10,8 +10,8 @@
       "acceptanceCriteria": [
         "Install @astrojs/sitemap and add it to astro.config.mjs",
         "customPages is populated at config-evaluation time from getAllPosts() (src/lib/notion/client.ts) + getPostLink() (src/lib/blog-helpers.ts), producing full URLs against the existing getSite() result - the integration's default auto-discovery will NOT find these since posts/[slug].astro is on-demand SSR with no getStaticPaths",
-        "customPages includes: homepage, every post URL, and tag URLs for exactly these 5 tags via getTagLink(): Notísias, Saúdi, Siênsia, Stórias, Tekinolojia",
-        "customPages explicitly excludes tag URLs for Natureza and Stória di Mundu (2 posts each, deliberately thin - do not add them)",
+        "customPages includes: homepage, every post URL, and tag URLs for exactly these 5 tags via getTagLink(): Not\u00edsias, Sa\u00fadi, Si\u00eansia, St\u00f3rias, Tekinolojia",
+        "customPages explicitly excludes tag URLs for Natureza and St\u00f3ria di Mundu (2 posts each, deliberately thin - do not add them)",
         "customPages includes kontaktu, privasidadi, and termus static pages",
         "No paginated routes (/posts/page/*, /posts/tag/*/page/*) appear anywhere in the generated sitemap output",
         "If getAllPosts() throws or returns empty during config evaluation, log a build warning and fall back to customPages: [] rather than failing the build",
@@ -21,7 +21,7 @@
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Installed @astrojs/sitemap; astro.config.mjs now builds customPages at config-eval time from getAllPosts()+getPostLink()/getTagLink() (5 non-thin tags only) + kontaktu/privasidadi/termus, with a try/catch fallback to [] and a filter restricting the final sitemap strictly to that URL set (so prerendered paginated/thin-tag routes can't leak in via auto-discovery). Added public/robots.txt with Sitemap: pointing at sitemap-index.xml. Verified via npm run build: dist/client/sitemap-index.xml + sitemap-0.xml contain exactly homepage, all 32 posts, the 5 approved tag pages, and the 3 static pages - no pagination, no Natureza/Stória di Mundu. npm run lint and npx tsc --noEmit -p . show only pre-existing errors, none new."
+      "notes": "Installed @astrojs/sitemap; astro.config.mjs now builds customPages at config-eval time from getAllPosts()+getPostLink()/getTagLink() (5 non-thin tags only) + kontaktu/privasidadi/termus, with a try/catch fallback to [] and a filter restricting the final sitemap strictly to that URL set (so prerendered paginated/thin-tag routes can't leak in via auto-discovery). Added public/robots.txt with Sitemap: pointing at sitemap-index.xml. Verified via npm run build: dist/client/sitemap-index.xml + sitemap-0.xml contain exactly homepage, all 32 posts, the 5 approved tag pages, and the 3 static pages - no pagination, no Natureza/St\u00f3ria di Mundu. npm run lint and npx tsc --noEmit -p . show only pre-existing errors, none new."
     },
     {
       "id": "US-002",
@@ -142,8 +142,8 @@
         "Typecheck passes"
       ],
       "priority": 9,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Added rel=nofollow to both Buy Me a Coffee links in Layout.astro, fixed LinkedIn href in SocialIcons.astro, added new Instagram icon linking https://www.instagram.com/ligadu.cv/. Verified via npm run lint and npx tsc --noEmit -p . (no new errors vs baseline); browser check not run (no dev server in this headless context)."
     },
     {
       "id": "US-010",

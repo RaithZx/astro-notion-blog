@@ -1,0 +1,35 @@
+# Ralph Progress Log — ralph/seo-remediation
+
+Source PRD: docs/prd/0001-seo-remediation.md
+Implementation plan: docs/prd/0001-seo-remediation-implementation-plan.md
+
+## 2026-08-20 — US-001: Add sitemap.xml and robots.txt
+
+Installed @astrojs/sitemap and wired it into astro.config.mjs with a
+top-level-await `customPages` builder that pulls posts from getAllPosts()
+and builds URLs via getPostLink()/getTagLink() (limited to the 5 non-thin
+tags: Notísias, Saúdi, Siênsia, Stórias, Tekinolojia) plus the static pages
+kontaktu/privasidadi/termus and the homepage. Wrapped in try/catch so a
+getAllPosts() failure or empty result logs a warning and falls back to an
+empty customPages instead of failing the build. Because @astrojs/sitemap's
+`filter` option applies to auto-discovered URLs too (not just customPages),
+set filter to restrict the final sitemap strictly to the built customPages
+set — this is what actually keeps the prerendered paginated routes
+(/posts/page/*, /posts/tag/*/page/*) and the excluded thin tag pages
+(Natureza, Stória di Mundu) out of the output, since those routes are
+statically prerendered and would otherwise be auto-discovered.
+
+Added public/robots.txt with `User-agent: *`, `Allow: /`, and a `Sitemap:`
+line pointing at sitemap-index.xml (confirmed exact filename by building).
+
+Verified: `npm run build` succeeds; inspected dist/client/sitemap-index.xml
+and dist/client/sitemap-0.xml directly — contains exactly the homepage, all
+32 published posts, the 5 approved tag pages, and the 3 static pages, with
+no paginated routes and no Natureza/Stória di Mundu tag URLs. `npm run lint`
+and `npx tsc --noEmit -p .` both show only pre-existing errors unrelated to
+this change (none in astro.config.mjs or public/robots.txt).
+
+Not verified: browser check of /robots.txt being served correctly by the
+Node adapter at runtime — this was headless, no dev/preview server was
+running; the file's presence and content were confirmed directly on disk
+and via the build output instead.

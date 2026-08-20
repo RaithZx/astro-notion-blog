@@ -26,11 +26,11 @@ export interface Props {
 const app = uiStrings.app
 const { title = app.site.defaultTitle, description = app.site.defaultDescription, path = '/', ogImage = '', fullWidth = false, showCategoryNav = true, structuredData = [], noindex = false } = Astro.props
 
+const SITE_NAME = 'Ligadu'
+
 /** Topic links — Notion tag names must match database (see getAllTags). */
 const navTopicScience = getTagLink('Siênsia')
 const navTopicTech = getTagLink('Tekinolojia')
-const navTopicInnovation = '#'
-const navTopicSpace = '#'
 
 
 // Check if we should show the coming soon page
@@ -121,7 +121,7 @@ const allStructuredData = [organizationSchema, websiteSchema, ...structuredData]
     <meta property="og:url" content={siteURL} />
     <meta property="og:title" content={siteTitle} />
     <meta property="og:description" content={siteDescription} />
-    <meta property="og:site_name" content={database.Title} />
+    <meta property="og:site_name" content={SITE_NAME} />
     <meta property="og:image" content={ogImage || siteOGImage} />
     <meta name="twitter:title" content={siteTitle} />
     <meta name="twitter:description" content={siteDescription} />

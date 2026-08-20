@@ -172,3 +172,25 @@ Verified:
   code inspection only (both consume the same `breadcrumbItems` array) —
   not a live browser check. Recommend a quick visual spot-check on a post
   with 0 tags and a post with tags before shipping.
+
+## 2026-08-20 — US-006: Fix og:site_name and remove dead nav variables
+
+- Added `const SITE_NAME = 'Ligadu'` near top of `Layout.astro` frontmatter
+  and pointed `<meta property="og:site_name">` at it (was `database.Title`,
+  the raw Notion DB title, which resolves to "Posts").
+- Deleted the unused `navTopicInnovation` and `navTopicSpace` variables
+  (both were `'#'` placeholders never referenced elsewhere) after
+  confirming via `grep -rn` across `src/` that nothing else used them.
+
+Verified:
+- `npm run lint` — went from 18 to 16 pre-existing errors; the two
+  `navTopicInnovation`/`navTopicSpace` "assigned a value but never used"
+  errors are gone, no new errors introduced (confirmed by diffing lint
+  output against a `git stash` baseline of the same commit).
+- `npx tsc --noEmit -p .` — same 7 pre-existing errors, all in
+  `src/integrations/post-content-image-downloader.ts` (unrelated, untouched
+  file); no new errors.
+- No dev server was started in this headless session, so the "og:site_name
+  meta tag on any built page reads 'Ligadu'" criterion was verified by
+  reading the rendered frontmatter/template source rather than a live
+  browser check.

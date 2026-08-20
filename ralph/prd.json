@@ -97,8 +97,8 @@
         "Typecheck passes"
       ],
       "priority": 6,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Added SITE_NAME=\"Ligadu\" const near top of Layout.astro frontmatter, used it for og:site_name (was database.Title, resolving to \"Posts\"); deleted unused navTopicInnovation/navTopicSpace after confirming via grep they were referenced nowhere else. Verified: npm run lint no longer reports the two unused-var errors for those vars (16 errors now vs 18 pre-existing on main, no new ones); npx tsc --noEmit -p . shows only pre-existing unrelated errors in post-content-image-downloader.ts. Did not run a dev server/browser check in this headless context; confirmed correctness by reading the rendered meta tag source."
     },
     {
       "id": "US-007",

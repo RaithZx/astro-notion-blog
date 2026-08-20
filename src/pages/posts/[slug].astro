@@ -102,7 +102,43 @@ function collectByWords(source: Block[], wordLimit: number, excerpt: string, acc
   return acc
 }
 
+function blockContainsEquation(block: Block): boolean {
+  if (block.Type === 'equation') return true
+  const richTexts =
+    block.Paragraph?.RichTexts ??
+    block.Heading1?.RichTexts ??
+    block.Heading2?.RichTexts ??
+    block.Heading3?.RichTexts ??
+    block.Quote?.RichTexts ??
+    block.BulletedListItem?.RichTexts ??
+    block.NumberedListItem?.RichTexts ??
+    block.ToDo?.RichTexts ??
+    block.Callout?.RichTexts ??
+    []
+  return richTexts.some((rt) => !!rt.Equation)
+}
+
+function hasEquationBlock(source: Block[]): boolean {
+  return source.some((block) => {
+    if (blockContainsEquation(block)) return true
+    if (block.Type === 'column_list' && block.ColumnList) {
+      return block.ColumnList.Columns.some((col) => hasEquationBlock(col.Children))
+    }
+    if (block.Type === 'synced_block' && block.SyncedBlock?.Children) {
+      return hasEquationBlock(block.SyncedBlock.Children)
+    }
+    if (block.Type === 'toggle' && block.Toggle?.Children) {
+      return hasEquationBlock(block.Toggle.Children)
+    }
+    if (block.Type === 'callout' && block.Callout?.Children) {
+      return hasEquationBlock(block.Callout.Children)
+    }
+    return false
+  })
+}
+
 const totalWords = countTotalWords(blocks)
+const hasMath = hasEquationBlock(blocks)
 const previewWordLimit = Math.max(100, Math.floor(totalWords * 0.2))
 const previewBlocks = showFullContent ? [] : collectByWords(blocks, previewWordLimit, post.Excerpt).collected
 
@@ -199,6 +235,7 @@ const breadcrumbSchema = {
   ogImage={ogImage}
   fullWidth={true}
   structuredData={[articleSchema, breadcrumbSchema]}
+  hasMath={hasMath}
 >
   <div slot="main">
     <!-- Reading progress bar -->

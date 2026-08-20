@@ -159,8 +159,8 @@
         "Typecheck passes"
       ],
       "priority": 10,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "In src/pages/posts/[slug].astro added hasEquationBlock() (mirrors the collectByWords traversal already in the file: column_list/synced_block/toggle/callout recursion) detecting both block-level 'equation' Type and inline richText.Equation on any RichTexts-bearing block, passed as a new hasMath prop to Layout.astro, which now wraps the KaTeX <link> in {hasMath && (...)} defaulting to false. Verified: npm run lint (16 pre-existing errors, none new) and npx tsc --noEmit -p . (same pre-existing errors in post-content-image-downloader.ts, none new); ran a full production build (ALLOW_LOCALHOST_SITE_URL=true) and live node server, curl-checked several real posts plus the homepage - none request katex.min.css (site currently has no post with an actual equation block, so the true-math-renders-correctly path could not be exercised live); confirmed the detection function's logic directly with a standalone Node script covering top-level equation blocks, inline equation rich text, and equations nested in toggle/callout/column_list, all correctly detected."
     }
   ]
 }

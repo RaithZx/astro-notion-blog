@@ -273,3 +273,27 @@ Verified:
 - No dev server running in this headless session, so the footer visual/link
   check was not performed live. A human should confirm in-browser that both
   icons render in the footer and that neither link still points to `#`.
+
+## 2026-08-20 — US-010: Load KaTeX CSS only on posts containing an equation block
+
+- `src/pages/posts/[slug].astro`: added `blockContainsEquation()` +
+  `hasEquationBlock()`, walking the post's block tree with the same
+  recursion shape already used by `collectByWords()` (column_list,
+  synced_block, toggle, callout), detecting both a block-level `equation`
+  Type and inline `richText.Equation` on any RichTexts-bearing block type.
+  Result passed to `Layout` as a new `hasMath` prop.
+- `src/layouts/Layout.astro`: added `hasMath?: boolean` (default `false`) to
+  `Props`, wrapped the KaTeX `<link rel="stylesheet">` in `{hasMath && (...)}`
+  so every other page type (homepage, tag pages, static pages, math-free
+  posts) no longer requests it.
+- Verified: `npm run lint` (16 pre-existing errors, none new) and
+  `npx tsc --noEmit -p .` (same pre-existing errors in
+  `post-content-image-downloader.ts`, none new). Ran a full production build
+  (`ALLOW_LOCALHOST_SITE_URL=true npm run build`) and a live local node
+  server; curl-checked the homepage and several real posts — none request
+  `katex.min.css`. The site currently has no post containing an actual
+  equation block, so the true/math-renders path could not be exercised live;
+  verified the detection logic itself with a standalone Node script covering
+  a top-level equation block, an inline equation in rich text, and equations
+  nested inside toggle/callout/column_list, all correctly detected as `true`,
+  and plain text correctly detected as `false`.

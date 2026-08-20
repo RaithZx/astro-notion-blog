@@ -33,7 +33,7 @@ export default (): AstroIntegration => ({
         fs.mkdirSync(outDir, { recursive: true })
       }
 
-      copyFiles('public/notion', outDir)
+      copyFiles('src/assets/notion', outDir)
       console.log('Finished copying notion files to root!')
     },
   },

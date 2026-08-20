@@ -1,5 +1,4 @@
 # Ligadu UI Strings
-<!-- Translators: edit values only. Keep keys, {{placeholders}}, and HTML tags exactly as-is. Run `npm run strings` after saving to regenerate ui-strings.json. -->
 
 ## clerk
 - formFieldLabel__emailAddress: Email
@@ -47,9 +46,9 @@
 - actionLink: Entra
 
 ### signUp.legalConsent.checkbox
-- label__termsOfServiceAndPrivacyPolicy: [EN placeholder] I accept the {{ termsOfServiceLink || link("Terms of Service") }} and the {{ privacyPolicyLink || link("Privacy Policy") }}
-- label__onlyTermsOfService: [EN placeholder] I accept the {{ termsOfServiceLink || link("Terms of Service") }}
-- label__onlyPrivacyPolicy: [EN placeholder] I accept the {{ privacyPolicyLink || link("Privacy Policy") }}
+- label__termsOfServiceAndPrivacyPolicy: [] N konkorda ku {{ termsOfServiceLink || link(“Terms of Service”) }} i kes {{ privacyPolicyLink || link(“Privacy Policy”) }}
+- label__onlyTermsOfService: [] N konkorda ku {{ termsOfServiceLink || link(“Terms of Service”) }}
+- label__onlyPrivacyPolicy: [] N konkorda ku {{ privacyPolicyLink || link(“Privacy Policy”) }}
 
 ### userProfile.navbar
 - title: Konta
@@ -165,15 +164,15 @@
 - ariaOpenMobileMenu: Abri menu mobil
 - ariaCloseMobileMenu: Fitxa menu mobil
 - ariaOpenSearch: Abri piskiza
-- ariaToggleDarkModeToDark: [EN placeholder] Switch to dark mode
-- ariaToggleDarkModeToDim: [EN placeholder] Switch to navy dark mode
-- ariaToggleDarkModeToLight: [EN placeholder] Switch to light mode
+- ariaToggleDarkModeToDark: Troka pa modu sukuru
+- ariaToggleDarkModeToDim: Troka pa modu azul sukuru
+- ariaToggleDarkModeToLight: Troka pa modu klaru
 - navHome: Inisiu
 - navPosts: Artigus
 - navScience: Siênsia
 - navTech: Tekinolojia
 - navContact: Kontaktu
-- searchShort: Piskiza...
+- searchShort: Piskiza…
 - authSignIn: Entra
 - footerBrandLogoAlt: Ligadu Logo
 - footerBrandBlurb: Artigus di siênsia, tekinolojia i saúdi.
@@ -191,21 +190,21 @@
 - drawerSupportCta: ☕ Apoia-nu
 
 ### search
-- placeholder: Piskiza...
+- placeholder: Piskiza…
 - ariaLabel: Piskiza
 - hintNavigate: Naviga
 - hintOpen: Abri
 - hintClose: Fitxa
-- loading: Ta karega...
+- loading: Ta karega…
 - empty: Nenhun rezultadu inkontradu.
 - loadError: Éru timenti dadus staba ta karega.
 - idleTitle: Piskiza artiklu
-- idleSub: Poi un palaura pa komeça
+- idleSub: Poi un palavra pa kumesa
 
 ### comingSoon
 - logoAlt: Ligadu Logo
 - heading: Artigus di siênsia, tekinolojia i saúdi
-- subheading: Ta sai dja!...
+- subheading: Ta sai dja!…
 - signupDescription: Inskreve i resebe nobidadis!
 - emailPlaceholder: nomi di konta@email.com
 - emailAriaLabel: Email address

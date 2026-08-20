@@ -109,3 +109,32 @@ Verified live, not just by reading code:
 errors in unrelated files as before this change (navTopicInnovation/
 navTopicSpace in Layout.astro, post-content-image-downloader.ts, etc.),
 none new.
+
+---
+2026-08-20 — US-004: Add Organization and WebSite JSON-LD sitewide
+
+Added Organization and WebSite JSON-LD objects directly in
+src/layouts/Layout.astro (built from Astro.site, database logo image URL,
+and the sameAs LinkedIn/Instagram URLs from the PRD's Decision 10). Merged
+both into a new `allStructuredData` array alongside the existing
+`structuredData` prop (unchanged prop name/shape) so page-specific schema —
+e.g. the Article schema passed from posts/[slug].astro — still renders too,
+now with Organization/WebSite prepended.
+
+Verified live:
+- `ALLOW_LOCALHOST_SITE_URL=true npm run build` completes successfully.
+- Parsed dist/client/index.html's two `application/ld+json` blocks with
+  Python's json.loads — both are well-formed and are exactly Organization
+  (name, url, logo, sameAs) and WebSite (name, url); no Article block on
+  the homepage since posts/[slug].astro doesn't run there, confirming nothing
+  else changed on that route.
+- Confirmed posts/[slug].astro still passes `structuredData={[articleSchema]}`
+  unchanged — new code only prepends to that array, never replaces it.
+- `npm run lint` and `npx tsc --noEmit -p .` show the same pre-existing
+  errors as on a clean stash of this change (18 lint errors in unrelated
+  files, 7 tsc errors in post-content-image-downloader.ts) — no new errors.
+
+Note: production `url` values resolve against CUSTOM_DOMAIN at build time
+(unset locally, so this verification build shows http://localhost:4321/ —
+expected per US-003's guard); on Coolify with CUSTOM_DOMAIN=ligadu.com set,
+url will correctly be https://ligadu.com/.

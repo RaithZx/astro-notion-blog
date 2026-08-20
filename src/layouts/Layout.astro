@@ -73,6 +73,24 @@ if (database.Icon && database.Icon.Type === 'file') {
     console.log('Invalid DB custom icon URL: ', (database.Icon as any)?.Url)
   }
 }
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Ligadu',
+  url: Astro.site,
+  logo: siteOGImage.toString(),
+  sameAs: ['https://linkedin.com/company/ligadu', 'https://www.instagram.com/ligadu.cv/'],
+}
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Ligadu',
+  url: Astro.site,
+}
+
+const allStructuredData = [organizationSchema, websiteSchema, ...structuredData]
 ---
 
 <!DOCTYPE html>
@@ -139,7 +157,7 @@ if (database.Icon && database.Icon.Type === 'file') {
         crossorigin="anonymous"
       ></script>
     )}
-    {structuredData.map((entry) => (
+    {allStructuredData.map((entry) => (
       <script type="application/ld+json" set:html={JSON.stringify(entry)} />
     ))}
   </head>

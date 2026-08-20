@@ -50,8 +50,8 @@
         "Typecheck passes"
       ],
       "priority": 3,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "In astro.config.mjs's getSite(), added a throw before the localhost:4321 fallback, gated on process.env.NODE_ENV === 'production' (empirically confirmed via a temporary debug log: astro build sets NODE_ENV=production, astro dev sets development, at config-evaluation time - import.meta.env.PROD is not usable this early) with an ALLOW_LOCALHOST_SITE_URL opt-out for legitimate local test builds, per the PRD's flagged risk that plain local `npm run build` (no CUSTOM_DOMAIN set, as used to verify US-001/US-002) is a real workflow. Verified live: `npm run dev` with no env vars starts cleanly; `npm run build` with no CUSTOM_DOMAIN/VERCEL_URL/CF_PAGES_URL throws the clear error and fails the build; `CUSTOM_DOMAIN=ligadu.com npm run build` succeeds normally. npm run lint and npx tsc --noEmit -p . show only pre-existing errors in unrelated files, none new."
     },
     {
       "id": "US-004",

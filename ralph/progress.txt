@@ -79,3 +79,33 @@ been added to astro.config.mjs while investigating US-003 (reverted,
 uncommitted, unrelated to US-002) and the two scratch repro files
 (`ralph/repro-404.sh`, `ralph/repro-404.mjs`) the agent had already flagged
 as safe to delete.
+
+## 2026-08-20 — US-003: Guard CUSTOM_DOMAIN localhost fallback at production build time
+
+Confirmed empirically (temporary debug log, then removed) that `astro build`
+sets `process.env.NODE_ENV = 'production'` and `astro dev` sets
+`'development'` at config-evaluation time, so `NODE_ENV` is the reliable
+signal to gate on (`import.meta.env.PROD` is not populated this early).
+
+In astro.config.mjs's getSite(), added a throw right before the
+`http://localhost:4321` fallback: if none of CUSTOM_DOMAIN, VERCEL_URL, or
+CF_PAGES_URL are set AND `NODE_ENV === 'production'`, throw a clear error
+naming all three vars and how to fix it (set CUSTOM_DOMAIN, e.g. in
+Coolify). Also confirmed via `.env` and prior stories' notes that plain
+local `npm run build` with no CUSTOM_DOMAIN set is a real, established local
+workflow (used to verify US-001 and US-002) - exactly the risk flagged in
+the PRD's Risks section - so added an `ALLOW_LOCALHOST_SITE_URL` opt-out env
+var for that case. It defaults unset, so it doesn't weaken the guard for
+real production builds or violate any acceptance criterion.
+
+Verified live, not just by reading code:
+- `npm run dev` with no env vars set starts cleanly, no throw.
+- `npm run build` with no CUSTOM_DOMAIN/VERCEL_URL/CF_PAGES_URL set fails
+  loudly with the new error message and does not produce a build.
+- `CUSTOM_DOMAIN=ligadu.com npm run build` completes normally (exit 0,
+  sitemap-index.xml generated).
+
+`npm run lint` and `npx tsc --noEmit -p .` show only the same pre-existing
+errors in unrelated files as before this change (navTopicInnovation/
+navTopicSpace in Layout.astro, post-content-image-downloader.ts, etc.),
+none new.

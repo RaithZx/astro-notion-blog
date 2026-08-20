@@ -66,6 +66,18 @@ const getSite = function () {
     ).toString();
   }
 
+  // `astro build` sets NODE_ENV=production at config-evaluation time (confirmed
+  // empirically; import.meta.env.PROD is not populated this early). Silently
+  // falling back to localhost in a production build would ship canonical/OG/RSS
+  // URLs pointing nowhere real, so fail loudly instead - unless explicitly
+  // opted out for a local test build via ALLOW_LOCALHOST_SITE_URL.
+  if (process.env.NODE_ENV === 'production' && !process.env.ALLOW_LOCALHOST_SITE_URL) {
+    throw new Error(
+      'No site URL configured for this production build: none of CUSTOM_DOMAIN, VERCEL_URL, or CF_PAGES_URL are set. ' +
+        'Set CUSTOM_DOMAIN in the environment (e.g. in Coolify), or set ALLOW_LOCALHOST_SITE_URL=true to explicitly allow a local test build to fall back to http://localhost:4321.'
+    );
+  }
+
   return new URL(BASE_PATH, 'http://localhost:4321').toString();
 };
 

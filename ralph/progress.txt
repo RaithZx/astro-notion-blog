@@ -138,3 +138,37 @@ Note: production `url` values resolve against CUSTOM_DOMAIN at build time
 (unset locally, so this verification build shows http://localhost:4321/ —
 expected per US-003's guard); on Coolify with CUSTOM_DOMAIN=ligadu.com set,
 url will correctly be https://ligadu.com/.
+
+---
+2026-08-20 — US-005: Add BreadcrumbList schema, wire up Breadcrumbs.astro, set Article author
+
+- src/pages/posts/[slug].astro:
+  - Built `breadcrumbItems` from post.Tags[0] (Home -> Tag -> Title), falling
+    back to Home -> Title when the post has zero tags — matches the
+    single-eyebrow-label convention already used on post cards
+    (docs/prd/0001-seo-remediation.md Decision 7).
+  - Added `breadcrumbSchema` (BreadcrumbList JSON-LD, ListItem per crumb,
+    absolute URLs via `new URL(href, Astro.site)`), appended to the
+    `structuredData` array passed to Layout alongside the existing
+    `articleSchema` — Article schema untouched otherwise.
+  - Added `author: { '@type': 'Organization', name: 'Ligadu' }` to
+    articleSchema, matching the existing `publisher` field.
+  - Imported and rendered `Breadcrumbs.astro` (previously dead code, unused
+    anywhere in the codebase) above the article header, passing the same
+    `breadcrumbItems` array used for the JSON-LD so the visual trail and
+    structured-data trail always match by construction. No prop interface
+    changes needed — `Breadcrumbs.astro`'s existing
+    `items: { label, href? }[]` shape already fit.
+
+Verified:
+- `npm run lint` — 18 pre-existing errors in unrelated files (RelatedArticles,
+  Layout.astro, notion-blocks/Image.astro, etc.); zero errors in the files
+  touched by this change.
+- `npx tsc --noEmit -p .` — 7 pre-existing errors, all in
+  src/integrations/post-content-image-downloader.ts (unrelated); no new
+  errors.
+- No dev server was started in this headless session, so the "breadcrumbs
+  render visually and match the JSON-LD trail" criterion was verified by
+  code inspection only (both consume the same `breadcrumbItems` array) —
+  not a live browser check. Recommend a quick visual spot-check on a post
+  with 0 tags and a post with tags before shipping.

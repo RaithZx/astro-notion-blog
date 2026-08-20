@@ -82,8 +82,8 @@
         "Typecheck passes"
       ],
       "priority": 5,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Added BreadcrumbList JSON-LD (Home -> Tags[0] -> title, falling back to Home -> title when tagless) alongside Article schema, set Article author to the Ligadu Organization matching publisher, and rendered the existing Breadcrumbs.astro component above the article header using the same items array so DOM and JSON-LD trails match. Verified with npm run lint and npx tsc --noEmit -p . (no new errors vs pre-existing baseline); no dev server was run in this headless session so the visual/browser check is unverified live and should be spot-checked in a browser before shipping."
     },
     {
       "id": "US-006",

@@ -6,7 +6,9 @@ import {
   getAllBlocksByBlockId,
 } from '../../lib/notion/client.ts'
 import {
+  getNavLink,
   getPostLink,
+  getTagLink,
   filePath,
   isKnownCrawler,
 } from '../../lib/blog-helpers.ts'
@@ -19,6 +21,7 @@ import RelatedArticles from '../../components/RelatedArticles.astro'
 import LatestPosts from '../../components/LatestPosts.astro'
 import ContentGate from '../../components/ContentGate.astro'
 import AdUnit from '../../components/AdUnit.astro'
+import Breadcrumbs from '../../components/Breadcrumbs.astro'
 import uiStrings from '../../locales/ui-strings.json'
 
 const { slug } = Astro.params
@@ -156,10 +159,35 @@ const articleSchema = {
   mainEntityOfPage: postURL,
   url: postURL,
   isAccessibleForFree: false,
+  author: {
+    '@type': 'Organization',
+    name: 'Ligadu',
+  },
   publisher: {
     '@type': 'Organization',
     name: 'Ligadu',
   },
+}
+
+// Sole category crumb = first tag, matching the single-eyebrow-label convention on post cards
+const primaryTag = post.Tags[0]
+const breadcrumbItems = primaryTag
+  ? [
+      { label: 'Home', href: getNavLink('/') },
+      { label: primaryTag.name, href: getTagLink(primaryTag.name) },
+      { label: post.Title },
+    ]
+  : [{ label: 'Home', href: getNavLink('/') }, { label: post.Title }]
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumbItems.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.label,
+    item: item.href ? new URL(item.href, Astro.site).toString() : postURL,
+  })),
 }
 
 ---
@@ -170,7 +198,7 @@ const articleSchema = {
   path={getPostLink(post.Slug)}
   ogImage={ogImage}
   fullWidth={true}
-  structuredData={[articleSchema]}
+  structuredData={[articleSchema, breadcrumbSchema]}
 >
   <div slot="main">
     <!-- Reading progress bar -->
@@ -179,6 +207,10 @@ const articleSchema = {
       class="fixed top-0 left-0 h-1 bg-primary z-[100] motion-reduce:transition-none"
       style="width: 0%;"
     ></div>
+
+    <div class="max-w-[44rem] mx-auto">
+      <Breadcrumbs items={breadcrumbItems} />
+    </div>
 
     <!-- Article Header: tag → title → excerpt → metadata row -->
     <article id="article-start" class="max-w-[44rem] mx-auto mb-10">

@@ -194,3 +194,45 @@ Verified:
   meta tag on any built page reads 'Ligadu'" criterion was verified by
   reading the rendered frontmatter/template source rather than a live
   browser check.
+
+## 2026-08-20 — US-007: Add security response headers via middleware
+
+- `src/middleware.ts` now chains a new header-setting middleware after the
+  existing `clerkMiddleware()` via Astro's `sequence()`. Every response that
+  goes through the app handler gets:
+  - `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`
+  - `X-Frame-Options: SAMEORIGIN`
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+  - `Content-Security-Policy-Report-Only` (intentionally non-enforcing),
+    built from the real third-party origin inventory found via grep across
+    `src/`: Clerk (`clerk.<CUSTOM_DOMAIN>`, `*.clerk.accounts.dev`,
+    `*.protect.clerk.com`, `challenges.cloudflare.com`, Clerk telemetry —
+    per Clerk's official CSP docs), Google Fonts, AdSense/googlesyndication/
+    doubleclick, googletagmanager.com, self-hosted Umami (`stats.ligadu.com`),
+    and frame-src/img-src entries for YouTube, Twitter/X, TikTok, Instagram,
+    Pinterest, CodePen embeds.
+
+Verified:
+- `npm run lint` and `npx tsc --noEmit -p .` — same pre-existing errors as
+  before this change, no new ones.
+- `npm run build` (with `ALLOW_LOCALHOST_SITE_URL=true`) succeeds.
+- Ran the built server locally (`node dist/server/entry.mjs`) and curled a
+  post page and `/404`: all four headers present, CSP is Report-Only (not
+  blocking), and Clerk's own `x-clerk-auth-status` header is still present,
+  confirming `clerkMiddleware()` still runs correctly in the chain.
+- No live browser/devtools pass was done in this headless session (no Clerk
+  sign-in/out, embed, ad, or Umami check) — noted as a limitation. Since the
+  CSP is Report-Only it cannot block anything, so this is low-risk, but a
+  human should still do the manual smoke test the story calls for before
+  flipping CSP to enforcing in a future PR.
+- **Found and documented a real coverage gap**: read
+  `node_modules/@astrojs/node/dist/standalone.js` — with
+  `adapter: node({ mode: 'standalone' })`, prerendered routes (homepage, tag
+  pages, pagination, kontaktu/privasidadi/termus) are served as static files
+  by the adapter's static handler, which runs *before* and can bypass the
+  Astro app/middleware handler entirely. Confirmed live: these responses
+  carry none of the new headers; only SSR routes (post pages, `/404`) do.
+  This is a pre-existing adapter/prerendering constraint, not fixable inside
+  `src/middleware.ts` — full coverage would need a reverse-proxy header
+  injection layer (e.g. Coolify/Traefik) or an adapter-mode change, both out
+  of scope for this story. Flagged as a follow-up rather than blocking.

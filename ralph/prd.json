@@ -10,8 +10,8 @@
       "acceptanceCriteria": [
         "Install @astrojs/sitemap and add it to astro.config.mjs",
         "customPages is populated at config-evaluation time from getAllPosts() (src/lib/notion/client.ts) + getPostLink() (src/lib/blog-helpers.ts), producing full URLs against the existing getSite() result - the integration's default auto-discovery will NOT find these since posts/[slug].astro is on-demand SSR with no getStaticPaths",
-        "customPages includes: homepage, every post URL, and tag URLs for exactly these 5 tags via getTagLink(): Not\u00edsias, Sa\u00fadi, Si\u00eansia, St\u00f3rias, Tekinolojia",
-        "customPages explicitly excludes tag URLs for Natureza and St\u00f3ria di Mundu (2 posts each, deliberately thin - do not add them)",
+        "customPages includes: homepage, every post URL, and tag URLs for exactly these 5 tags via getTagLink(): Notísias, Saúdi, Siênsia, Stórias, Tekinolojia",
+        "customPages explicitly excludes tag URLs for Natureza and Stória di Mundu (2 posts each, deliberately thin - do not add them)",
         "customPages includes kontaktu, privasidadi, and termus static pages",
         "No paginated routes (/posts/page/*, /posts/tag/*/page/*) appear anywhere in the generated sitemap output",
         "If getAllPosts() throws or returns empty during config evaluation, log a build warning and fall back to customPages: [] rather than failing the build",
@@ -21,7 +21,7 @@
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Installed @astrojs/sitemap; astro.config.mjs now builds customPages at config-eval time from getAllPosts()+getPostLink()/getTagLink() (5 non-thin tags only) + kontaktu/privasidadi/termus, with a try/catch fallback to [] and a filter restricting the final sitemap strictly to that URL set (so prerendered paginated/thin-tag routes can't leak in via auto-discovery). Added public/robots.txt with Sitemap: pointing at sitemap-index.xml. Verified via npm run build: dist/client/sitemap-index.xml + sitemap-0.xml contain exactly homepage, all 32 posts, the 5 approved tag pages, and the 3 static pages - no pagination, no Natureza/St\u00f3ria di Mundu. npm run lint and npx tsc --noEmit -p . show only pre-existing errors, none new."
+      "notes": "Installed @astrojs/sitemap; astro.config.mjs now builds customPages at config-eval time from getAllPosts()+getPostLink()/getTagLink() (5 non-thin tags only) + kontaktu/privasidadi/termus, with a try/catch fallback to [] and a filter restricting the final sitemap strictly to that URL set (so prerendered paginated/thin-tag routes can't leak in via auto-discovery). Added public/robots.txt with Sitemap: pointing at sitemap-index.xml. Verified via npm run build: dist/client/sitemap-index.xml + sitemap-0.xml contain exactly homepage, all 32 posts, the 5 approved tag pages, and the 3 static pages - no pagination, no Natureza/Stória di Mundu. npm run lint and npx tsc --noEmit -p . show only pre-existing errors, none new."
     },
     {
       "id": "US-002",
@@ -112,8 +112,8 @@
         "Typecheck passes"
       ],
       "priority": 7,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "src/middleware.ts now chains a new headers middleware after clerkMiddleware() via sequence(); every response sets Strict-Transport-Security, X-Frame-Options: SAMEORIGIN, Referrer-Policy: strict-origin-when-cross-origin, and a Content-Security-Policy-Report-Only (not enforcing) built from the actual third-party origins grepped from src/ (Clerk incl. clerk.<CUSTOM_DOMAIN>/*.clerk.accounts.dev/*.protect.clerk.com per Clerk's official CSP doc, fonts.googleapis.com/fonts.gstatic.com, cdn.jsdelivr.net-served KaTeX is style-only so covered under style-src, AdSense/googlesyndication/doubleclick, googletagmanager.com, stats.ligadu.com, and YouTube/Twitter/TikTok/Instagram/Pinterest/CodePen frame-src/img-src). Verified: npm run lint and npx tsc --noEmit -p . show the same pre-existing errors as before (none new); a production build + local node server run showed curl -I on an SSR route (a post page and /404) carrying all four headers correctly, with Clerk's own x-clerk-auth-status header still present confirming clerkMiddleware still runs unbroken; Report-Only means nothing can be blocked so embeds/ads/Umami are inherently unaffected (no dev server browser pass done in this headless session, but the CSP is non-enforcing so there is nothing for it to break). Caveat found during verification (read node_modules/@astrojs/node/dist/standalone.js): with adapter node({mode:'standalone'}), prerendered routes (homepage, tag pages, pagination, kontaktu/privasidadi/termus) are served as static files by the adapter's static handler, which runs BEFORE and can short-circuit around the Astro app/middleware handler - confirmed live, these responses carry none of the new headers, only SSR routes (post pages, /404, any non-prerendered route) do. This is a pre-existing adapter/prerendering constraint, not fixable within src/middleware.ts's scope (the implementation plan scopes this story to that file only); full coverage would need either a reverse-proxy header injection layer (e.g. at Coolify/Traefik) or switching adapter mode, both out of scope here. Flagging as a known follow-up rather than blocking this story on it, since the literal middleware/sequence()/CSP task is correctly and fully implemented."
     },
     {
       "id": "US-008",

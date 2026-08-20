@@ -278,6 +278,40 @@ export const isYouTubeURL = (url: URL): boolean => {
 // - https://www.youtube.com/v/0zM3nApSvMg?fs=1&amp;hl=en_US&amp;rel=0
 // - https://www.youtube.com/embed/0zM3nApSvMg?rel=0
 // - https://youtube.com/live/uOLwqWlpKbA
+// Search and AI-answer-engine crawlers that should receive full article
+// content instead of the anonymous-visitor preview. UA sniffing is
+// spoofable, but this is a soft engagement gate (not a paid paywall), so
+// the tradeoff is acceptable. See Google's paywalled-content guidance:
+// https://developers.google.com/search/docs/appearance/structured-data/paywalled-content
+const CRAWLER_USER_AGENT_PATTERNS = [
+  'googlebot',
+  'google-inspectiontool',
+  'bingbot',
+  'duckduckbot',
+  'baiduspider',
+  'yandexbot',
+  'slurp',
+  'applebot',
+  'facebookexternalhit',
+  'twitterbot',
+  'linkedinbot',
+  'gptbot',
+  'chatgpt-user',
+  'oai-searchbot',
+  'claudebot',
+  'claude-web',
+  'anthropic-ai',
+  'perplexitybot',
+  'google-extended',
+  'ccbot',
+]
+
+export const isKnownCrawler = (userAgent: string | null): boolean => {
+  if (!userAgent) return false
+  const ua = userAgent.toLowerCase()
+  return CRAWLER_USER_AGENT_PATTERNS.some((pattern) => ua.includes(pattern))
+}
+
 export const parseYouTubeVideoId = (url: URL): string => {
   if (!isYouTubeURL(url)) return ''
 

@@ -19,10 +19,11 @@ export interface Props {
   ogImage: string
   fullWidth?: boolean
   showCategoryNav?: boolean
+  structuredData?: Record<string, unknown>[]
 }
 
 const app = uiStrings.app
-const { title = app.site.defaultTitle, description = app.site.defaultDescription, path = '/', ogImage = '', fullWidth = false, showCategoryNav = true } = Astro.props
+const { title = app.site.defaultTitle, description = app.site.defaultDescription, path = '/', ogImage = '', fullWidth = false, showCategoryNav = true, structuredData = [] } = Astro.props
 
 /** Topic links — Notion tag names must match database (see getAllTags). */
 const navTopicScience = getTagLink('Siênsia')
@@ -137,6 +138,9 @@ if (database.Icon && database.Icon.Type === 'file') {
         crossorigin="anonymous"
       ></script>
     )}
+    {structuredData.map((entry) => (
+      <script type="application/ld+json" set:html={JSON.stringify(entry)} />
+    ))}
   </head>
   <body>
     {showComingSoon ? (

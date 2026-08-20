@@ -8,6 +8,7 @@ import {
 import {
   getPostLink,
   filePath,
+  isKnownCrawler,
 } from '../../lib/blog-helpers.ts'
 import Layout from '../../layouts/Layout.astro'
 import PostTags from '../../components/PostTags.astro'
@@ -23,6 +24,8 @@ import uiStrings from '../../locales/ui-strings.json'
 const { slug } = Astro.params
 const { userId } = Astro.locals.auth()
 const isSignedIn = !!userId
+const isCrawler = isKnownCrawler(Astro.request.headers.get('user-agent'))
+const showFullContent = isSignedIn || isCrawler
 
 const post = await getPostBySlug(slug)
 if (!post) {
@@ -98,7 +101,7 @@ function collectByWords(source: Block[], wordLimit: number, excerpt: string, acc
 
 const totalWords = countTotalWords(blocks)
 const previewWordLimit = Math.max(100, Math.floor(totalWords * 0.2))
-const previewBlocks = isSignedIn ? [] : collectByWords(blocks, previewWordLimit, post.Excerpt).collected
+const previewBlocks = showFullContent ? [] : collectByWords(blocks, previewWordLimit, post.Excerpt).collected
 
 // Related posts scored by tag overlap across all of the post's tags, not just the first one
 const postTagNames = new Set(post.Tags.map((tag) => tag.name))
@@ -137,6 +140,28 @@ function estimateReadTime(blockCount: number): number {
 }
 const readTime = isSignedIn ? estimateReadTime(blocks.length) : null
 
+const postURL = new URL(getPostLink(post.Slug), Astro.site).toString()
+
+// isAccessibleForFree is always false here: it describes the general-public
+// access policy (sign-up required), not whether *this* request happens to
+// be unlocked for a crawler or a signed-in reader.
+// https://developers.google.com/search/docs/appearance/structured-data/paywalled-content
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.Title,
+  description: post.Excerpt,
+  image: ogImage ? [ogImage] : undefined,
+  datePublished: post.Date,
+  mainEntityOfPage: postURL,
+  url: postURL,
+  isAccessibleForFree: false,
+  publisher: {
+    '@type': 'Organization',
+    name: 'Ligadu',
+  },
+}
+
 ---
 
 <Layout
@@ -145,6 +170,7 @@ const readTime = isSignedIn ? estimateReadTime(blocks.length) : null
   path={getPostLink(post.Slug)}
   ogImage={ogImage}
   fullWidth={true}
+  structuredData={[articleSchema]}
 >
   <div slot="main">
     <!-- Reading progress bar -->
@@ -186,9 +212,11 @@ const readTime = isSignedIn ? estimateReadTime(blocks.length) : null
       </div>
     )}
 
-    <!-- Body Content: gate for unauthenticated, full article for signed-in users -->
+    <!-- Body Content: gate for unauthenticated humans, full article for signed-in users and known crawlers -->
     <article class="px-0">
-      {isSignedIn ? (
+      {!showFullContent ? (
+        <ContentGate previewBlocks={previewBlocks} />
+      ) : isSignedIn ? (
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
           <!-- Social Side Bar (desktop only) -->
           <aside class="md:col-span-1 hidden md:flex flex-col gap-8 sticky top-32 h-fit">
@@ -259,7 +287,13 @@ const readTime = isSignedIn ? estimateReadTime(blocks.length) : null
           </div>
         </div>
       ) : (
-        <ContentGate previewBlocks={previewBlocks} />
+        <div class="max-w-[44rem] mx-auto">
+          {blocks.length > 0 ? (
+            <PostBody blocks={blocks} />
+          ) : (
+            <NoContents contents={[]} />
+          )}
+        </div>
       )}
     </article>
 

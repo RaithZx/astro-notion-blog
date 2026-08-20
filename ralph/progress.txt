@@ -236,3 +236,23 @@ Verified:
   `src/middleware.ts` — full coverage would need a reverse-proxy header
   injection layer (e.g. Coolify/Traefik) or an adapter-mode change, both out
   of scope for this story. Flagged as a follow-up rather than blocking.
+
+## 2026-08-20 — US-008: Fix RSS feed content-type and add autodiscovery link
+
+- `src/pages/feed.ts`: `@astrojs/rss`'s `rss()` returns a `Response` with
+  `Content-Type: application/xml` by default. Now awaits that response and
+  overrides the header to `application/rss+xml; charset=utf-8` before
+  returning it.
+- `src/layouts/Layout.astro`: added
+  `<link rel="alternate" type="application/rss+xml" title="Ligadu" href={getStaticFilePath('/feed')} />`
+  in `<head>`, reusing the existing `getStaticFilePath` helper (already
+  imported) so `BASE_PATH` is respected.
+- Verified via `npm run lint` and `npx tsc --noEmit -p .`: both changed files
+  produce zero errors; all remaining errors in each report are pre-existing
+  and untouched by this change (confirmed by diffing against files not
+  touched here, e.g. the same `database`-unused-var pattern already present
+  in `kontaktu.astro`/`privasidadi.astro`/`termus.astro`).
+- No dev server running in this headless session, so `curl -I /feed` and a
+  live page-source check were not performed; the header-override and
+  head-tag logic were traced by hand instead. A human should do a quick
+  `curl -I` / view-source pass before merge.

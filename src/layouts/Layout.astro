@@ -113,7 +113,8 @@ const allStructuredData = [organizationSchema, websiteSchema, ...structuredData]
     <title>{siteTitle}</title>
     <meta name="description" content={siteDescription} />
     <link rel="canonical" href={siteURL} />
-    
+    <link rel="alternate" type="application/rss+xml" title="Ligadu" href={getStaticFilePath('/feed')} />
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/ligadu_logo.png" />
     <link rel="shortcut icon" href="/ligadu_logo.png" />

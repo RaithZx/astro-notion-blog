@@ -44,21 +44,13 @@ const { blocks } = Astro.props
     line-height: 1.8;
     margin: 1.1rem 0;
     color: rgb(var(--on-surface-variant));
-    font-family: 'Lora', Georgia, 'Times New Roman', serif;
-  }
-  /* Lora's loaded weights are 400/500/600 — no 700, so browser-default
-     bold (font-weight: bolder -> 700) has no matching file and gets
-     synthesized (faux-bold), which looks uneven/heavier than intended
-     especially at mobile pixel densities. Pin to the real 600 file. */
-  .article-body b,
-  .article-body strong {
-    font-weight: 600;
+    font-family: 'Inter', sans-serif;
   }
   .article-body > :first-child p {
     font-size: calc(var(--body-font-size) + 0.0625rem);
     line-height: 1.75;
     color: rgb(var(--on-surface));
-    font-family: 'Lora', Georgia, 'Times New Roman', serif;
+    font-family: 'Inter', sans-serif;
   }
   /* Newspaper pull-quote — classic left border, not glass blob */
   .article-body blockquote {
@@ -101,6 +93,6 @@ const { blocks } = Astro.props
     color: rgb(var(--on-surface-variant));
     font-size: var(--body-font-size);
     line-height: 1.8;
-    font-family: 'Lora', Georgia, serif;
+    font-family: 'Inter', sans-serif;
   }
 </style>

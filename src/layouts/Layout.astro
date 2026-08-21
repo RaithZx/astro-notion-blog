@@ -187,8 +187,8 @@ const allStructuredData = [organizationSchema, websiteSchema, ...structuredData]
       id="main-header"
       class="fixed inset-x-0 top-0 z-[90] w-full border-0 isolate bg-surface/80 shadow-none supports-[backdrop-filter]:bg-surface/75 backdrop-blur-xl"
     >
-      <nav class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
-        <div class="flex items-center gap-6 md:gap-12 min-w-0">
+      <nav class="flex justify-between items-center w-full px-4 md:px-8 py-4 max-w-7xl mx-auto">
+        <div class="flex items-center gap-3 md:gap-12 min-w-0">
           <button
             id="mobile-menu-button"
             class="md:hidden bg-transparent border-0 text-on-surface-variant cursor-pointer p-2 hover:text-primary rounded transition-colors focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 shrink-0"
@@ -202,14 +202,14 @@ const allStructuredData = [organizationSchema, websiteSchema, ...structuredData]
 
           <a
             href={getNavLink('/')}
-            class="text-2xl font-black font-headline tracking-tight text-primary no-underline shrink-0"
+            class="text-xl sm:text-2xl font-black font-headline tracking-tight text-primary no-underline shrink-0"
           >
             {app.layout.brandName}
           </a>
 
         </div>
 
-        <div class="flex items-center gap-4 md:gap-6 shrink-0">
+        <div class="flex items-center gap-1 sm:gap-2 md:gap-6 shrink-0">
           <a
             href={getNavLink('/posts/page/1')}
             class="hidden md:flex items-center gap-1.5 text-on-surface-variant hover:text-primary transition-colors font-medium text-sm no-underline"
@@ -219,7 +219,7 @@ const allStructuredData = [organizationSchema, websiteSchema, ...structuredData]
           </a>
 
           <button
-            class="open-search-modal bg-transparent border-0 text-on-surface-variant hover:text-primary transition-colors p-1.5 rounded-full focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
+            class="open-search-modal hidden md:flex bg-transparent border-0 text-on-surface-variant hover:text-primary transition-colors p-1.5 rounded-full focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
             aria-label={app.layout.ariaOpenSearch}
             type="button"
           >
@@ -228,20 +228,20 @@ const allStructuredData = [organizationSchema, websiteSchema, ...structuredData]
 
           <button
             id="theme-toggle"
-            class="bg-transparent border-0 text-on-surface-variant hover:text-primary transition-colors p-1.5 rounded-full focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
+            class="bg-surface-container-high border-0 text-on-surface-variant cursor-pointer w-9 h-9 flex items-center justify-center rounded-full hover:bg-surface-container-highest hover:text-primary transition-colors focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
             aria-label={app.layout.ariaToggleDarkModeToDark}
             data-label-to-dark={app.layout.ariaToggleDarkModeToDark}
             data-label-to-dim={app.layout.ariaToggleDarkModeToDim}
             data-label-to-light={app.layout.ariaToggleDarkModeToLight}
             type="button"
           >
-            <span id="theme-toggle-icon" class="material-symbols-outlined text-2xl leading-none" aria-hidden="true">dark_mode</span>
+            <span id="theme-toggle-icon" class="material-symbols-outlined text-xl leading-none" aria-hidden="true">dark_mode</span>
           </button>
 
           <div class="ligadu-auth-when-signed-out flex items-center">
             <button
               type="button"
-              class="ligadu-open-sign-in bg-primary-container text-on-primary-container px-5 py-2 rounded-full font-bold text-sm transition-transform duration-200 active:scale-95 border-0 cursor-pointer"
+              class="ligadu-open-sign-in bg-primary-container text-on-primary-container px-4 sm:px-5 py-2 rounded-full font-bold text-sm transition-transform duration-200 active:scale-95 border-0 cursor-pointer"
             >
               {app.layout.authSignIn}
             </button>

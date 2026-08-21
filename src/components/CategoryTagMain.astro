@@ -58,18 +58,6 @@ const featuredImage = featuredPost ? loadPostImage(featuredPost) : null
 const gridPosts =
   currentPage === 1 && posts.length > 1 ? posts.slice(1) : currentPage > 1 ? posts : []
 
-const isFeaturedAdmin = (post: Post) =>
-  post.AdminTags.some((t) => t.name.toLowerCase() === 'featured')
-
-const cardKicker = (post: Post) => {
-  if (isFeaturedAdmin(post)) return 'ESPESIAL'
-  if (allPostsArchive) {
-    return (post.Tags[0]?.name ?? 'ARTIGU').toUpperCase()
-  }
-  const other = post.Tags.find((t) => t.name !== tag)
-  return (other?.name ?? post.Tags[0]?.name ?? tag).toUpperCase()
-}
-
 const allPostsIndexPath = getNavLink('/posts/page/1')
 ---
 
@@ -155,9 +143,15 @@ const allPostsIndexPath = getNavLink('/posts/page/1')
                   )}
                   <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none" />
                   <div class="absolute bottom-0 left-0 right-0 px-6 pb-7 pt-16 md:px-10 md:pb-9">
-                    <span class="text-tertiary-fixed font-bold text-xs uppercase tracking-wide block mb-3">
-                      {cardKicker(featuredPost)}
-                    </span>
+                    {featuredPost.Tags && featuredPost.Tags.length > 0 && (
+                      <div class="flex flex-wrap gap-3 mb-3">
+                        {featuredPost.Tags.slice(0, 3).map((t) => (
+                          <span class="text-tertiary-fixed font-bold text-[10px] uppercase tracking-widest">
+                            {t.name}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold font-headline text-white leading-tight mb-3 m-0">
                       {featuredPost.Title}
                     </h2>
@@ -176,7 +170,7 @@ const allPostsIndexPath = getNavLink('/posts/page/1')
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12" id="tag-grid">
               {gridPosts.map((post, i) => (
                 <div class:list={[useLoadMore && i >= GRID_INITIAL && 'tag-extra hidden']}>
-                  <PostCard post={post} kicker={cardKicker(post)} />
+                  <PostCard post={post} />
                 </div>
               ))}
             </div>

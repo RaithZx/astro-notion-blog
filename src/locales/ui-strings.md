@@ -212,7 +212,7 @@
 - successMessage: ✓ Obrigadu! Bu sta na lista di nobidadis.
 
 ### contentGate
-- heading: Entra pa lê artigu kompletu
+- heading: Entra pa lê artigu konplétu
 - subheading: Djunta Ligadu pa ten aksês grátis a tudu nos artigu i stória.
 - benefit1: Tudu artigu i stória konplétu
 - benefit2: Nobidadis di artigus na bu email

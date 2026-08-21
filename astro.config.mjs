@@ -21,6 +21,10 @@ import PostContentImageDownloader from './src/integrations/post-content-image-do
 const SITEMAP_TAGS = ['Notísias', 'Saúdi', 'Siênsia', 'Stórias', 'Tekinolojia'];
 const SITEMAP_STATIC_PAGES = ['kontaktu', 'privasidadi', 'termus'];
 
+// Populated by buildSitemapCustomPages, read by the sitemap integration's
+// `serialize` below to attach <lastmod> to post URLs.
+const postDatesByUrl = new Map();
+
 // @astrojs/sitemap's auto-discovery only finds prerendered routes; post pages
 // are on-demand SSR (no getStaticPaths), so their URLs must be built here.
 const buildSitemapCustomPages = async (site) => {
@@ -31,7 +35,11 @@ const buildSitemapCustomPages = async (site) => {
       return [];
     }
 
-    const postUrls = posts.map((post) => new URL(getPostLink(post.Slug), site).toString());
+    const postUrls = posts.map((post) => {
+      const url = new URL(getPostLink(post.Slug), site).toString();
+      if (post.Date) postDatesByUrl.set(url, post.Date);
+      return url;
+    });
     const tagUrls = SITEMAP_TAGS.map((tag) => new URL(getTagLink(tag), site).toString());
     const staticUrls = SITEMAP_STATIC_PAGES.map((page) => new URL(`/${page}`, site).toString());
 
@@ -110,6 +118,11 @@ export default defineConfig({
       // thin tags like Natureza) - restrict the final sitemap to exactly the
       // URL set built in customPages.
       filter: (url) => sitemapCustomPages.includes(url),
+      serialize(item) {
+        const postDate = postDatesByUrl.get(item.url);
+        if (postDate) item.lastmod = postDate;
+        return item;
+      },
     }),
     CoverImageDownloader(),
     CustomIconDownloader(),

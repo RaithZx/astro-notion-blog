@@ -9,6 +9,7 @@ import {
   getNavLink,
   getPostLink,
   getTagLink,
+  getStaticFilePath,
   filePath,
   isKnownCrawler,
 } from '../../lib/blog-helpers.ts'
@@ -185,6 +186,11 @@ const postURL = new URL(getPostLink(post.Slug), Astro.site).toString()
 // access policy (sign-up required), not whether *this* request happens to
 // be unlocked for a crawler or a signed-in reader.
 // https://developers.google.com/search/docs/appearance/structured-data/paywalled-content
+const logoURL = new URL(
+  getStaticFilePath('/ligadu_logo.png'),
+  Astro.site
+).toString()
+
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
@@ -192,6 +198,10 @@ const articleSchema = {
   description: post.Excerpt,
   image: ogImage ? [ogImage] : undefined,
   datePublished: post.Date,
+  // Notion doesn't expose last_edited_time on the Post domain model yet, so
+  // datePublished is the best available signal - still better than omitting
+  // dateModified entirely.
+  dateModified: post.Date,
   mainEntityOfPage: postURL,
   url: postURL,
   isAccessibleForFree: false,
@@ -202,6 +212,10 @@ const articleSchema = {
   publisher: {
     '@type': 'Organization',
     name: 'Ligadu',
+    logo: {
+      '@type': 'ImageObject',
+      url: logoURL,
+    },
   },
 }
 

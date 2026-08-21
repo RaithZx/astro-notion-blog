@@ -1,0 +1,325 @@
+# Ralph Progress Log — ralph/seo-remediation
+
+Source PRD: docs/prd/0001-seo-remediation.md
+Implementation plan: docs/prd/0001-seo-remediation-implementation-plan.md
+
+## 2026-08-20 — US-001: Add sitemap.xml and robots.txt
+
+Installed @astrojs/sitemap and wired it into astro.config.mjs with a
+top-level-await `customPages` builder that pulls posts from getAllPosts()
+and builds URLs via getPostLink()/getTagLink() (limited to the 5 non-thin
+tags: Notísias, Saúdi, Siênsia, Stórias, Tekinolojia) plus the static pages
+kontaktu/privasidadi/termus and the homepage. Wrapped in try/catch so a
+getAllPosts() failure or empty result logs a warning and falls back to an
+empty customPages instead of failing the build. Because @astrojs/sitemap's
+`filter` option applies to auto-discovered URLs too (not just customPages),
+set filter to restrict the final sitemap strictly to the built customPages
+set — this is what actually keeps the prerendered paginated routes
+(/posts/page/*, /posts/tag/*/page/*) and the excluded thin tag pages
+(Natureza, Stória di Mundu) out of the output, since those routes are
+statically prerendered and would otherwise be auto-discovered.
+
+Added public/robots.txt with `User-agent: *`, `Allow: /`, and a `Sitemap:`
+line pointing at sitemap-index.xml (confirmed exact filename by building).
+
+Verified: `npm run build` succeeds; inspected dist/client/sitemap-index.xml
+and dist/client/sitemap-0.xml directly — contains exactly the homepage, all
+32 published posts, the 5 approved tag pages, and the 3 static pages, with
+no paginated routes and no Natureza/Stória di Mundu tag URLs. `npm run lint`
+and `npx tsc --noEmit -p .` both show only pre-existing errors unrelated to
+this change (none in astro.config.mjs or public/robots.txt).
+
+Not verified: browser check of /robots.txt being served correctly by the
+Node adapter at runtime — this was headless, no dev/preview server was
+running; the file's presence and content were confirmed directly on disk
+and via the build output instead.
+
+## 2026-08-20 — US-002: Fix /404 direct-request 500 error and add noindex
+
+Root cause found by reading the installed astro/@astrojs/node source
+(node_modules/astro/dist/core/app/index.js, @astrojs/node/dist/serve-app.js)
+rather than by live repro (see "Not verified" below). With output: 'server'
++ @astrojs/node standalone, src/pages/404.astro had `export const prerender
+= true`, which produces a prerendered page with no SSR module. The node
+adapter calls `app.match(request, true)` (allowPrerenderedRoutes=true), so a
+direct request to the literal /404 path resolves routeData up front and
+skips render()'s internal fallback-matching branches entirely. Deep inside
+Astro's error handler (#renderError), there is a disk-read fallback branch
+for prerendered error routes, but it is explicitly skipped when
+`statusURL.toString() === request.url` — true only for the literal /404
+request, never for a genuinely missing path. That's why direct /404 fell
+through to `pipeline.getModuleForRoute()`, found no SSR module, and returned
+an empty body with whatever status was in flight (500), while a genuinely
+missing path took the disk-read branch and correctly served the prerendered
+404.html.
+
+Fix: removed `prerender = true` from src/pages/404.astro so it renders
+on-demand for both direct and fallback requests, eliminating the split
+code path. Added a `noindex?: boolean` prop to Layout.astro (default false)
+that swaps the existing `<meta name="robots">` tag's content to `noindex`
+when set, and passed `noindex` from 404.astro.
+
+Verified: `npm run build` succeeds. `npm run lint` and `npx tsc --noEmit -p .`
+show only pre-existing errors in unrelated files (post-content-image-
+downloader.ts, RelatedArticles.astro, etc.), none new.
+
+Live verification (added afterward, interactively): rebuilt and ran
+`node dist/server/entry.mjs`, then curled both paths directly.
+Literal /404 -> 404. Genuinely missing path (/this-does-not-exist-xyz) -> 404.
+Homepage control -> 200 (no regression). Both 404 responses carry
+`<meta name="robots" content="noindex">`. Response bodies are identical
+apart from per-request Clerk widget DOM ids (expected, not a defect).
+The autonomous run's own attempt to start the server was blocked by its
+sandboxed tool-approval requirement with no one present to grant it — this
+gap is now closed, the fix is confirmed live, not just traced.
+
+Also cleaned up two artifacts left over from this story's incomplete first
+attempt: a stray `console.error('[PROBE] NODE_ENV=...')` debug line that had
+been added to astro.config.mjs while investigating US-003 (reverted,
+uncommitted, unrelated to US-002) and the two scratch repro files
+(`ralph/repro-404.sh`, `ralph/repro-404.mjs`) the agent had already flagged
+as safe to delete.
+
+## 2026-08-20 — US-003: Guard CUSTOM_DOMAIN localhost fallback at production build time
+
+Confirmed empirically (temporary debug log, then removed) that `astro build`
+sets `process.env.NODE_ENV = 'production'` and `astro dev` sets
+`'development'` at config-evaluation time, so `NODE_ENV` is the reliable
+signal to gate on (`import.meta.env.PROD` is not populated this early).
+
+In astro.config.mjs's getSite(), added a throw right before the
+`http://localhost:4321` fallback: if none of CUSTOM_DOMAIN, VERCEL_URL, or
+CF_PAGES_URL are set AND `NODE_ENV === 'production'`, throw a clear error
+naming all three vars and how to fix it (set CUSTOM_DOMAIN, e.g. in
+Coolify). Also confirmed via `.env` and prior stories' notes that plain
+local `npm run build` with no CUSTOM_DOMAIN set is a real, established local
+workflow (used to verify US-001 and US-002) - exactly the risk flagged in
+the PRD's Risks section - so added an `ALLOW_LOCALHOST_SITE_URL` opt-out env
+var for that case. It defaults unset, so it doesn't weaken the guard for
+real production builds or violate any acceptance criterion.
+
+Verified live, not just by reading code:
+- `npm run dev` with no env vars set starts cleanly, no throw.
+- `npm run build` with no CUSTOM_DOMAIN/VERCEL_URL/CF_PAGES_URL set fails
+  loudly with the new error message and does not produce a build.
+- `CUSTOM_DOMAIN=ligadu.com npm run build` completes normally (exit 0,
+  sitemap-index.xml generated).
+
+`npm run lint` and `npx tsc --noEmit -p .` show only the same pre-existing
+errors in unrelated files as before this change (navTopicInnovation/
+navTopicSpace in Layout.astro, post-content-image-downloader.ts, etc.),
+none new.
+
+---
+2026-08-20 — US-004: Add Organization and WebSite JSON-LD sitewide
+
+Added Organization and WebSite JSON-LD objects directly in
+src/layouts/Layout.astro (built from Astro.site, database logo image URL,
+and the sameAs LinkedIn/Instagram URLs from the PRD's Decision 10). Merged
+both into a new `allStructuredData` array alongside the existing
+`structuredData` prop (unchanged prop name/shape) so page-specific schema —
+e.g. the Article schema passed from posts/[slug].astro — still renders too,
+now with Organization/WebSite prepended.
+
+Verified live:
+- `ALLOW_LOCALHOST_SITE_URL=true npm run build` completes successfully.
+- Parsed dist/client/index.html's two `application/ld+json` blocks with
+  Python's json.loads — both are well-formed and are exactly Organization
+  (name, url, logo, sameAs) and WebSite (name, url); no Article block on
+  the homepage since posts/[slug].astro doesn't run there, confirming nothing
+  else changed on that route.
+- Confirmed posts/[slug].astro still passes `structuredData={[articleSchema]}`
+  unchanged — new code only prepends to that array, never replaces it.
+- `npm run lint` and `npx tsc --noEmit -p .` show the same pre-existing
+  errors as on a clean stash of this change (18 lint errors in unrelated
+  files, 7 tsc errors in post-content-image-downloader.ts) — no new errors.
+
+Note: production `url` values resolve against CUSTOM_DOMAIN at build time
+(unset locally, so this verification build shows http://localhost:4321/ —
+expected per US-003's guard); on Coolify with CUSTOM_DOMAIN=ligadu.com set,
+url will correctly be https://ligadu.com/.
+
+---
+2026-08-20 — US-005: Add BreadcrumbList schema, wire up Breadcrumbs.astro, set Article author
+
+- src/pages/posts/[slug].astro:
+  - Built `breadcrumbItems` from post.Tags[0] (Home -> Tag -> Title), falling
+    back to Home -> Title when the post has zero tags — matches the
+    single-eyebrow-label convention already used on post cards
+    (docs/prd/0001-seo-remediation.md Decision 7).
+  - Added `breadcrumbSchema` (BreadcrumbList JSON-LD, ListItem per crumb,
+    absolute URLs via `new URL(href, Astro.site)`), appended to the
+    `structuredData` array passed to Layout alongside the existing
+    `articleSchema` — Article schema untouched otherwise.
+  - Added `author: { '@type': 'Organization', name: 'Ligadu' }` to
+    articleSchema, matching the existing `publisher` field.
+  - Imported and rendered `Breadcrumbs.astro` (previously dead code, unused
+    anywhere in the codebase) above the article header, passing the same
+    `breadcrumbItems` array used for the JSON-LD so the visual trail and
+    structured-data trail always match by construction. No prop interface
+    changes needed — `Breadcrumbs.astro`'s existing
+    `items: { label, href? }[]` shape already fit.
+
+Verified:
+- `npm run lint` — 18 pre-existing errors in unrelated files (RelatedArticles,
+  Layout.astro, notion-blocks/Image.astro, etc.); zero errors in the files
+  touched by this change.
+- `npx tsc --noEmit -p .` — 7 pre-existing errors, all in
+  src/integrations/post-content-image-downloader.ts (unrelated); no new
+  errors.
+- No dev server was started in this headless session, so the "breadcrumbs
+  render visually and match the JSON-LD trail" criterion was verified by
+  code inspection only (both consume the same `breadcrumbItems` array) —
+  not a live browser check. Recommend a quick visual spot-check on a post
+  with 0 tags and a post with tags before shipping.
+
+## 2026-08-20 — US-006: Fix og:site_name and remove dead nav variables
+
+- Added `const SITE_NAME = 'Ligadu'` near top of `Layout.astro` frontmatter
+  and pointed `<meta property="og:site_name">` at it (was `database.Title`,
+  the raw Notion DB title, which resolves to "Posts").
+- Deleted the unused `navTopicInnovation` and `navTopicSpace` variables
+  (both were `'#'` placeholders never referenced elsewhere) after
+  confirming via `grep -rn` across `src/` that nothing else used them.
+
+Verified:
+- `npm run lint` — went from 18 to 16 pre-existing errors; the two
+  `navTopicInnovation`/`navTopicSpace` "assigned a value but never used"
+  errors are gone, no new errors introduced (confirmed by diffing lint
+  output against a `git stash` baseline of the same commit).
+- `npx tsc --noEmit -p .` — same 7 pre-existing errors, all in
+  `src/integrations/post-content-image-downloader.ts` (unrelated, untouched
+  file); no new errors.
+- No dev server was started in this headless session, so the "og:site_name
+  meta tag on any built page reads 'Ligadu'" criterion was verified by
+  reading the rendered frontmatter/template source rather than a live
+  browser check.
+
+## 2026-08-20 — US-007: Add security response headers via middleware
+
+- `src/middleware.ts` now chains a new header-setting middleware after the
+  existing `clerkMiddleware()` via Astro's `sequence()`. Every response that
+  goes through the app handler gets:
+  - `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`
+  - `X-Frame-Options: SAMEORIGIN`
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+  - `Content-Security-Policy-Report-Only` (intentionally non-enforcing),
+    built from the real third-party origin inventory found via grep across
+    `src/`: Clerk (`clerk.<CUSTOM_DOMAIN>`, `*.clerk.accounts.dev`,
+    `*.protect.clerk.com`, `challenges.cloudflare.com`, Clerk telemetry —
+    per Clerk's official CSP docs), Google Fonts, AdSense/googlesyndication/
+    doubleclick, googletagmanager.com, self-hosted Umami (`stats.ligadu.com`),
+    and frame-src/img-src entries for YouTube, Twitter/X, TikTok, Instagram,
+    Pinterest, CodePen embeds.
+
+Verified:
+- `npm run lint` and `npx tsc --noEmit -p .` — same pre-existing errors as
+  before this change, no new ones.
+- `npm run build` (with `ALLOW_LOCALHOST_SITE_URL=true`) succeeds.
+- Ran the built server locally (`node dist/server/entry.mjs`) and curled a
+  post page and `/404`: all four headers present, CSP is Report-Only (not
+  blocking), and Clerk's own `x-clerk-auth-status` header is still present,
+  confirming `clerkMiddleware()` still runs correctly in the chain.
+- No live browser/devtools pass was done in this headless session (no Clerk
+  sign-in/out, embed, ad, or Umami check) — noted as a limitation. Since the
+  CSP is Report-Only it cannot block anything, so this is low-risk, but a
+  human should still do the manual smoke test the story calls for before
+  flipping CSP to enforcing in a future PR.
+- **Found and documented a real coverage gap**: read
+  `node_modules/@astrojs/node/dist/standalone.js` — with
+  `adapter: node({ mode: 'standalone' })`, prerendered routes (homepage, tag
+  pages, pagination, kontaktu/privasidadi/termus) are served as static files
+  by the adapter's static handler, which runs *before* and can bypass the
+  Astro app/middleware handler entirely. Confirmed live: these responses
+  carry none of the new headers; only SSR routes (post pages, `/404`) do.
+  This is a pre-existing adapter/prerendering constraint, not fixable inside
+  `src/middleware.ts` — full coverage would need a reverse-proxy header
+  injection layer (e.g. Coolify/Traefik) or an adapter-mode change, both out
+  of scope for this story. Flagged as a follow-up rather than blocking.
+
+## 2026-08-20 — US-008: Fix RSS feed content-type and add autodiscovery link
+
+- `src/pages/feed.ts`: `@astrojs/rss`'s `rss()` returns a `Response` with
+  `Content-Type: application/xml` by default. Now awaits that response and
+  overrides the header to `application/rss+xml; charset=utf-8` before
+  returning it.
+- `src/layouts/Layout.astro`: added
+  `<link rel="alternate" type="application/rss+xml" title="Ligadu" href={getStaticFilePath('/feed')} />`
+  in `<head>`, reusing the existing `getStaticFilePath` helper (already
+  imported) so `BASE_PATH` is respected.
+- Verified via `npm run lint` and `npx tsc --noEmit -p .`: both changed files
+  produce zero errors; all remaining errors in each report are pre-existing
+  and untouched by this change (confirmed by diffing against files not
+  touched here, e.g. the same `database`-unused-var pattern already present
+  in `kontaktu.astro`/`privasidadi.astro`/`termus.astro`).
+- No dev server running in this headless session, so `curl -I /feed` and a
+  live page-source check were not performed; the header-override and
+  head-tag logic were traced by hand instead. A human should do a quick
+  `curl -I` / view-source pass before merge.
+
+## 2026-08-20 — US-009: Add nofollow to outbound support link, fix SocialIcons links
+
+- `src/layouts/Layout.astro`: both Buy Me a Coffee links (mobile drawer ~L357
+  and footer ~L464) now use `rel="nofollow noopener noreferrer"` instead of
+  `rel="noopener noreferrer"`.
+- `src/components/SocialIcons.astro`: LinkedIn `<a>` href changed from `#` to
+  `https://linkedin.com/company/ligadu`; added new Instagram `<a>` (same
+  markup pattern — icon + `aria-label`, `target="_blank"`,
+  `rel="noopener noreferrer"`) linking to the canonical
+  `https://www.instagram.com/ligadu.cv/` with no tracking params.
+- Verified via `npm run lint` and `npx tsc --noEmit -p .`: no errors in either
+  changed file; all reported errors are pre-existing, in untouched files/lines
+  (confirmed via `git diff --stat` on the two changed files).
+- No dev server running in this headless session, so the footer visual/link
+  check was not performed live. A human should confirm in-browser that both
+  icons render in the footer and that neither link still points to `#`.
+
+## 2026-08-20 — US-010: Load KaTeX CSS only on posts containing an equation block
+
+- `src/pages/posts/[slug].astro`: added `blockContainsEquation()` +
+  `hasEquationBlock()`, walking the post's block tree with the same
+  recursion shape already used by `collectByWords()` (column_list,
+  synced_block, toggle, callout), detecting both a block-level `equation`
+  Type and inline `richText.Equation` on any RichTexts-bearing block type.
+  Result passed to `Layout` as a new `hasMath` prop.
+- `src/layouts/Layout.astro`: added `hasMath?: boolean` (default `false`) to
+  `Props`, wrapped the KaTeX `<link rel="stylesheet">` in `{hasMath && (...)}`
+  so every other page type (homepage, tag pages, static pages, math-free
+  posts) no longer requests it.
+- Verified: `npm run lint` (16 pre-existing errors, none new) and
+  `npx tsc --noEmit -p .` (same pre-existing errors in
+  `post-content-image-downloader.ts`, none new). Ran a full production build
+  (`ALLOW_LOCALHOST_SITE_URL=true npm run build`) and a live local node
+  server; curl-checked the homepage and several real posts — none request
+  `katex.min.css`. The site currently has no post containing an actual
+  equation block, so the true/math-renders path could not be exercised live;
+  verified the detection logic itself with a standalone Node script covering
+  a top-level equation block, an inline equation in rich text, and equations
+  nested inside toggle/callout/column_list, all correctly detected as `true`,
+  and plain text correctly detected as `false`.
+
+## 2026-08-21 — Correction to US-008: RSS content-type fix didn't actually work
+
+During a full review pass (independently rebuilding, running a live server,
+and curling every changed endpoint rather than trusting self-reported
+verification), found that `/feed` still returned
+`content-type: application/octet-stream` despite US-008's code change and
+"passing" status.
+
+Root cause: `feed.ts` had `export const prerender = true`. Prerendered
+routes are written to disk as static files by @astrojs/node's standalone
+adapter at build time, which discards the runtime `response.headers.set()`
+call in the `GET()` handler entirely — the exact same mechanism US-007
+already documented as a limitation for security headers on prerendered
+routes, just not connected to this story at the time.
+
+Fix: removed `prerender = true` from `feed.ts`, same pattern as US-002's
+`/404` fix (on-demand SSR instead of prerendered). Live-verified: `curl -I
+/feed` now shows `content-type: application/rss+xml; charset=utf-8`, body
+is still valid RSS XML, and it now also receives the US-007 security
+headers as a side effect of no longer being prerendered.
+
+Lesson for future stories in this codebase: any story that sets a response
+header via code needs a live curl check, not just a code trace — prerendered
+routes silently discard runtime header mutations, and this will bite again
+on any future story that assumes `response.headers.set()` "just works" here.

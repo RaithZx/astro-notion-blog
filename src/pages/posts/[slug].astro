@@ -6,7 +6,9 @@ import {
   getAllBlocksByBlockId,
 } from '../../lib/notion/client.ts'
 import {
+  getNavLink,
   getPostLink,
+  getTagLink,
   filePath,
   isKnownCrawler,
 } from '../../lib/blog-helpers.ts'
@@ -19,6 +21,7 @@ import RelatedArticles from '../../components/RelatedArticles.astro'
 import LatestPosts from '../../components/LatestPosts.astro'
 import ContentGate from '../../components/ContentGate.astro'
 import AdUnit from '../../components/AdUnit.astro'
+import Breadcrumbs from '../../components/Breadcrumbs.astro'
 import uiStrings from '../../locales/ui-strings.json'
 
 const { slug } = Astro.params
@@ -99,7 +102,43 @@ function collectByWords(source: Block[], wordLimit: number, excerpt: string, acc
   return acc
 }
 
+function blockContainsEquation(block: Block): boolean {
+  if (block.Type === 'equation') return true
+  const richTexts =
+    block.Paragraph?.RichTexts ??
+    block.Heading1?.RichTexts ??
+    block.Heading2?.RichTexts ??
+    block.Heading3?.RichTexts ??
+    block.Quote?.RichTexts ??
+    block.BulletedListItem?.RichTexts ??
+    block.NumberedListItem?.RichTexts ??
+    block.ToDo?.RichTexts ??
+    block.Callout?.RichTexts ??
+    []
+  return richTexts.some((rt) => !!rt.Equation)
+}
+
+function hasEquationBlock(source: Block[]): boolean {
+  return source.some((block) => {
+    if (blockContainsEquation(block)) return true
+    if (block.Type === 'column_list' && block.ColumnList) {
+      return block.ColumnList.Columns.some((col) => hasEquationBlock(col.Children))
+    }
+    if (block.Type === 'synced_block' && block.SyncedBlock?.Children) {
+      return hasEquationBlock(block.SyncedBlock.Children)
+    }
+    if (block.Type === 'toggle' && block.Toggle?.Children) {
+      return hasEquationBlock(block.Toggle.Children)
+    }
+    if (block.Type === 'callout' && block.Callout?.Children) {
+      return hasEquationBlock(block.Callout.Children)
+    }
+    return false
+  })
+}
+
 const totalWords = countTotalWords(blocks)
+const hasMath = hasEquationBlock(blocks)
 const previewWordLimit = Math.max(100, Math.floor(totalWords * 0.2))
 const previewBlocks = showFullContent ? [] : collectByWords(blocks, previewWordLimit, post.Excerpt).collected
 
@@ -156,10 +195,35 @@ const articleSchema = {
   mainEntityOfPage: postURL,
   url: postURL,
   isAccessibleForFree: false,
+  author: {
+    '@type': 'Organization',
+    name: 'Ligadu',
+  },
   publisher: {
     '@type': 'Organization',
     name: 'Ligadu',
   },
+}
+
+// Sole category crumb = first tag, matching the single-eyebrow-label convention on post cards
+const primaryTag = post.Tags[0]
+const breadcrumbItems = primaryTag
+  ? [
+      { label: 'Home', href: getNavLink('/') },
+      { label: primaryTag.name, href: getTagLink(primaryTag.name) },
+      { label: post.Title },
+    ]
+  : [{ label: 'Home', href: getNavLink('/') }, { label: post.Title }]
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumbItems.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.label,
+    item: item.href ? new URL(item.href, Astro.site).toString() : postURL,
+  })),
 }
 
 ---
@@ -170,7 +234,8 @@ const articleSchema = {
   path={getPostLink(post.Slug)}
   ogImage={ogImage}
   fullWidth={true}
-  structuredData={[articleSchema]}
+  structuredData={[articleSchema, breadcrumbSchema]}
+  hasMath={hasMath}
 >
   <div slot="main">
     <!-- Reading progress bar -->
@@ -179,6 +244,10 @@ const articleSchema = {
       class="fixed top-0 left-0 h-1 bg-primary z-[100] motion-reduce:transition-none"
       style="width: 0%;"
     ></div>
+
+    <div class="max-w-[44rem] mx-auto">
+      <Breadcrumbs items={breadcrumbItems} />
+    </div>
 
     <!-- Article Header: tag → title → excerpt → metadata row -->
     <article id="article-start" class="max-w-[44rem] mx-auto mb-10">

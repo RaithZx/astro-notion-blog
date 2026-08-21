@@ -4,14 +4,43 @@ import icon from 'astro-icon';
 import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
 import clerk from '@clerk/astro';
+import sitemap from '@astrojs/sitemap';
 import { clerkLocalization } from './src/lib/clerk-localization.mjs';
 import { CUSTOM_DOMAIN, BASE_PATH } from './src/server-constants';
+import { getAllPosts } from './src/lib/notion/client';
+import { getPostLink, getTagLink } from './src/lib/blog-helpers';
 import CoverImageDownloader from './src/integrations/cover-image-downloader';
 import CustomIconDownloader from './src/integrations/custom-icon-downloader';
 import FeaturedImageDownloader from './src/integrations/featured-image-downloader';
 import PostContentImageDownloader from './src/integrations/post-content-image-downloader';
 // PublicNotionCopier no longer needed - images are now in src/assets/ and handled by Astro
 // import PublicNotionCopier from './src/integrations/public-notion-copier';
+
+// Tag pages thin enough to keep out of the sitemap (2 posts each) are
+// intentionally excluded here rather than in the tag data itself.
+const SITEMAP_TAGS = ['Notísias', 'Saúdi', 'Siênsia', 'Stórias', 'Tekinolojia'];
+const SITEMAP_STATIC_PAGES = ['kontaktu', 'privasidadi', 'termus'];
+
+// @astrojs/sitemap's auto-discovery only finds prerendered routes; post pages
+// are on-demand SSR (no getStaticPaths), so their URLs must be built here.
+const buildSitemapCustomPages = async (site) => {
+  try {
+    const posts = await getAllPosts();
+    if (!posts || posts.length === 0) {
+      console.warn('[sitemap] getAllPosts() returned no posts; customPages will be empty');
+      return [];
+    }
+
+    const postUrls = posts.map((post) => new URL(getPostLink(post.Slug), site).toString());
+    const tagUrls = SITEMAP_TAGS.map((tag) => new URL(getTagLink(tag), site).toString());
+    const staticUrls = SITEMAP_STATIC_PAGES.map((page) => new URL(`/${page}`, site).toString());
+
+    return [site, ...postUrls, ...tagUrls, ...staticUrls];
+  } catch (error) {
+    console.warn('[sitemap] getAllPosts() failed; falling back to empty customPages:', error);
+    return [];
+  }
+};
 
 // Canonical site URL: prefer CUSTOM_DOMAIN (e.g. Coolify production). Vercel / CF_PAGES are optional fallbacks.
 const getSite = function () {
@@ -37,12 +66,27 @@ const getSite = function () {
     ).toString();
   }
 
+  // `astro build` sets NODE_ENV=production at config-evaluation time (confirmed
+  // empirically; import.meta.env.PROD is not populated this early). Silently
+  // falling back to localhost in a production build would ship canonical/OG/RSS
+  // URLs pointing nowhere real, so fail loudly instead - unless explicitly
+  // opted out for a local test build via ALLOW_LOCALHOST_SITE_URL.
+  if (process.env.NODE_ENV === 'production' && !process.env.ALLOW_LOCALHOST_SITE_URL) {
+    throw new Error(
+      'No site URL configured for this production build: none of CUSTOM_DOMAIN, VERCEL_URL, or CF_PAGES_URL are set. ' +
+        'Set CUSTOM_DOMAIN in the environment (e.g. in Coolify), or set ALLOW_LOCALHOST_SITE_URL=true to explicitly allow a local test build to fall back to http://localhost:4321.'
+    );
+  }
+
   return new URL(BASE_PATH, 'http://localhost:4321').toString();
 };
 
+const site = getSite();
+const sitemapCustomPages = await buildSitemapCustomPages(site);
+
 // https://astro.build/config
 export default defineConfig({
-  site: getSite(),
+  site,
   base: BASE_PATH,
   output: 'server',
   adapter: node({ mode: 'standalone' }),
@@ -59,6 +103,14 @@ export default defineConfig({
     icon(),
     tailwind(),
     react(),
+    sitemap({
+      customPages: sitemapCustomPages,
+      // Auto-discovery would also pick up prerendered routes we don't want
+      // (paginated /posts/page/* and /posts/tag/*/page/*, plus tag pages for
+      // thin tags like Natureza) - restrict the final sitemap to exactly the
+      // URL set built in customPages.
+      filter: (url) => sitemapCustomPages.includes(url),
+    }),
     CoverImageDownloader(),
     CustomIconDownloader(),
     FeaturedImageDownloader(),

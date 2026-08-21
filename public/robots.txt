@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ligadu.com/sitemap-index.xml

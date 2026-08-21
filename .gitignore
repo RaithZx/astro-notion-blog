@@ -35,3 +35,6 @@ public/notion/*
 # Notion images downloaded at build time
 src/assets/notion/*
 !src/assets/notion/.gitkeep
+
+# SEO audit scratch output (screenshots, raw HTML dumps, PDF report) - large, not source
+ligadu.com-audit/

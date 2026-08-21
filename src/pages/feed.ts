@@ -1,5 +1,3 @@
-export const prerender = true
-
 import rss from '@astrojs/rss'
 import { getAllPosts, getDatabase } from '../lib/notion/client'
 import { getPostLink } from '../lib/blog-helpers'
@@ -8,7 +6,7 @@ const description = 'Artigus di siensia i saudi'
 export async function GET() {
   const [posts, database] = await Promise.all([getAllPosts(), getDatabase()])
 
-  return rss({
+  const response = await rss({
     title: title,
     description: description,
     site: import.meta.env.SITE,
@@ -19,4 +17,8 @@ export async function GET() {
       pubDate: new Date(post.Date),
     })),
   })
+
+  response.headers.set('Content-Type', 'application/rss+xml; charset=utf-8')
+
+  return response
 }

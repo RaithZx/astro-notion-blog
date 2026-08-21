@@ -1,6 +1,9 @@
 ---
-export const prerender = true
-
+// Deliberately NOT prerendered: with output: 'server' + @astrojs/node, a
+// prerendered 404 page has no SSR module, so a direct request to the literal
+// /404 route throws inside Astro's node adapter and returns an empty 500
+// (the automatic not-found fallback takes a different code path that reads
+// the prerendered file from disk, which is why only direct requests broke).
 import Layout from '../layouts/Layout.astro'
 import { getNavLink, getPostLink } from '../lib/blog-helpers.ts'
 import { getPosts } from '../lib/notion/client.ts'
@@ -15,6 +18,7 @@ const recentPosts = await getPosts(4)
   description={s.body}
   path="/404"
   ogImage=""
+  noindex
 >
   <div slot="main">
     <div class="relative flex flex-col items-center justify-center min-h-[72vh] text-center px-6 py-16 overflow-hidden">

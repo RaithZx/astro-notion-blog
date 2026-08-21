@@ -6,10 +6,13 @@
 A user with a Clerk account. Membership is free. Members can read all articles in full and receive article notifications by email.
 
 **Anonymous User**
-A visitor with no Clerk account. Sees article titles, excerpts, and featured images. Body content is blocked by the ContentGate.
+A visitor with no Clerk account, not recognized as a Known Crawler. Sees article titles, excerpts, and featured images. Body content is blocked by the ContentGate.
+
+**Known Crawler**
+A search or AI-answer-engine bot (Googlebot, Bingbot, GPTBot, ClaudeBot, etc.), detected by user agent (`isKnownCrawler()` in `blog-helpers.ts`). Exempt from the ContentGate: receives full body content like a Member, but none of the Member-only UI (share sidebar, ads, reading progress bar). Not a security boundary — UA spoofing can defeat it — so it exists only to keep articles indexable, never to gate anything that requires real access control. See [ADR 0003](docs/adr/0003-crawler-exempt-from-content-gate.md).
 
 **ContentGate**
-The hard wall shown to Anonymous Users on article pages. Renders title + excerpt + Clerk signup/sign-in prompt. No body content is sent in the HTML response for anonymous requests.
+The hard wall shown to Anonymous Users (excluding Known Crawlers) on article pages. Renders title + excerpt + Clerk signup/sign-in prompt. No body content is sent in the HTML response for anonymous, non-crawler requests.
 
 **Article Notification**
 An email sent to Members when a new article is published. Triggered by a Notion webhook → email function (not yet implemented). Not a newsletter — no separate subscription list, no unsubscribe flow beyond deleting the Clerk account.

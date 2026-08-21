@@ -12,8 +12,8 @@ const csp = [
   `default-src 'self'`,
   `script-src 'self' 'unsafe-inline' https://*.clerk.accounts.dev https://challenges.cloudflare.com https://*.protect.clerk.com https://clerk-telemetry.com https://*.clerk-telemetry.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://stats.ligadu.com https://platform.twitter.com https://www.instagram.com https://www.tiktok.com https://cpwebassets.codepen.io https://assets.pinterest.com ${clerkOrigins.join(' ')}`,
   // cdn.jsdelivr.net serves KaTeX's CSS (Layout.astro, math-block posts only).
-  `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net`,
-  `font-src 'self' https://fonts.gstatic.com data:`,
+  `style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net`,
+  `font-src 'self' data:`,
   // Bookmark previews (metascraper) and link favicons pull images from
   // arbitrary third-party sites, so img-src is intentionally broad.
   `img-src 'self' data: https: https://img.clerk.com https://www.google.com`,
@@ -34,10 +34,10 @@ const securityHeaders = defineMiddleware(async (_context, next) => {
   )
   response.headers.set('X-Frame-Options', 'SAMEORIGIN')
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-  // Report-only: collects violation data without blocking anything, per
-  // docs/prd/0001-seo-remediation.md Decision 5. Flip to enforcing in a
-  // follow-up PR once a monitoring window shows no unexpected reports.
-  response.headers.set('Content-Security-Policy-Report-Only', csp)
+  // Enforcing per docs/prd/0001-seo-remediation.md Decision 5 follow-up:
+  // every external domain the app actually loads (scripts, iframes,
+  // stylesheets, fonts) was audited against this policy before the flip.
+  response.headers.set('Content-Security-Policy', csp)
 
   return response
 })

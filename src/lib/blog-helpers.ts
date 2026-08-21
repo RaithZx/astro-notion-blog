@@ -150,9 +150,7 @@ export const getTagLink = (tag: string) => {
 
 export const getPageLink = (page: number, tag: string) => {
   if (page === 1) {
-    return tag
-      ? getTagLink(tag)
-      : pathJoin(BASE_PATH, '/posts/page/1')
+    return tag ? getTagLink(tag) : pathJoin(BASE_PATH, '/posts/page/1')
   }
   return tag
     ? pathJoin(
@@ -304,6 +302,10 @@ const CRAWLER_USER_AGENT_PATTERNS = [
   'perplexitybot',
   'google-extended',
   'ccbot',
+  'meta-externalagent',
+  'meta-externalfetcher',
+  'bytespider',
+  'amazonbot',
 ]
 
 export const isKnownCrawler = (userAgent: string | null): boolean => {

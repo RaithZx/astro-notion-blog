@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "start": "node ./dist/server/entry.mjs",
+    "start": "node ./server.mjs",
     "build": "npm run strings && astro build",
     "build:cached": "npm run strings && npm run cache:fetch && astro build",
     "strings": "node scripts/strings-to-json.cjs",

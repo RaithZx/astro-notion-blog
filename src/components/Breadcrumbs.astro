@@ -65,32 +65,33 @@ const { items } = Astro.props
   }
 
   .breadcrumb-link {
-    color: #64748b;
+    color: rgb(var(--muted-foreground));
     text-decoration: none;
     font-size: 0.875rem;
     transition: color 0.2s ease;
   }
 
   .breadcrumb-link:hover {
-    color: #3b82f6;
+    color: rgb(var(--primary));
     text-decoration: underline;
   }
 
   .breadcrumb-link:focus-visible {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid rgb(var(--primary));
     outline-offset: 2px;
     border-radius: 0.25rem;
   }
 
   .breadcrumb-current {
-    color: #1e293b;
+    color: rgb(var(--foreground));
     font-size: 0.875rem;
     font-weight: 500;
   }
 
   .breadcrumb-separator {
-    color: #cbd5e1;
+    color: rgb(var(--muted-foreground));
     flex-shrink: 0;
+    opacity: 0.6;
   }
 
   @media (max-width: 640px) {

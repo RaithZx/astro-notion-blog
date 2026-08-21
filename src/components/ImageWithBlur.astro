@@ -32,6 +32,7 @@ const {
 } = Astro.props
 
 const isNatural = fit === 'natural'
+const isEager = loading === 'eager'
 const imageId = `img-${Math.random().toString(36).substr(2, 9)}`
 const isString = typeof src === 'string'
 
@@ -41,13 +42,15 @@ const wrapperStyle = isNatural || fill
 ---
 
 <div class:list={['image-blur-wrapper', className, { 'image-blur-wrapper-natural': isNatural, 'image-blur-wrapper-fill': fill }]} style={wrapperStyle}>
-  <!-- Blur placeholder/skeleton -->
-  <div class="image-blur-placeholder" data-placeholder-id={imageId}>
-    <div class="skeleton-shimmer"></div>
-  </div>
+  <!-- Blur placeholder/skeleton (skipped for eager/LCP images — it would only delay paint) -->
+  {!isEager && (
+    <div class="image-blur-placeholder" data-placeholder-id={imageId}>
+      <div class="skeleton-shimmer"></div>
+    </div>
+  )}
 
   <!-- Actual image -->
-  <div class:list={['image-container', { 'image-container-natural': isNatural }]} data-container-id={imageId}>
+  <div class:list={['image-container', { 'image-container-natural': isNatural, 'image-container-eager': isEager }]} data-container-id={imageId}>
     {isString ? (
       <img
         src={src}
@@ -55,6 +58,7 @@ const wrapperStyle = isNatural || fill
         width={width}
         height={height}
         loading={loading}
+        fetchpriority={isEager ? 'high' : 'auto'}
         class:list={['image-content', { 'image-content-natural': isNatural, 'image-content-zoom': hoverZoom }]}
         style={isNatural ? '' : `object-fit: ${fit};`}
         data-image-id={imageId}
@@ -66,6 +70,7 @@ const wrapperStyle = isNatural || fill
         width={width || src.width}
         height={height || src.height}
         loading={loading}
+        fetchpriority={isEager ? 'high' : 'auto'}
         class:list={['image-content', { 'image-content-natural': isNatural, 'image-content-zoom': hoverZoom }]}
         style={isNatural ? '' : `object-fit: ${fit};`}
         data-image-id={imageId}
@@ -141,6 +146,11 @@ const wrapperStyle = isNatural || fill
   }
 
   .image-container.loaded {
+    opacity: 1;
+  }
+
+  /* Eager/LCP images must paint immediately — never gate visibility behind JS */
+  .image-container-eager {
     opacity: 1;
   }
 

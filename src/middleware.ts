@@ -1,43 +1,36 @@
 import { clerkMiddleware } from '@clerk/astro/server'
 import { defineMiddleware, sequence } from 'astro:middleware'
 import { CUSTOM_DOMAIN } from './server-constants'
+import { buildCsp, SECURITY_HEADERS_BASE } from '../security-headers.mjs'
 
 // Clerk's Frontend API is reachable at clerk.<CUSTOM_DOMAIN> in production (CNAME)
 // and at a *.clerk.accounts.dev subdomain in dev/preview. Both are allowed since
 // this middleware runs against both environments.
 // https://clerk.com/docs/security/clerk-csp
-const clerkOrigins = CUSTOM_DOMAIN ? [`https://clerk.${CUSTOM_DOMAIN}`] : []
-
-const csp = [
-  `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline' https://*.clerk.accounts.dev https://challenges.cloudflare.com https://*.protect.clerk.com https://clerk-telemetry.com https://*.clerk-telemetry.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://stats.ligadu.com https://platform.twitter.com https://www.instagram.com https://www.tiktok.com https://cpwebassets.codepen.io https://assets.pinterest.com ${clerkOrigins.join(' ')}`,
-  // cdn.jsdelivr.net serves KaTeX's CSS (Layout.astro, math-block posts only).
-  `style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net`,
-  `font-src 'self' data:`,
-  // Bookmark previews (metascraper) and link favicons pull images from
-  // arbitrary third-party sites, so img-src is intentionally broad.
-  `img-src 'self' data: https: https://img.clerk.com https://www.google.com`,
-  `connect-src 'self' https://*.clerk.accounts.dev https://*.protect.clerk.com https://clerk-telemetry.com https://*.clerk-telemetry.com https://stats.ligadu.com https://www.google-analytics.com ${clerkOrigins.join(' ')}`,
-  `frame-src 'self' https://challenges.cloudflare.com https://*.protect.clerk.com https://www.youtube.com https://platform.twitter.com https://www.tiktok.com https://www.instagram.com https://assets.pinterest.com https://www.pinterest.com https://cpwebassets.codepen.io https://codepen.io https://googleads.g.doubleclick.net https://tpc.googlesyndication.com ${clerkOrigins.join(' ')}`,
-  `worker-src 'self' blob:`,
-  `base-uri 'self'`,
-]
-  .map((directive) => directive.trim())
-  .join('; ')
+const csp = buildCsp(CUSTOM_DOMAIN)
 
 const securityHeaders = defineMiddleware(async (_context, next) => {
   const response = await next()
 
-  response.headers.set(
-    'Strict-Transport-Security',
-    'max-age=63072000; includeSubDomains; preload'
-  )
-  response.headers.set('X-Frame-Options', 'SAMEORIGIN')
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  // Shared with server.mjs's static-route wrapper so SSR and prerendered
+  // routes carry an identical header set (see security-headers.mjs).
+  for (const [name, value] of Object.entries(SECURITY_HEADERS_BASE)) {
+    response.headers.set(name, value)
+  }
   // Enforcing per docs/prd/0001-seo-remediation.md Decision 5 follow-up:
   // every external domain the app actually loads (scripts, iframes,
   // stylesheets, fonts) was audited against this policy before the flip.
   response.headers.set('Content-Security-Policy', csp)
+
+  // SSR responses omit charset by default; without it, some crawler/extraction
+  // pipelines fall back to Latin-1 and mangle Kriolu diacritics (á, é, ã, ê, ó).
+  const contentType = response.headers.get('Content-Type')
+  if (
+    contentType?.startsWith('text/html') &&
+    !contentType.includes('charset')
+  ) {
+    response.headers.set('Content-Type', `${contentType}; charset=utf-8`)
+  }
 
   return response
 })

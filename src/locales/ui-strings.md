@@ -46,9 +46,9 @@
 - actionLink: Entra
 
 ### signUp.legalConsent.checkbox
-- label__termsOfServiceAndPrivacyPolicy: [] N konkorda ku {{ termsOfServiceLink || link(“Terms of Service”) }} i kes {{ privacyPolicyLink || link(“Privacy Policy”) }}
-- label__onlyTermsOfService: [] N konkorda ku {{ termsOfServiceLink || link(“Terms of Service”) }}
-- label__onlyPrivacyPolicy: [] N konkorda ku {{ privacyPolicyLink || link(“Privacy Policy”) }}
+- label__termsOfServiceAndPrivacyPolicy: N konkorda ku {{ termsOfServiceLink || link(“Terms of Service”) }} i kes {{ privacyPolicyLink || link(“Privacy Policy”) }}
+- label__onlyTermsOfService: N konkorda ku {{ termsOfServiceLink || link(“Terms of Service”) }}
+- label__onlyPrivacyPolicy: N konkorda ku {{ privacyPolicyLink || link(“Privacy Policy”) }}
 
 ### userProfile.navbar
 - title: Konta

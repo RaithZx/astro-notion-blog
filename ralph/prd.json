@@ -128,7 +128,7 @@
       ],
       "priority": 8,
       "passes": true,
-      "notes": "Set feed.ts response Content-Type to application/rss+xml; charset=utf-8 by overriding the header on the Response from @astrojs/rss (which defaults to application/xml), and added an RSS autodiscovery <link> in Layout.astro head using getStaticFilePath('/feed'). Verified via npm run lint and npx tsc --noEmit -p . (no new errors vs baseline); no dev server available in this headless context, so curl -I and page-source checks were not run live but logic was traced/confirmed correct."
+      "notes": "Set feed.ts response Content-Type to application/rss+xml; charset=utf-8 by overriding the header on the Response from @astrojs/rss, and added an RSS autodiscovery <link> in Layout.astro. The header override was correct in isolation but had no effect at first, because feed.ts had `export const prerender = true` - prerendered routes are written to disk as static files by the Node adapter's standalone build, which discards runtime header overrides (the same root cause US-007 documented for security headers on prerendered routes). Found via live curl during a follow-up review: content-type was still application/octet-stream despite the code change. Fix: removed `prerender = true` from feed.ts, same pattern as US-002's /404 fix - it's now a genuine on-demand SSR route. Live-verified afterward: curl -I /feed shows content-type: application/rss+xml; charset=utf-8, body is still valid RSS XML, and it now also picks up the US-007 security headers as a side effect of no longer being prerendered. Autodiscovery link was correct from the start, unaffected."
     },
     {
       "id": "US-009",

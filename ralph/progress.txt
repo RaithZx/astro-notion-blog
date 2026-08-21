@@ -297,3 +297,29 @@ Verified:
   a top-level equation block, an inline equation in rich text, and equations
   nested inside toggle/callout/column_list, all correctly detected as `true`,
   and plain text correctly detected as `false`.
+
+## 2026-08-21 — Correction to US-008: RSS content-type fix didn't actually work
+
+During a full review pass (independently rebuilding, running a live server,
+and curling every changed endpoint rather than trusting self-reported
+verification), found that `/feed` still returned
+`content-type: application/octet-stream` despite US-008's code change and
+"passing" status.
+
+Root cause: `feed.ts` had `export const prerender = true`. Prerendered
+routes are written to disk as static files by @astrojs/node's standalone
+adapter at build time, which discards the runtime `response.headers.set()`
+call in the `GET()` handler entirely — the exact same mechanism US-007
+already documented as a limitation for security headers on prerendered
+routes, just not connected to this story at the time.
+
+Fix: removed `prerender = true` from `feed.ts`, same pattern as US-002's
+`/404` fix (on-demand SSR instead of prerendered). Live-verified: `curl -I
+/feed` now shows `content-type: application/rss+xml; charset=utf-8`, body
+is still valid RSS XML, and it now also receives the US-007 security
+headers as a side effect of no longer being prerendered.
+
+Lesson for future stories in this codebase: any story that sets a response
+header via code needs a live curl check, not just a code trace — prerendered
+routes silently discard runtime header mutations, and this will bite again
+on any future story that assumes `response.headers.set()` "just works" here.

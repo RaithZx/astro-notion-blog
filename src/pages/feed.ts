@@ -1,5 +1,3 @@
-export const prerender = true
-
 import rss from '@astrojs/rss'
 import { getAllPosts, getDatabase } from '../lib/notion/client'
 import { getPostLink } from '../lib/blog-helpers'
